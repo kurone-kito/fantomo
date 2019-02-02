@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Fantomo.Core;
 
 namespace Fantomo.Text

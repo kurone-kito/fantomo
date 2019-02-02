@@ -1,4 +1,4 @@
-﻿namespace Fantomo.Core
+namespace Fantomo.Core
 {
     public enum Direction
     {
