@@ -1,4 +1,5 @@
 ﻿using System;
+using Fantomo.Core;
 
 namespace Fantomo.Text
 {
@@ -6,7 +7,7 @@ namespace Fantomo.Text
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Console.WriteLine("Hello World!" + Direction.Up);
         }
     }
 }
