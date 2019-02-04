@@ -31,6 +31,22 @@ namespace Fantomo.Core
             }
         }
 
+        private static void InitializeNeighbors(Room[][] map)
+        {
+            var width = map.Length;
+            for (var y = width; --y >= 0;)
+            {
+                var row = map[y];
+                var height = row.Length;
+                for (var x = height; --x >= 0;)
+                {
+                    var offsets = GetNeighborIndex((x, y), (width, height));
+                    var room = row[x];
+                    room.InnerNeighbors = offsets.ToDictionary(o => o.type, o => new Door(map[o.y][o.x]));
+                }
+            }
+        }
+
         private readonly Room[][] InnerMap;
 
         public IReadOnlyCollection<IReadOnlyCollection<IRoom>> Map
@@ -42,16 +58,7 @@ namespace Fantomo.Core
         {
             var createRows = Enumerable.Repeat<Func<Room[]>>(() => new Room[width], height);
             var innerMap = (from createRow in createRows select createRow()).ToArray();
-            for (var y = innerMap.Length; --y >= 0;)
-            {
-                var row = innerMap[y];
-                for (var x = row.Length; --x >= 0;)
-                {
-                    var offsets = GetNeighborIndex(target: (x, y), limit: (width, height));
-                    var room = innerMap[x][y];
-                    room.InnerNeighbors = offsets.ToDictionary(o => o.type, o => new Door(innerMap[o.y][o.x]));
-                }
-            }
+            InitializeNeighbors(innerMap);
             InnerMap = innerMap;
         }
     }
