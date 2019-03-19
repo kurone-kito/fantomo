@@ -6,6 +6,7 @@ namespace Fantomo.Core
 {
     public sealed class Rooms
     {
+        public Point size { get; private set; }
         // private static readonly (Direction type, int x, int y)[] NeighborTable =
         //     new[] {
         //         (type: Direction.Right, x: 1, y: 0),
