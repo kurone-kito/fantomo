@@ -6,14 +6,22 @@ namespace Fantomo.Test
     [TestFixture]
     public class DoorTest
     {
-        private Door door;
-
         [Test]
-        public void EmptyConstructor()
+        public void Constructor()
         {
             var door = new Door();
-            Assert.IsNull(door.Rooms);
             Assert.IsFalse(door.IsLocked);
+        }
+
+        [Test]
+        public void Toggle()
+        {
+            var door = new Door();
+            var toggled = door.Toggle();
+            Assert.AreNotEqual(door, toggled);
+            Assert.IsFalse(door.IsLocked);
+            Assert.IsTrue(toggled.IsLocked);
         }
     }
 }
+

@@ -42,7 +42,7 @@ namespace Fantomo.Core
                 {
                     var offsets = GetNeighborIndex((x, y), (width, height));
                     var room = row[x];
-                    room.InnerNeighbors = offsets.ToDictionary(o => o.type, o => new Door(map[o.y][o.x]));
+                    room.InnerNeighbors = offsets.ToDictionary(o => o.type, o => new Door());
                 }
             }
         }

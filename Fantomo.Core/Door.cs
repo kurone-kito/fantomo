@@ -1,20 +1,12 @@
 namespace Fantomo.Core
 {
-    public struct Door
+    public sealed class Door
     {
-        public IRoom[] Rooms { get; }
-        public bool IsLocked { get; }
-
-        public Door(IRoom[] rooms, bool locked = false)
-        {
-            Rooms = rooms;
-            IsLocked = locked;
-        }
-
+        public bool IsLocked { get; private set; } = false;
 
         public Door Toggle()
         {
-            return new Door(rooms: Rooms, locked: !IsLocked);
+            return new Door() { IsLocked = !IsLocked };
         }
     }
 }
