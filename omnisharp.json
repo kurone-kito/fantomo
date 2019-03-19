@@ -1,0 +1,6 @@
+{
+  "FormattingOptions": {
+    "NewLinesForBracesInControlBlocks": true,
+    "NewLineForElse": true
+  }
+}

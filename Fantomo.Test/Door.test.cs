@@ -4,7 +4,7 @@ using Fantomo.Core;
 namespace Fantomo.Test
 {
     [TestFixture]
-    public class DoorTest
+    public sealed class DoorTest
     {
         [Test]
         public void Constructor()
