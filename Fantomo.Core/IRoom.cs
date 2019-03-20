@@ -5,6 +5,8 @@ namespace Fantomo.Core
     /// <summary>Interface of a room.</summary>
     public interface IRoom
     {
+        Point Address { get; }
+
         /// <summary>Whether a trap exists in this room.</summary>
         bool IsTrap { get; }
 
