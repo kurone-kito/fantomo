@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Fantomo.Core
 {
@@ -12,9 +13,15 @@ namespace Fantomo.Core
                 new KeyValuePair<Direction, Point>(Direction.Up, new Point(y: -1)),
             };
 
-        public static Point Offset(Direction direction)
+        public static Point Offset(this Direction direction)
         {
-
+            var filtered =
+                from o in Offsets
+                where (o.Key & direction) != 0
+                select o.Value;
+            return filtered.Aggregate((a, b) => a + b);
         }
+
+
     }
 }
