@@ -10,6 +10,7 @@ namespace Fantomo.Core
         public Rooms(Point size)
         {
             Size = size;
+
             //Enumerable.Repeat()
         }
         // private static readonly (Direction type, int x, int y)[] NeighborTable =

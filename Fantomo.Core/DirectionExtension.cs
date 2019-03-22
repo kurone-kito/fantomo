@@ -3,8 +3,10 @@ using System.Linq;
 
 namespace Fantomo.Core
 {
-    public static class OffsetHelper
+    /// <summary>Extension for Direction enum.</summary>
+    public static class DirectionExtension
     {
+        /// <summary>Offsets of the direction.</summary>
         private static KeyValuePair<Direction, Point>[] Offsets =
             {
                 new KeyValuePair<Direction, Point>(Direction.Down, new Point(y: 1)),
@@ -13,6 +15,8 @@ namespace Fantomo.Core
                 new KeyValuePair<Direction, Point>(Direction.Up, new Point(y: -1)),
             };
 
+        /// <summary>Get offset of the direction.</summary>
+        /// <param name="direction">direction.</param>
         public static Point Offset(this Direction direction)
         {
             var filtered =
@@ -21,7 +25,5 @@ namespace Fantomo.Core
                 select o.Value;
             return filtered.Aggregate((a, b) => a + b);
         }
-
-
     }
 }
