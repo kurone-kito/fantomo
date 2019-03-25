@@ -6,7 +6,7 @@ namespace Fantomo.Core
     sealed class Room : IRoom
     {
         /// <summary>Get address of this room.</summary>
-        public Point Address { get; private set; }
+        public Point Address { get; internal set; }
 
         /// <summary>Whether a trap exists in this room.</summary>
         public bool IsTrap { get; internal set; }
