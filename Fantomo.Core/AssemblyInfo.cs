@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("Fantomo Core")]
 [assembly: AssemblyProduct("Fantomo")]
-[assembly: AssemblyCopyright("Copyright © 2019 Kurone Kito")]
+[assembly: AssemblyCopyright("Copyright (c) 2019 Kurone Kito")]
 
 [assembly: ComVisible(true)]
 [assembly: InternalsVisibleTo("Fantomo.Test")]

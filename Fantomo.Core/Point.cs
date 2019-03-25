@@ -1,4 +1,4 @@
-﻿namespace Fantomo.Core
+namespace Fantomo.Core
 {
     /// <summary>2D Position.</summary>
     public struct Point

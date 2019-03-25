@@ -1,4 +1,4 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 using Fantomo.Core;
 
 namespace Fantomo.Test
