@@ -18,7 +18,7 @@ namespace Fantomo.Test
         {
             var door = new Door();
             var toggled = door.Toggle();
-            Assert.AreNotEqual(door, toggled);
+            Assert.AreNotSame(door, toggled);
             Assert.IsFalse(door.IsLocked);
             Assert.IsTrue(toggled.IsLocked);
         }

@@ -1,5 +1,6 @@
-using NUnit.Framework;
+using System.Collections.Generic;
 using Fantomo.Core;
+using NUnit.Framework;
 
 namespace Fantomo.Test
 {
@@ -20,9 +21,11 @@ namespace Fantomo.Test
         [TestCase(-1, 0)]
         public void Address(int x, int y)
         {
-            var room = new Room();
             var address = new Point(x, y);
-            room.Address = address;
+            var room = new Room
+            {
+                Address = address
+            };
             Assert.AreEqual(room.Address, address);
         }
 
@@ -30,10 +33,25 @@ namespace Fantomo.Test
         [TestCase(false)]
         public void IsTrap(bool trap)
         {
-            var room = new Room();
-            room.IsTrap = trap;
+            var room = new Room
+            {
+                IsTrap = trap
+            };
             Assert.AreEqual(room.IsTrap, trap);
+        }
+
+        [TestCase(0)]
+        [TestCase(1)]
+        public void Neighbors(int times)
+        {
+            var dic = new Dictionary<Direction, Door>();
+            var room = new Room
+            {
+                InnerNeighbors = dic
+            };
+            Assert.AreSame(room.InnerNeighbors, dic);
+            Assert.AreSame(room.Neighbors, dic);
+            Assert.AreSame(room.Neighbors, room.InnerNeighbors);
         }
     }
 }
-
