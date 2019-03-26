@@ -9,8 +9,7 @@ namespace Fantomo.Test
         [Test]
         public void Constructor()
         {
-            var door = new Door();
-            Assert.IsFalse(door.IsLocked);
+            Assert.That(new Door().IsLocked, Is.False);
         }
 
         [Test]
