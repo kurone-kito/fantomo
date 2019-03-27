@@ -11,47 +11,42 @@ namespace Fantomo.Test
         public void Constructor()
         {
             var room = new Room();
-            Assert.AreEqual(room.Address, new Point());
-            Assert.IsFalse(room.IsTrap);
-            Assert.IsNull(room.Neighbors);
-            Assert.IsNull(room.InnerNeighbors);
+            Assert.That(room.Address, Is.EqualTo(new Point()));
+            Assert.That(room.IsTrap, Is.False);
+            Assert.That(room.Neighbors, Is.Null);
+            Assert.That(room.InnerNeighbors, Is.Null);
         }
 
-        [TestCase(0, 1)]
-        [TestCase(-1, 0)]
-        public void Address(int x, int y)
+        [Test]
+        public void Address([Random(2)]int x, [Random(2)]int y)
         {
             var address = new Point(x, y);
             var room = new Room
             {
                 Address = address
             };
-            Assert.AreEqual(room.Address, address);
+            Assert.That(room.Address, Is.EqualTo(address));
         }
 
-        [TestCase(true)]
-        [TestCase(false)]
-        public void IsTrap(bool trap)
+        public void IsTrap([Values]bool trap)
         {
             var room = new Room
             {
                 IsTrap = trap
             };
-            Assert.AreEqual(room.IsTrap, trap);
+            Assert.That(room.IsTrap, Is.EqualTo(trap));
         }
 
-        [TestCase(0)]
-        [TestCase(1)]
-        public void Neighbors(int times)
+        [Test]
+        public void Neighbors()
         {
             var dic = new Dictionary<Direction, Door>();
             var room = new Room
             {
                 InnerNeighbors = dic
             };
-            Assert.AreSame(room.InnerNeighbors, dic);
-            Assert.AreSame(room.Neighbors, dic);
-            Assert.AreSame(room.Neighbors, room.InnerNeighbors);
+            Assert.That(room.Neighbors, Is.SameAs(dic));
+            Assert.That(room.InnerNeighbors, Is.SameAs(dic));
         }
     }
 }

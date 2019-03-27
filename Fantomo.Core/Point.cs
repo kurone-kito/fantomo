@@ -11,6 +11,7 @@ namespace Fantomo.Core
 
         /// <summary>Initialize the instance.</summary>
         /// <param name="x">X axis position.</param>
+        ///
         /// <param name="y">Y axis position.</param>
         public Point(int x = 0, int y = 0)
         {

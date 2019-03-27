@@ -12,14 +12,25 @@ namespace Fantomo.Test
             Assert.That(new Door().IsLocked, Is.False);
         }
 
-        [Test]
-        public void Toggle()
+        public void IsLocked([Values]bool locked)
         {
-            var door = new Door();
+            var door = new Door
+            {
+                IsLocked = locked
+            };
+            Assert.That(door.IsLocked, Is.EqualTo(locked));
+        }
+
+        [Test]
+        public void Toggle([Values]bool locked)
+        {
+            var door = new Door
+            {
+                IsLocked = locked
+            };
             var toggled = door.Toggle();
-            Assert.AreNotSame(door, toggled);
-            Assert.IsFalse(door.IsLocked);
-            Assert.IsTrue(toggled.IsLocked);
+            Assert.That(toggled, Is.Not.SameAs(door));
+            Assert.That(toggled.IsLocked, Is.EqualTo(!locked));
         }
     }
 }
