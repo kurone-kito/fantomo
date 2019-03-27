@@ -1,9 +1,11 @@
 using System;
 
-namespace Fantomo.Core {
+namespace Fantomo.Core
+{
     /// <summary>Doors direction.</summary>
     [Flags]
-    public enum Direction {
+    public enum Direction
+    {
         /// <summary>Down (south)</summary>
         Down = 0x1,
 

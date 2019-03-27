@@ -25,7 +25,7 @@ namespace Fantomo.Core
             return this + direction.Offset();
         }
 
-        //public static Point FromIndex(Point size, int index) => size.Y 
+        //public static Point FromIndex(Point size, int index) => size.Y
 
         /// <summary>Synthesize two values..</summary>
         public static Point operator +(Point a, Point b)

@@ -7,7 +7,7 @@ namespace Fantomo.Core
     public static class DirectionExtension
     {
         /// <summary>Offsets of the direction.</summary>
-        private static readonly IEnumerable< KeyValuePair<Direction, Point>> Offsets = new KeyValuePair<Direction, Point>[]
+        private static readonly IEnumerable<KeyValuePair<Direction, Point>> Offsets = new KeyValuePair<Direction, Point>[]
             {
                 new KeyValuePair<Direction, Point>(Direction.Down, new Point(y: 1)),
                 new KeyValuePair<Direction, Point>(Direction.Left, new Point(x: -1)),

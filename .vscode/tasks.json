@@ -6,9 +6,6 @@
     {
       "label": "build",
       "command": "dotnet build",
-      "windows": {
-        "command": "echo hoge; dotnet build"
-      },
       "type": "shell",
       "group": "build",
       "presentation": {

@@ -10,7 +10,7 @@
       "request": "launch",
       "preLaunchTask": "build",
       "program": "${workspaceFolder}/Fantomo.Text/bin/Debug/netcoreapp2.2/Fantomo.Text.dll",
-      "args": ["/consoleloggerparameters:Encoding=UTF-8"],
+      "args": [],
       "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
       "stopAtEntry": false,
