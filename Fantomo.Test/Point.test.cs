@@ -30,5 +30,14 @@ namespace Fantomo.Test
             Assert.That(neighbor, Is.Not.EqualTo(point));
             Assert.That(neighbor, Is.EqualTo(point + direction.Offset()));
         }
+
+        public void PlusOperator([Random(2)]int x1, [Random(2)]int x2, [Random(2)]int y1, [Random(2)]int y2)
+        {
+            var a = new Point(x1, y1);
+            var b = new Point(x2, y2);
+            var calced = a + b;
+            Assert.That(calced.X, Is.EqualTo(x1 + x2));
+            Assert.That(calced.Y, Is.EqualTo(y1 + y2));
+        }
     }
 }
