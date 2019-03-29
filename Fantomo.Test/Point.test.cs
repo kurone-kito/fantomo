@@ -31,6 +31,7 @@ namespace Fantomo.Test
             Assert.That(neighbor, Is.EqualTo(point + direction.Offset()));
         }
 
+        [Test]
         public void PlusOperator([Random(2)]int x1, [Random(2)]int x2, [Random(2)]int y1, [Random(2)]int y2)
         {
             var a = new Point(x1, y1);
@@ -38,6 +39,19 @@ namespace Fantomo.Test
             var calced = a + b;
             Assert.That(calced.X, Is.EqualTo(x1 + x2));
             Assert.That(calced.Y, Is.EqualTo(y1 + y2));
+        }
+
+        [Test]
+        public void CreateGrid([Random(1, 10, 2)]int w, [Random(1, 10, 2)]int h)
+        {
+            var list = Point.CreateGrid(new Point(w, h)).GetEnumerator();
+            for (var y = 0; y < h; y++)
+                for (var x = 0; x < w; x++)
+                {
+                    list.MoveNext();
+                    Assert.That(list.Current.X, Is.EqualTo(x));
+                    Assert.That(list.Current.Y, Is.EqualTo(y));
+                }
         }
     }
 }

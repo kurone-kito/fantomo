@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Fantomo.Core
 {
@@ -17,15 +16,5 @@ namespace Fantomo.Core
 
         /// <summary>Doors for access to neighbor rooms.</summary>
         internal Dictionary<Direction, Door> InnerNeighbors { get; set; }
-
-        public static IEnumerable<Point> CreateAddresses(Point size)
-        {
-            foreach (var y in Enumerable.Range(start: 0, count: size.Y)) {
-                foreach (var x in Enumerable.Range(start: 0, count: size.X))
-                {
-                    yield return new Point(x, y);
-                }
-            }
-        }
     }
 }

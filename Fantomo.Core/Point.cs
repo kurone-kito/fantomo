@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Linq;
+
 namespace Fantomo.Core
 {
     /// <summary>2D Position.</summary>
@@ -30,6 +33,19 @@ namespace Fantomo.Core
         public static Point operator +(Point a, Point b)
         {
             return new Point(a.X + b.X, a.Y + b.Y);
+        }
+
+        /// <summary>Create the addresses map.</summary>
+        /// <param name="size">Grid size.</param>
+        public static IEnumerable<Point> CreateGrid(Point size)
+        {
+            foreach (var y in Enumerable.Range(start: 0, count: size.Y))
+            {
+                foreach (var x in Enumerable.Range(start: 0, count: size.X))
+                {
+                    yield return new Point(x, y);
+                }
+            }
         }
     }
 }

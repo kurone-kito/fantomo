@@ -10,9 +10,15 @@ namespace Fantomo.Core
         public Rooms(Point size)
         {
             Size = size;
-
             //Enumerable.Repeat()
         }
+
+        private IDictionary<Point, IRoom> CreateRooms()
+        {
+            var pairs =
+                from a in Point.CreateGrid(Size) select a;
+        }
+
         // private static readonly (Direction type, int x, int y)[] NeighborTable =
         //     new[] {
         //         (type: Direction.Right, x: 1, y: 0),
