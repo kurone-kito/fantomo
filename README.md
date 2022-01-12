@@ -1,3 +1,2 @@
-# codename: Fantomo
-
-_for practice of .NET_
+# fantomo
+for practice of .NET
