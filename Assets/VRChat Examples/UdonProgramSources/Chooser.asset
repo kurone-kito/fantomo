@@ -604,7 +604,6 @@ MonoBehaviour:
       - dc7a240f-c4f6-45d2-94d5-d319aecb934c
       - ec526b86-6ebe-4f1a-9e8e-d45d9ed63a65
       - 0d0deb2f-9e47-4bbb-9812-2f3d545de877
-      - 
       nodeValues: []
     - fullName: Branch
       uid: dc7a240f-c4f6-45d2-94d5-d319aecb934c
@@ -669,7 +668,7 @@ MonoBehaviour:
     uid: 175503d6-0240-48f0-8025-74ddd0371984
     jsonData: '{"visible":true,"layout":{"serializedVersion":"2","x":10.0,"y":20.0,"width":0.0,"height":0.0}}'
   viewTransform:
-    position: {x: 700.1234, y: 459.86627}
-    scale: 0.43232757
+    position: {x: 736.8889, y: 539.55554}
+    scale: 0.49717674
   version: 1.0.0
   showAssembly: 0
