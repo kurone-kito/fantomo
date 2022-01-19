@@ -16,9 +16,16 @@ public class EntrySystem : UdonSharpBehaviour
     /// <summary>エントリーボタンのラベル。</summary>
     public GameObject entryButtonLabel = null;
 
+    /// <summary>ゲーム開始ボタン本体。</summary>
+    public GameObject startButton = null;
+
     /// <summary>エントリーしている、プレイヤーの一覧。</summary>
     [UdonSynced]
     public int[] playersId = new int[MAX_PLAYERS];
+
+    /// <summary>エントリーしている、プレイヤーの一覧。</summary>
+    [UdonSynced]
+    public bool gameStarted = false;
 
     /// <summary>エントリーしている、プレイヤーの一覧を表示するためのラベル。</summary>
     public GameObject[] playerNamesLabel = new GameObject[MAX_PLAYERS];
@@ -80,15 +87,44 @@ public class EntrySystem : UdonSharpBehaviour
         this.updateView();
     }
 
+    public void GameStart()
+    {
+        this.changeOwner();
+        this.gameStarted = true;
+        this.RequestSerialization();
+        this.updateView();
+        this.teleportEntriedPlayers();
+    }
+
+    /// <summary>
+    /// エントリーしているプレイヤーをフィールドへ転送します。
+    /// </summary>
+    private void teleportEntriedPlayers()
+    {
+        foreach (var id in this.playersId)
+        {
+            var player = VRCPlayerApi.GetPlayerById(id);
+            if (player != null && player.IsValid())
+            {
+                player.TeleportTo(
+                    new Vector3(0, 1, 0),
+                    player.GetRotation());
+            }
+        }
+    }
+
     private void updateView()
     {
         var entried = this.isEntried();
         var full = !entried && this.getEmpty() < 0;
         entryButtonLabel.GetComponent<Text>().text =
+            this.gameStarted ? "ゲームが始まります..." :
             entried ? "参加を取り消す" :
             full ? "満員です" :
             "参加する";
-        entryButton.GetComponent<Button>().interactable = !full;
+        entryButton.GetComponent<Button>().interactable =
+            !full && !this.gameStarted;
+        startButton.SetActive(entried && !this.gameStarted);
         for (var i = this.playersId.Length; --i >= 0; )
         {
             var id = this.playersId[i];
