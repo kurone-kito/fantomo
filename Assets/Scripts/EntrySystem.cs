@@ -107,7 +107,7 @@ public class EntrySystem : UdonSharpBehaviour
             if (player != null && player.IsValid())
             {
                 player.TeleportTo(
-                    new Vector3(0, 1, 0),
+                    new Vector3(20, 1, 0),
                     player.GetRotation());
             }
         }
