@@ -1,7 +1,8 @@
-using UdonSharp;
+﻿using UdonSharp;
 using UnityEngine;
 using UnityEngine.UI;
 using VRC.SDKBase;
+using VRC.Udon.Common.Interfaces;
 
 /// <summary>エントリー機能のロジック。</summary>
 [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
@@ -100,24 +101,21 @@ public class EntrySystem : UdonSharpBehaviour
         this.gameStarted = true;
         this.RequestSerialization();
         this.updateView();
-        this.teleportEntriedPlayers();
+        this.SendCustomNetworkEvent(
+            NetworkEventTarget.All, nameof(teleportToGameField));
     }
 
     /// <summary>
-    /// エントリーしているプレイヤーをフィールドへ転送します。
+    /// 自分自身がエントリーしている場合、フィールドへ転送します。
     /// </summary>
-    private void teleportEntriedPlayers()
+    public void teleportToGameField()
     {
-        foreach (var id in this.playersId)
-        {
-            var player = VRCPlayerApi.GetPlayerById(id);
-            if (player != null && player.IsValid())
-            {
-                player.TeleportTo(
-                    new Vector3(20, 1, 0),
-                    player.GetRotation());
-            }
+        if (this.isEntried()){
+            var player = Networking.LocalPlayer;
+            var pos = new Vector3(20, 1, 0);
+            player.TeleportTo(pos, player.GetRotation());
         }
+
     }
 
     /// <summary>ビューを最新の状態に更新します。</summary>
