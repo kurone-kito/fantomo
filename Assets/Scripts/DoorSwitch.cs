@@ -2,17 +2,14 @@
 using UdonSharp;
 using UnityEngine;
 
+[UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 public class DoorSwitch : UdonSharpBehaviour
 {
     public GameObject door = null;
-    void Start()
-    {
-
-    }
 
     public override void Interact()
     {
-        Debug.Log("Interact");
-        // door.GetComponent<Animator>().enabled = !door.GetComponent<Animator>().enabled;
+        var animator = door.GetComponent<Animator>();
+        animator.SetBool("isOpen", !animator.GetBool("isOpen"));
     }
 }

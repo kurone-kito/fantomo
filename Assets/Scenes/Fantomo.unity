@@ -566,6 +566,25 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   m_IsOn: 0
+--- !u!1 &223974226 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1094421957795851142, guid: 8894fa7e4588a5c4fab98453e558847d,
+    type: 3}
+  m_PrefabInstance: {fileID: 1656821369}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &223974231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 223974226}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 229740497, guid: 4ecd63eff847044b68db9453ce219299, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  contentType: 1
 --- !u!1 &232069339
 GameObject:
   m_ObjectHideFlags: 0
@@ -2498,7 +2517,7 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 767226851}
-  m_Enabled: 0
+  m_Enabled: 1
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: e1896421068e07846ab91b4118fd2f43, type: 2}
   m_CullingMode: 0
@@ -3230,7 +3249,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   interactTextPlacement: {fileID: 0}
-  interactText: Open
+  interactText: "\u958B\u304F"
   interactTextGO: {fileID: 0}
   proximity: 0.5
   SynchronizePosition: 0
