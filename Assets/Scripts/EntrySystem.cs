@@ -44,6 +44,13 @@ public class EntrySystem : UdonSharpBehaviour
     /// </summary>
     public override void OnPlayerLeft(VRCPlayerApi player)
     {
+        if (
+            Networking.IsOwner(Networking.LocalPlayer, this.gameObject) &&
+            !this.isEntriedAny())
+        {
+            this.gameStarted = false;
+            this.RequestSerialization();
+        }
         this.updateView();
     }
 
@@ -66,6 +73,10 @@ public class EntrySystem : UdonSharpBehaviour
         if (Networking.IsOwner(player, this.gameObject))
         {
             this.owner__removeId(player.playerId);
+            if (!this.isEntriedAny())
+            {
+                this.gameStarted = false;
+            }
             this.RequestSerialization();
         }
         this.updateView();
@@ -94,7 +105,7 @@ public class EntrySystem : UdonSharpBehaviour
         this.updateView();
     }
 
-    /// <summary>ゲーム開始ボタンを謳歌した際に呼び出します。</summary>
+    /// <summary>ゲーム開始ボタンを押下した際に呼び出します。</summary>
     public void GameStart()
     {
         this.changeOwner();
@@ -174,6 +185,23 @@ public class EntrySystem : UdonSharpBehaviour
             }
         }
         return -1;
+    }
+
+    /// <summary>
+    /// 任意のプレイヤーがエントリーしているかどうかを取得します。
+    /// </summary>
+    /// <returns>エントリーしている場合、true。</returns>
+    private bool isEntriedAny()
+    {
+        for (var i = this.playersId.Length; --i >= 0; )
+        {
+            var player = VRCPlayerApi.GetPlayerById(this.playersId[i]);
+            if (player != null && player.IsValid())
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     /// <summary>エントリーしているかどうかを取得します。</summary>
