@@ -6,6 +6,9 @@ using UnityEngine;
 [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 public class DoorSwitch : UdonSharpBehaviour
 {
+    /// <value>ドア施錠・解錠オブジェクト。</value>
+    public GameObject doorLock = null;
+
     /// <value>ドア本体オブジェクト。</value>
     public GameObject door = null;
 
@@ -27,7 +30,7 @@ public class DoorSwitch : UdonSharpBehaviour
         var animator = door.GetComponent<Animator>();
         animator.SetBool("isOpen", true);
         this.SendCustomEventDelayedSeconds(nameof(CloseDoor), 1.5f);
-        this.DisableInteractive = true;
+        this.SetLockInteract(true);
     }
 
     /// <summary>
@@ -43,6 +46,17 @@ public class DoorSwitch : UdonSharpBehaviour
     /// <summary>ドア開閉スイッチを有効化します。</summary>
     public void EnableKnob()
     {
-        this.DisableInteractive = false;
+        this.SetLockInteract(false);
+    }
+
+    /// <summary>
+    /// ドア開閉スイッチ、およびドア施錠・解錠スイッチの有効・無効を設定します。
+    /// </summary>
+    /// <param name="isLocked">無効化するかどうか。</param>
+    private void SetLockInteract(bool isLocked)
+    {
+        var doorLockBehaviour = doorLock.GetComponent<DoorLock>();
+        this.DisableInteractive = isLocked;
+        doorLockBehaviour.DisableInteractive = isLocked;
     }
 }
