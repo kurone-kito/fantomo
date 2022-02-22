@@ -1,6 +1,7 @@
 ﻿
 using UdonSharp;
 using UnityEngine;
+using VRC.Udon;
 
 /// <summary>ドア施錠・解錠スイッチの制御用ロジック。</summary>
 [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
@@ -30,11 +31,23 @@ public class DoorLock : UdonSharpBehaviour
     {
         this.isLocked = !this.isLocked;
         this.DisableInteractive = false;
+        this.UpdateInteract();
         var doorSwitchBehaviour = this.doorSwitch.GetComponent<DoorSwitch>();
         doorSwitchBehaviour.DisableInteractive = this.isLocked;
         if (!this.isLocked)
         {
             doorSwitchBehaviour.Interact();
         }
+    }
+
+    /// <summary>表示状態を更新します。</summary>
+    private void UpdateInteract()
+    {
+        // ! ここだけ Generics 使うと怒られる。なんでやねん。
+        var selfBehaviour =
+            (UdonBehaviour)this.GetComponent(typeof(UdonBehaviour));
+        selfBehaviour.InteractionText =
+            this.isLocked ? "解錠して開く" : "施錠";
+        this.lockedText.SetActive(this.isLocked);
     }
 }
