@@ -24,6 +24,9 @@ public class Door : UdonSharpBehaviour
     /// <value>ドア施錠状態の表示を持つオブジェクト。</value>
     public GameObject lockedText = null;
 
+    /// <value>ドア施錠・解錠を継続可能な領域。</value>
+    public Collider lockableArea = null;
+
     /// <value>隣接状態の表示を持つオブジェクト。</value>
     public GameObject neighborText = null;
 
