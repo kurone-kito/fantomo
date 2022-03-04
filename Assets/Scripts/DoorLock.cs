@@ -1,4 +1,4 @@
-
+﻿
 using UdonSharp;
 
 /// <summary>ドア施錠・解錠スイッチの制御用ロジック。</summary>
@@ -15,6 +15,7 @@ public class DoorLock : UdonSharpBehaviour
     {
         if (this.door != null)
         {
+            door.StartProgress();
             door.ToggleLock();
         }
     }

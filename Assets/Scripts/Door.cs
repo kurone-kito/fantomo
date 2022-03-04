@@ -1,4 +1,4 @@
-
+﻿
 using UdonSharp;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,6 +17,9 @@ public class Door : UdonSharpBehaviour
     /// <value>他プレイヤーによる施錠における、表示文字色。</value>
     private readonly Color enemyLockColor =
         new Color(1f, 0.2f, 0.5f);
+
+    /// <value>ドア施錠・解錠のための、プログレス バー。</value>
+    public LockProgress lockProgress = null;
 
     /// <value>ドア施錠・解錠オブジェクト。</value>
     public GameObject lockSwitch = null;
@@ -56,6 +59,10 @@ public class Door : UdonSharpBehaviour
     /// </summary>
     public void InnerOpenDoor()
     {
+        if (this.lockProgress)
+        {
+            this.lockProgress.StopProgress();
+        }
         this.setInteractive(false);
         this.updateInteraction();
         this.playAnimationToOpen();
@@ -70,6 +77,15 @@ public class Door : UdonSharpBehaviour
         this.playAnimationToClose();
         this.SendCustomEventDelayedSeconds(
             nameof(EnableInteractive), 0.5f);
+    }
+
+    /// <summary>施錠・解錠のプログレス バーを起動します。</summary>
+    public void StartProgress()
+    {
+        if (this.lockProgress != null)
+        {
+            this.lockProgress.StartProgress(1.5f);
+        }
     }
 
     /// <summary>ドアの施錠状態を切り替えます。</summary>
