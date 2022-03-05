@@ -15,8 +15,7 @@ public class DoorLock : UdonSharpBehaviour
     {
         if (this.door != null)
         {
-            door.StartProgress();
-            door.ToggleLock();
+            door.ReserveToggleLock();
         }
     }
 }

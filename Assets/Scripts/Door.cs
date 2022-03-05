@@ -43,6 +43,16 @@ public class Door : UdonSharpBehaviour
     [UdonSynced]
     public int lockedUser = 0;
 
+    /// <value>ドア施錠・解錠をキャンセルするかどうか。</value>
+    private bool isLockCanceled = false;
+
+    /// <summary>ドア施錠・解錠をキャンセルします。</summary>
+    public void CancelLock()
+    {
+        this.isLockCanceled = true;
+        this.lockProgress.IgnoreProgress();
+    }
+
     /// <summary>
     /// すべてのプレイヤーに対し、<seealso cref="InnerOpenDoor"/>
     /// を実行するようイベントを送信します。
@@ -59,10 +69,7 @@ public class Door : UdonSharpBehaviour
     /// </summary>
     public void InnerOpenDoor()
     {
-        if (this.lockProgress)
-        {
-            this.lockProgress.StopProgress();
-        }
+        this.CancelLock();
         this.setInteractive(false);
         this.updateInteraction();
         this.playAnimationToOpen();
@@ -79,12 +86,35 @@ public class Door : UdonSharpBehaviour
             nameof(EnableInteractive), 0.5f);
     }
 
-    /// <summary>施錠・解錠のプログレス バーを起動します。</summary>
-    public void StartProgress()
+    /// <summary>施錠・解錠の予約をします。</summary>
+    public void ReserveToggleLock()
     {
+        this.setLockSwitchEnabled(false);
+        var wait = this.isLocked() && !this.isMyLock() ? 5f : 1.5f;
         if (this.lockProgress != null)
         {
-            this.lockProgress.StartProgress(1.5f);
+            this.lockProgress.StartProgress(wait);
+        }
+        this.isLockCanceled = false;
+        this.SendCustomEventDelayedSeconds(
+            nameof(ToggleLockWhenNotCanceled), wait);
+    }
+
+    /// <summary>
+    /// <para>
+    /// 途中キャンセルがなかった場合、ドアの施錠状態を切り替えます。
+    /// </para>
+    /// <para>
+    /// <seealso cref="UdonSharpBehaviour.SendCustomEventDelayedSeconds"/>
+    /// のキャンセルができないため、代替として実装した、Facade メソッドです。
+    /// </para>
+    /// </summary>
+    public void ToggleLockWhenNotCanceled()
+    {
+        this.setLockSwitchEnabled(true);
+        if (!this.isLockCanceled)
+        {
+            this.ToggleLock();
         }
     }
 
