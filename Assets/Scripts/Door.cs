@@ -1,7 +1,6 @@
 ﻿
 using UdonSharp;
 using UnityEngine;
-using UnityEngine.UI;
 using VRC.SDKBase;
 using VRC.Udon;
 using VRC.Udon.Common.Interfaces;
@@ -10,31 +9,17 @@ using VRC.Udon.Common.Interfaces;
 [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
 public class Door : UdonSharpBehaviour
 {
-    /// <value>自分自身による施錠における、表示文字色。</value>
-    private readonly Color myLockColor =
-        new Color(0f, 0.5f, 1f, 0.5f);
-
-    /// <value>他プレイヤーによる施錠における、表示文字色。</value>
-    private readonly Color enemyLockColor =
-        new Color(1f, 0.2f, 0.5f);
-
-    /// <value>ドア施錠・解錠のための、プログレス バー。</value>
-    public LockProgress lockProgress = null;
-
     /// <value>ドア施錠・解錠オブジェクト。</value>
     public GameObject lockSwitch = null;
-
-    /// <value>ドア施錠状態の表示を持つオブジェクト。</value>
-    public GameObject lockedText = null;
 
     /// <value>ドア施錠・解錠を継続可能な領域。</value>
     public Collider lockableArea = null;
 
-    /// <value>隣接状態の表示を持つオブジェクト。</value>
-    public GameObject neighborText = null;
-
     /// <value>ドア開放オブジェクト。</value>
     public GameObject openSwitch = null;
+
+    /// <value>ドア表示状態コントローラー。</value>
+    public DoorStateViewController stateViewController = null;
 
     /// <value>
     /// <para>ドアを施錠したユーザーの ID。</para>
@@ -50,7 +35,10 @@ public class Door : UdonSharpBehaviour
     public void CancelLock()
     {
         this.isLockCanceled = true;
-        this.lockProgress.IgnoreProgress();
+        if (this.stateViewController != null)
+        {
+            this.stateViewController.IgnoreProgress();
+        }
     }
 
     /// <summary>
@@ -70,6 +58,10 @@ public class Door : UdonSharpBehaviour
     public void InnerOpenDoor()
     {
         this.CancelLock();
+        if (this.stateViewController != null)
+        {
+            this.stateViewController.StopProgress();
+        }
         this.setInteractive(false);
         this.updateInteraction();
         this.playAnimationToOpen();
@@ -91,9 +83,9 @@ public class Door : UdonSharpBehaviour
     {
         this.setLockSwitchEnabled(false);
         var wait = this.isLocked() && !this.isMyLock() ? 5f : 1.5f;
-        if (this.lockProgress != null)
+        if (this.stateViewController != null)
         {
-            this.lockProgress.StartProgress(wait);
+            this.stateViewController.StartProgress(wait);
         }
         this.isLockCanceled = false;
         this.SendCustomEventDelayedSeconds(
@@ -263,15 +255,12 @@ public class Door : UdonSharpBehaviour
     /// <summary>表示状態を更新します。</summary>
     private void updateView()
     {
-        if (this.lockedText != null)
+        if (this.stateViewController != null)
         {
-            this.lockedText.SetActive(this.isLocked());
-            var lockedText = this.lockedText.GetComponent<Text>();
-            if (lockedText != null)
-            {
-                lockedText.color =
-                    this.isMyLock() ? myLockColor : enemyLockColor;
-            }
+            this.stateViewController.UpdateLockState(
+                this.isMyLock() ? stateViewController.LOCLED_BY_ME :
+                this.isLocked() ? stateViewController.LOCKED_BY_ENEMY :
+                stateViewController.UNLOCKED);
         }
     }
 
