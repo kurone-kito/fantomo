@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 307783537705102952}
   - component: {fileID: 307783537705102959}
   - component: {fileID: 307783537705102958}
-  - component: {fileID: 307783537705102953}
   m_Layer: 17
   m_Name: DoorStateCanvas
   m_TagString: Untagged
@@ -102,18 +101,6 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &307783537705102953
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 307783537705102956}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -1533785930, guid: 661092b4961be7145bfbe56e1e62337b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &307783538739097735
 GameObject:
   m_ObjectHideFlags: 0
