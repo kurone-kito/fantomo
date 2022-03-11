@@ -2,32 +2,33 @@
 using UnityEngine;
 using UnityEngine.UI;
 using VRC.SDKBase;
+using VRC.Udon.Common.Interfaces;
 
 /// <summary>エントリー機能のロジック。</summary>
 [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
 public class EntrySystem : UdonSharpBehaviour
 {
-    /// <summary>最大エントリー可能数。</summary>
+    /// <value>最大エントリー可能数。</value>
     private const int MAX_PLAYERS = 3;
 
-    /// <summary>エントリーボタン本体。</summary>
+    /// <value>エントリーボタン本体。</value>
     public GameObject entryButton = null;
 
-    /// <summary>エントリーボタンのラベル。</summary>
+    /// <value>エントリーボタンのラベル。</value>
     public GameObject entryButtonLabel = null;
 
-    /// <summary>ゲーム開始ボタン本体。</summary>
+    /// <value>ゲーム開始ボタン本体。</value>
     public GameObject startButton = null;
 
-    /// <summary>エントリーしている、プレイヤーの一覧。</summary>
+    /// <value>エントリーしている、プレイヤーの一覧。</value>
     [UdonSynced]
     public int[] playersId = new int[MAX_PLAYERS];
 
-    /// <summary>エントリーしている、プレイヤーの一覧。</summary>
+    /// <value>エントリーしている、プレイヤーの一覧。</value>
     [UdonSynced]
     public bool gameStarted = false;
 
-    /// <summary>エントリーしている、プレイヤーの一覧を表示するためのラベル。</summary>
+    /// <value>エントリーしている、プレイヤーの一覧を表示するためのラベル。</value>
     public GameObject[] playerNamesLabel = new GameObject[MAX_PLAYERS];
 
     /// <summary>
@@ -43,13 +44,24 @@ public class EntrySystem : UdonSharpBehaviour
     /// </summary>
     public override void OnPlayerLeft(VRCPlayerApi player)
     {
+        if (
+            Networking.IsOwner(Networking.LocalPlayer, this.gameObject) &&
+            !this.isEntriedAny())
+        {
+            this.gameStarted = false;
+            this.RequestSerialization();
+        }
         this.updateView();
     }
 
     /// <summary>
-    /// 任意のプレイヤーがリスポーンした際に呼び出すコールバック。
+    /// <para>
+    /// 任意のプレイヤーがリスポーンした際に呼び出す、コールバック。
+    /// </para>
+    /// <para>
     /// このワールドでは、リスポーンはリタイアと同義であるため、
     /// エントリーを強制的に取り消しています。
+    /// </para>
     /// </summary>
     /// <param name="player">リスポーンしたプレイヤー。</param>
     public override void OnPlayerRespawn(VRCPlayerApi player)
@@ -61,20 +73,26 @@ public class EntrySystem : UdonSharpBehaviour
         if (Networking.IsOwner(player, this.gameObject))
         {
             this.owner__removeId(player.playerId);
+            if (!this.isEntriedAny())
+            {
+                this.gameStarted = false;
+            }
             this.RequestSerialization();
         }
         this.updateView();
     }
 
     /// <summary>
-    /// 任意のプレイヤーがこのワールドにスポーンした際に呼び出すコールバック。
+    /// 任意のプレイヤーがスポーンした際に呼び出すコールバック。
     /// </summary>
     public override void OnSpawn()
     {
         this.updateView();
     }
 
-    /// <summary>このワールド初期化時に呼び出す、コールバック。</summary>
+    /// <summary>
+    /// このコンポーネントが初期化された時に呼び出す、コールバック。
+    /// </summary>
     void Start()
     {
         this.updateView();
@@ -87,32 +105,31 @@ public class EntrySystem : UdonSharpBehaviour
         this.updateView();
     }
 
+    /// <summary>ゲーム開始ボタンを押下した際に呼び出します。</summary>
     public void GameStart()
     {
         this.changeOwner();
         this.gameStarted = true;
         this.RequestSerialization();
         this.updateView();
-        this.teleportEntriedPlayers();
+        this.SendCustomNetworkEvent(
+            NetworkEventTarget.All, nameof(teleportToGameField));
     }
 
     /// <summary>
-    /// エントリーしているプレイヤーをフィールドへ転送します。
+    /// 自分自身がエントリーしている場合、フィールドへ転送します。
     /// </summary>
-    private void teleportEntriedPlayers()
+    public void teleportToGameField()
     {
-        foreach (var id in this.playersId)
-        {
-            var player = VRCPlayerApi.GetPlayerById(id);
-            if (player != null && player.IsValid())
-            {
-                player.TeleportTo(
-                    new Vector3(20, 1, 0),
-                    player.GetRotation());
-            }
+        if (this.isEntried()){
+            var player = Networking.LocalPlayer;
+            var pos = new Vector3(20, 1, 0);
+            player.TeleportTo(pos, player.GetRotation());
         }
+
     }
 
+    /// <summary>ビューを最新の状態に更新します。</summary>
     private void updateView()
     {
         var entried = this.isEntried();
@@ -152,7 +169,9 @@ public class EntrySystem : UdonSharpBehaviour
     }
 
     /// <summary>空きスロットのインデックスを取得します。</summary>
-    /// <returns>空きスロットのインデックス。存在しない場合、負数。</returns>
+    /// <returns>
+    /// 空きスロットのインデックス。存在しない場合、負数。
+    /// </returns>
     private int getEmpty()
     {
         // NOTE: UDON では Lambda も delegate も使えない。。
@@ -168,8 +187,25 @@ public class EntrySystem : UdonSharpBehaviour
         return -1;
     }
 
-    /// <summary>エントリーしているかどうかを取得します。</summary>
+    /// <summary>
+    /// 任意のプレイヤーがエントリーしているかどうかを取得します。
+    /// </summary>
     /// <returns>エントリーしている場合、true。</returns>
+    private bool isEntriedAny()
+    {
+        for (var i = this.playersId.Length; --i >= 0; )
+        {
+            var player = VRCPlayerApi.GetPlayerById(this.playersId[i]);
+            if (player != null && player.IsValid())
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /// <summary>エントリーしているかどうかを取得します。</summary>
+    /// <returns>エントリーしている場合、<c>true</c>。</returns>
     private bool isEntried()
     {
         // NOTE: UDON では Lambda も delegate も使えない。。
@@ -195,8 +231,8 @@ public class EntrySystem : UdonSharpBehaviour
     }
 
     /// <summary>
-    /// プレイヤー ID をエントリー一覧に追加します。
-    /// この関数はオブジェクトオーナーのみ使用可能です。
+    /// <para>プレイヤー ID をエントリー一覧に追加します。</para>
+    /// <para>この関数はオブジェクトオーナーのみ使用可能です。</para>
     /// </summary>
     private void owner__addId()
     {
@@ -204,8 +240,8 @@ public class EntrySystem : UdonSharpBehaviour
     }
 
     /// <summary>
-    /// プレイヤー ID をエントリー一覧から削除します。
-    /// この関数はオブジェクトオーナーのみ使用可能です。
+    /// <para>プレイヤー ID をエントリー一覧から削除します。</para>
+    /// <para>この関数はオブジェクトオーナーのみ使用可能です。</para>
     /// </summary>
     /// <param name="id">プレイヤー ID。</param>
     private void owner__removeId(int id)
