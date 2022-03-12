@@ -17,6 +17,9 @@ public class EntrySystem : UdonSharpBehaviour
     /// <value>エントリーボタンのラベル。</value>
     public GameObject entryButtonLabel = null;
 
+    /// <value>ゲームフィールドのロジック。</value>
+    public GameField gameField = null;
+
     /// <value>ゲーム開始ボタン本体。</value>
     public GameObject startButton = null;
 
@@ -121,10 +124,9 @@ public class EntrySystem : UdonSharpBehaviour
     /// </summary>
     public void teleportToGameField()
     {
-        if (this.isEntried()){
-            var player = Networking.LocalPlayer;
-            var pos = new Vector3(20, 1, 0);
-            player.TeleportTo(pos, player.GetRotation());
+        if (this.isEntried() && this.gameField != null)
+        {
+            this.gameField.teleportToGameField();
         }
 
     }
