@@ -2,7 +2,7 @@
 using UdonSharp;
 
 /// <summary>ドア施錠・解錠スイッチの制御用ロジック。</summary>
-[UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
+[UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 public class DoorLock : UdonSharpBehaviour
 {
     /// <value>ドア本体オブジェクト。</value>
