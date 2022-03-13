@@ -126,6 +126,7 @@ public class EntrySystem : UdonSharpBehaviour
     {
         if (this.isEntried() && this.gameField != null)
         {
+            this.gameField.Initialize();
             this.gameField.teleportToGameField();
         }
 
