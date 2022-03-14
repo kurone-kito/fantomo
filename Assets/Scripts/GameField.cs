@@ -12,31 +12,12 @@ public class GameField : UdonSharpBehaviour
     /// <value>ゲームフィールドの Y 軸における部屋数。</value>
     private const int HEIGHT = 8;
 
-    /// <value>部屋のオブジェクト。</value>
-    public GameObject room = null;
-
     /// <value>部屋のオブジェクト一覧。</value>
-    private GameObject[] rooms = new GameObject[WIDTH * HEIGHT];
+    public GameObject[] rooms = new GameObject[WIDTH * HEIGHT];
 
     /// <value>ゲーム フィールドを初期化します。</value>
     public void Initialize()
     {
-        for (int i = rooms.Length; --i >= 0; )
-        {
-            var instanciated = VRCInstantiate(this.room);
-            var xy = this.getXYFromIndex(i);
-            instanciated.transform.position =
-                new Vector3(xy[0] * 10, 0, xy[1] * 10) + this.transform.position;
-            var roomBehaviour = instanciated.GetComponent<Room>();
-            if (roomBehaviour != null)
-            {
-                roomBehaviour.existsDoorNX = (xy[0] > 0);
-                roomBehaviour.existsDoorPX = (xy[0] < WIDTH - 1);
-                roomBehaviour.existsDoorNZ = (xy[1] > 0);
-                roomBehaviour.existsDoorPZ = (xy[1] < HEIGHT - 1);
-            }
-            this.rooms[i] = instanciated;
-        }
     }
 
     /// <summary>プレイヤーをフィールドへ転送します。</summary>
