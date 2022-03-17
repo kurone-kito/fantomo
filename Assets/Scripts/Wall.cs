@@ -23,5 +23,6 @@ public class Wall : UdonSharpBehaviour
         // これだけの処理なので、Udon graph で十分でしょうと思っていましたが、
         // transform.position に加算するだけなのに、詰みました。。
         transform.position += wallMove;
+        this.enabled = false;
     }
 }
