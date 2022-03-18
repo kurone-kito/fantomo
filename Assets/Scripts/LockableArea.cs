@@ -11,12 +11,9 @@ public class LockableArea : UdonSharpBehaviour
     [SerializeField]
     private Door door = null;
 
-    /// <summary>プレイヤーが当該エリアに存在するかどうか。</summary>
-    public bool isLocalPlayerExists
-    {
-        get;
-        private set;
-    }
+    /// <summary>ドア開放・施錠スイッチにおける、コンテナ。</summary>
+    [SerializeField]
+    private SwitchContainer switchesContainer = null;
 
     /// <summary>
     /// プレイヤーが当該エリアに侵入した時に呼び出す、コールバック。
@@ -24,9 +21,9 @@ public class LockableArea : UdonSharpBehaviour
     /// <param name="player">対象プレイヤー オブジェクト。</param>
     public override void OnPlayerTriggerEnter(VRCPlayerApi player)
     {
-        if (player.isLocal)
+        if (player.isLocal && this.switchesContainer != null)
         {
-            this.isLocalPlayerExists = true;
+            this.switchesContainer.enabled = true;
         }
     }
 
@@ -38,19 +35,14 @@ public class LockableArea : UdonSharpBehaviour
     {
         if (player.isLocal)
         {
-            this.isLocalPlayerExists = false;
+            if (this.switchesContainer != null)
+            {
+                this.switchesContainer.enabled = false;
+            }
             if (this.door != null)
             {
                 this.door.CancelLock();
             }
         }
-    }
-
-    /// <summary>
-    /// このコンポーネント初期化時に呼び出す、コールバック。
-    /// </summary>
-    void Start()
-    {
-        this.isLocalPlayerExists = false;
     }
 }
