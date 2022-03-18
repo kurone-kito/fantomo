@@ -8,7 +8,7 @@ public class Wall : UdonSharpBehaviour
 {
     /// <value>開始時に壁の位置をずらす定数。</value>
     [SerializeField]
-    private Vector3 wallMove;
+    private Vector3 wallMove = new Vector3(0, 3.5f, 0);
 
     /// <summary>
     /// <para>

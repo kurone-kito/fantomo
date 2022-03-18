@@ -19,6 +19,17 @@ public class GameField : UdonSharpBehaviour
     /// <value>ゲーム フィールドを初期化します。</value>
     public void Initialize()
     {
+        for (var i = rooms.Length; --i >= 0; )
+        {
+            var room = rooms[i];
+            var xy = this.getXYFromIndex(i);
+            var roomScript = room.GetComponent<Room>();
+            roomScript.existsDoorNX = xy[0] > 0;
+            roomScript.existsDoorPX = xy[0] < WIDTH - 1;
+            roomScript.existsDoorNZ = xy[1] > 0;
+            roomScript.existsDoorPZ = xy[1] < HEIGHT - 1;
+            roomScript.OnDeserialization();
+        }
     }
 
     /// <summary>プレイヤーをフィールドへ転送します。</summary>

@@ -8,19 +8,19 @@ public class Room : UdonSharpBehaviour
     /// <value>-X側のドアが存在するかどうか。</value>
     [SerializeField]
     [UdonSynced]
-    private bool existsDoorNX = false;
+    public bool existsDoorNX = false;
     /// <value>+X側のドアが存在するかどうか。</value>
     [SerializeField]
     [UdonSynced]
-    private bool existsDoorPX = false;
+    public bool existsDoorPX = false;
     /// <value>-Z側のドアが存在するかどうか。</value>
     [SerializeField]
     [UdonSynced]
-    private bool existsDoorNZ = false;
+    public bool existsDoorNZ = false;
     /// <value>+Z側のドアが存在するかどうか。</value>
     [SerializeField]
     [UdonSynced]
-    private bool existsDoorPZ = false;
+    public bool existsDoorPZ = false;
     /// <value>-X側のドアと周囲のオブジェクトを含むコンテナ。</value>
     [SerializeField]
     private GameObject doorContainerNX = null;

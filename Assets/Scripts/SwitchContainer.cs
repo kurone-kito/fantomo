@@ -11,7 +11,7 @@ public class SwitchContainer : UdonSharpBehaviour
     /// オブジェクトの動的調整時における、Y軸のオフセット座標。
     /// </summary>
     [SerializeField]
-    private float positionOffsetY;
+    private float positionOffsetY = -0.2f;
 
     /// <summary>
     /// このコンポーネント初期化時に呼び出す、コールバック。
