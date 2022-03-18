@@ -1,5 +1,6 @@
 ﻿
 using UdonSharp;
+using UnityEngine;
 using VRC.SDKBase;
 
 /// <summary>施錠可能エリアのロジック。</summary>
@@ -7,7 +8,8 @@ using VRC.SDKBase;
 public class LockableArea : UdonSharpBehaviour
 {
     /// <summary>ドア本体オブジェクト。</summary>
-    public Door door = null;
+    [SerializeField]
+    private Door door = null;
 
     /// <summary>プレイヤーが当該エリアに存在するかどうか。</summary>
     public bool isLocalPlayerExists

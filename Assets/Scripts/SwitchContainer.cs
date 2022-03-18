@@ -8,12 +8,14 @@ using VRC.SDKBase;
 public class SwitchContainer : UdonSharpBehaviour
 {
     /// <summary>施錠可能エリア オブジェクト。</summary>
-    public LockableArea lockableArea = null;
+    [SerializeField]
+    private LockableArea lockableArea = null;
 
     /// <summary>
     /// オブジェクトの動的調整時における、Y軸のオフセット座標。
     /// </summary>
-    public float positionOffsetY = 0.0f;
+    [SerializeField]
+    private float positionOffsetY = 0.0f;
 
     /// <summary>毎フレーム呼び出される、コールバック。</summary>
     void Update()

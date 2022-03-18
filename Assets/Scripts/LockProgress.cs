@@ -8,12 +8,12 @@ using UnityEngine.UI;
 public class LockProgress : UdonSharpBehaviour
 {
     /// <value>既定時のプログレス バー色。</value>
-    private readonly Color defaultColor =
-        new Color(0f, 0.5f, 1f, 0.5f);
+    [SerializeField]
+    private Color defaultColor;
 
     /// <value>無効時のプログレス バー色。</value>
-    private readonly Color ignoredColor =
-        new Color(1f, 0.2f, 0.5f);
+    [SerializeField]
+    private Color ignoredColor;
 
     /// <value>開始時間。非稼働時は <seealso cref="float.NaN"/>。</value>
     private float startTime = float.NaN;

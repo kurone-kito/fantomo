@@ -7,7 +7,8 @@ using UnityEngine;
 public class Wall : UdonSharpBehaviour
 {
     /// <value>開始時に壁の位置をずらす定数。</value>
-    private readonly Vector3 wallMove = new Vector3(0, 3.5f, 0);
+    [SerializeField]
+    private Vector3 wallMove;
 
     /// <summary>
     /// <para>

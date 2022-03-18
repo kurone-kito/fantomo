@@ -13,7 +13,8 @@ public class GameField : UdonSharpBehaviour
     private const int HEIGHT = 8;
 
     /// <value>部屋のオブジェクト一覧。</value>
-    public GameObject[] rooms = new GameObject[WIDTH * HEIGHT];
+    [SerializeField]
+    private GameObject[] rooms = new GameObject[WIDTH * HEIGHT];
 
     /// <value>ゲーム フィールドを初期化します。</value>
     public void Initialize()
