@@ -28,7 +28,7 @@ public class GameField : UdonSharpBehaviour
             roomScript.existsDoorPX = xy[0] < WIDTH - 1;
             roomScript.existsDoorNZ = xy[1] > 0;
             roomScript.existsDoorPZ = xy[1] < HEIGHT - 1;
-            roomScript.OnDeserialization();
+            roomScript.UpdateVisible();
         }
     }
 

@@ -2,24 +2,20 @@
 using UnityEngine;
 
 /// <summary>部屋制御用ロジック。</summary>
-[UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
+[UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 public class Room : UdonSharpBehaviour
 {
     /// <value>-X側のドアが存在するかどうか。</value>
     [SerializeField]
-    [UdonSynced]
     public bool existsDoorNX = false;
     /// <value>+X側のドアが存在するかどうか。</value>
     [SerializeField]
-    [UdonSynced]
     public bool existsDoorPX = false;
     /// <value>-Z側のドアが存在するかどうか。</value>
     [SerializeField]
-    [UdonSynced]
     public bool existsDoorNZ = false;
     /// <value>+Z側のドアが存在するかどうか。</value>
     [SerializeField]
-    [UdonSynced]
     public bool existsDoorPZ = false;
     /// <value>-X側のドアと周囲のオブジェクトを含むコンテナ。</value>
     [SerializeField]
@@ -45,25 +41,16 @@ public class Room : UdonSharpBehaviour
     /// <value>+Z側の壁オブジェクトを含むコンテナ。</value>
     [SerializeField]
     private GameObject wallContainerPZ = null;
-
-    /// <summary>
-    /// 同期データを受領・適用した後に呼び出す、コールバック。
-    /// </summary>
-    public override void OnDeserialization()
-    {
-        this.updateVisible();
-    }
-
     /// <summary>
     /// このコンポーネント初期化時に呼び出す、コールバック。
     /// </summary>
     void Start()
     {
-        this.updateVisible();
+        this.UpdateVisible();
     }
 
     /// <summary>表示状態を更新します。</summary>
-    private void updateVisible()
+    public void UpdateVisible()
     {
         this.doorContainerNX.SetActive(this.existsDoorNX);
         this.doorContainerPX.SetActive(this.existsDoorPX);
