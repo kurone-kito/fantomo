@@ -1,4 +1,5 @@
-﻿using UdonSharp;
+﻿using System;
+using UdonSharp;
 using UnityEngine;
 
 /// <summary>部屋制御用ロジック。</summary>
@@ -17,6 +18,9 @@ public class Room : UdonSharpBehaviour
     /// <value>+Z側のドアが存在するかどうか。</value>
     [SerializeField]
     public bool existsDoorPZ = false;
+    /// <value>地雷が存在するかどうか。</value>
+    [NonSerialized]
+    public bool existsMine = false;
     /// <value>-X側のドアと周囲のオブジェクトを含むコンテナ。</value>
     [SerializeField]
     private GameObject doorContainerNX = null;
