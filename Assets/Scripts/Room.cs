@@ -1,57 +1,60 @@
-﻿using UdonSharp;
+﻿using System;
+using UdonSharp;
 using UnityEngine;
 
 /// <summary>部屋制御用ロジック。</summary>
-[UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
+[UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 public class Room : UdonSharpBehaviour
 {
     /// <value>-X側のドアが存在するかどうか。</value>
-    [UdonSynced]
+    [SerializeField]
     public bool existsDoorNX = false;
     /// <value>+X側のドアが存在するかどうか。</value>
-    [UdonSynced]
+    [SerializeField]
     public bool existsDoorPX = false;
     /// <value>-Z側のドアが存在するかどうか。</value>
-    [UdonSynced]
+    [SerializeField]
     public bool existsDoorNZ = false;
     /// <value>+Z側のドアが存在するかどうか。</value>
-    [UdonSynced]
+    [SerializeField]
     public bool existsDoorPZ = false;
+    /// <value>地雷が存在するかどうか。</value>
+    [NonSerialized]
+    public bool existsMine = false;
     /// <value>-X側のドアと周囲のオブジェクトを含むコンテナ。</value>
-    public GameObject doorContainerNX = null;
+    [SerializeField]
+    private GameObject doorContainerNX = null;
     /// <value>+X側のドアと周囲のオブジェクトを含むコンテナ。</value>
-    public GameObject doorContainerPX = null;
+    [SerializeField]
+    private GameObject doorContainerPX = null;
     /// <value>-Z側のドアと周囲のオブジェクトを含むコンテナ。</value>
-    public GameObject doorContainerNZ = null;
+    [SerializeField]
+    private GameObject doorContainerNZ = null;
     /// <value>+Z側のドアと周囲のオブジェクトを含むコンテナ。</value>
-    public GameObject doorContainerPZ = null;
+    [SerializeField]
+    private GameObject doorContainerPZ = null;
     /// <value>-X側の壁オブジェクトを含むコンテナ。</value>
-    public GameObject wallContainerNX = null;
+    [SerializeField]
+    private GameObject wallContainerNX = null;
     /// <value>+X側の壁オブジェクトを含むコンテナ。</value>
-    public GameObject wallContainerPX = null;
+    [SerializeField]
+    private GameObject wallContainerPX = null;
     /// <value>-Z側の壁オブジェクトを含むコンテナ。</value>
-    public GameObject wallContainerNZ = null;
+    [SerializeField]
+    private GameObject wallContainerNZ = null;
     /// <value>+Z側の壁オブジェクトを含むコンテナ。</value>
-    public GameObject wallContainerPZ = null;
-
-    /// <summary>
-    /// 同期データを受領・適用した後に呼び出す、コールバック。
-    /// </summary>
-    public override void OnDeserialization()
-    {
-        this.updateVisible();
-    }
-
+    [SerializeField]
+    private GameObject wallContainerPZ = null;
     /// <summary>
     /// このコンポーネント初期化時に呼び出す、コールバック。
     /// </summary>
     void Start()
     {
-        this.updateVisible();
+        this.UpdateVisible();
     }
 
     /// <summary>表示状態を更新します。</summary>
-    private void updateVisible()
+    public void UpdateVisible()
     {
         this.doorContainerNX.SetActive(this.existsDoorNX);
         this.doorContainerPX.SetActive(this.existsDoorPX);

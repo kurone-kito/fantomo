@@ -20,21 +20,24 @@ public class DoorStateViewController : UdonSharpBehaviour
     public readonly int LOCLED_BY_ANYTHING = 3;
 
     /// <value>自分自身による施錠における、表示文字色。</value>
-    private readonly Color myLockColor =
-        new Color(0f, 0.5f, 1f, 0.5f);
+    [SerializeField]
+    private Color myLockColor;
 
     /// <value>他プレイヤーによる施錠における、表示文字色。</value>
-    private readonly Color enemyLockColor =
-        new Color(1f, 0.2f, 0.5f);
+    [SerializeField]
+    private Color enemyLockColor;
 
     /// <value>ドア施錠・解錠のための、プログレス バー一覧。</value>
-    public GameObject[] lockProgresses = new GameObject[2];
+    [SerializeField]
+    private GameObject[] lockProgresses = new GameObject[2];
 
     /// <value>ドア施錠状態の表示一覧。</value>
-    public Text[] lockedTexts = new Text[2];
+    [SerializeField]
+    private Text[] lockedTexts = new Text[2];
 
     /// <value>隣接状態の表示一覧。</value>
-    public Text[] neighborTexts = new Text[2];
+    [SerializeField]
+    private Text[] neighborTexts = new Text[2];
 
     /// <value>プログレス バーを無効状態にします。</value>
     public void IgnoreProgress()

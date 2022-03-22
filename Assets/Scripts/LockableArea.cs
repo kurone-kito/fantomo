@@ -1,5 +1,6 @@
 ﻿
 using UdonSharp;
+using UnityEngine;
 using VRC.SDKBase;
 
 /// <summary>施錠可能エリアのロジック。</summary>
@@ -7,14 +8,12 @@ using VRC.SDKBase;
 public class LockableArea : UdonSharpBehaviour
 {
     /// <summary>ドア本体オブジェクト。</summary>
-    public Door door = null;
+    [SerializeField]
+    private Door door = null;
 
-    /// <summary>プレイヤーが当該エリアに存在するかどうか。</summary>
-    public bool isLocalPlayerExists
-    {
-        get;
-        private set;
-    }
+    /// <summary>ドア開放・施錠スイッチにおける、コンテナ。</summary>
+    [SerializeField]
+    private SwitchContainer switchesContainer = null;
 
     /// <summary>
     /// プレイヤーが当該エリアに侵入した時に呼び出す、コールバック。
@@ -22,9 +21,10 @@ public class LockableArea : UdonSharpBehaviour
     /// <param name="player">対象プレイヤー オブジェクト。</param>
     public override void OnPlayerTriggerEnter(VRCPlayerApi player)
     {
-        if (player.isLocal)
+        Debug.Log(string.Format("OnPlayerTriggerEnter: {0} {1}", this.switchesContainer == null, this.door == null));
+        if (player.isLocal && this.switchesContainer != null)
         {
-            this.isLocalPlayerExists = true;
+            this.switchesContainer.enabled = true;
         }
     }
 
@@ -36,19 +36,14 @@ public class LockableArea : UdonSharpBehaviour
     {
         if (player.isLocal)
         {
-            this.isLocalPlayerExists = false;
+            if (this.switchesContainer != null)
+            {
+                this.switchesContainer.enabled = false;
+            }
             if (this.door != null)
             {
                 this.door.CancelLock();
             }
         }
-    }
-
-    /// <summary>
-    /// このコンポーネント初期化時に呼び出す、コールバック。
-    /// </summary>
-    void Start()
-    {
-        this.isLocalPlayerExists = false;
     }
 }

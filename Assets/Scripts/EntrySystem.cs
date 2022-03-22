@@ -1,4 +1,5 @@
-﻿using UdonSharp;
+﻿using System;
+using UdonSharp;
 using UnityEngine;
 using UnityEngine.UI;
 using VRC.SDKBase;
@@ -12,24 +13,34 @@ public class EntrySystem : UdonSharpBehaviour
     private const int MAX_PLAYERS = 3;
 
     /// <value>エントリーボタン本体。</value>
-    public GameObject entryButton = null;
+    [SerializeField]
+    private Button entryButton = null;
 
     /// <value>エントリーボタンのラベル。</value>
-    public GameObject entryButtonLabel = null;
+    [SerializeField]
+    private Text entryButtonLabel = null;
+
+    /// <value>ゲームフィールドのロジック。</value>
+    [SerializeField]
+    private GameField gameField = null;
 
     /// <value>ゲーム開始ボタン本体。</value>
-    public GameObject startButton = null;
+    [SerializeField]
+    private GameObject startButton = null;
 
     /// <value>エントリーしている、プレイヤーの一覧。</value>
+    [NonSerialized]
     [UdonSynced]
     public int[] playersId = new int[MAX_PLAYERS];
 
     /// <value>エントリーしている、プレイヤーの一覧。</value>
+    [NonSerialized]
     [UdonSynced]
     public bool gameStarted = false;
 
     /// <value>エントリーしている、プレイヤーの一覧を表示するためのラベル。</value>
-    public GameObject[] playerNamesLabel = new GameObject[MAX_PLAYERS];
+    [SerializeField]
+    private Text[] playerNamesLabel = new Text[MAX_PLAYERS];
 
     /// <summary>
     /// 同期データを受領・適用した後に呼び出す、コールバック。
@@ -121,10 +132,10 @@ public class EntrySystem : UdonSharpBehaviour
     /// </summary>
     public void teleportToGameField()
     {
-        if (this.isEntried()){
-            var player = Networking.LocalPlayer;
-            var pos = new Vector3(20, 1, 0);
-            player.TeleportTo(pos, player.GetRotation());
+        if (this.isEntried() && this.gameField != null)
+        {
+            this.gameField.Initialize();
+            this.gameField.teleportToGameField();
         }
 
     }
@@ -134,19 +145,18 @@ public class EntrySystem : UdonSharpBehaviour
     {
         var entried = this.isEntried();
         var full = !entried && this.getEmpty() < 0;
-        entryButtonLabel.GetComponent<Text>().text =
+        entryButtonLabel.text =
             this.gameStarted ? "ゲームが始まります..." :
             entried ? "参加を取り消す" :
             full ? "満員です" :
             "参加する";
-        entryButton.GetComponent<Button>().interactable =
-            !full && !this.gameStarted;
+        entryButton.interactable = !full && !this.gameStarted;
         startButton.SetActive(entried && !this.gameStarted);
         for (var i = this.playersId.Length; --i >= 0; )
         {
             var id = this.playersId[i];
             var player = VRCPlayerApi.GetPlayerById(id);
-            playerNamesLabel[i].GetComponent<Text>().text =
+            playerNamesLabel[i].text =
                 player != null && player.IsValid()
                     ? string.Format("{0}(ID: {1})", player.displayName, id)
                     : string.Empty;

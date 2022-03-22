@@ -8,12 +8,12 @@ using UnityEngine.UI;
 public class LockProgress : UdonSharpBehaviour
 {
     /// <value>既定時のプログレス バー色。</value>
-    private readonly Color defaultColor =
-        new Color(0f, 0.5f, 1f, 0.5f);
+    [SerializeField]
+    private Color defaultColor;
 
     /// <value>無効時のプログレス バー色。</value>
-    private readonly Color ignoredColor =
-        new Color(1f, 0.2f, 0.5f);
+    [SerializeField]
+    private Color ignoredColor;
 
     /// <value>開始時間。非稼働時は <seealso cref="float.NaN"/>。</value>
     private float startTime = float.NaN;
@@ -45,6 +45,7 @@ public class LockProgress : UdonSharpBehaviour
     /// <param name="time">所要時間。</param>
     public void StartProgress(float time)
     {
+        this.enabled = true;
         this.startTime = Time.realtimeSinceStartup;
         // 100ms 見かけ上の待機時間を減らすことにより、
         // 完了の一瞬のみ無効表示になる現象を回避している。
@@ -60,6 +61,8 @@ public class LockProgress : UdonSharpBehaviour
     {
         this.startTime = float.NaN;
         this.endTime = float.MinValue;
+        this.enabled = false;
+        this.Update();
     }
 
     /// <summary>進捗中かどうかを取得します。</summary>
@@ -67,6 +70,14 @@ public class LockProgress : UdonSharpBehaviour
     private bool isProgress()
     {
         return !float.IsNaN(this.startTime);
+    }
+
+    /// <summary>
+    /// このコンポーネントが初期化された時に呼び出す、コールバック。
+    /// </summary>
+    void Start()
+    {
+        this.enabled = false;
     }
 
     /// <summary>毎フレーム呼び出される、コールバック。</summary>

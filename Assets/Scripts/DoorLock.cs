@@ -1,12 +1,14 @@
 ﻿
 using UdonSharp;
+using UnityEngine;
 
 /// <summary>ドア施錠・解錠スイッチの制御用ロジック。</summary>
-[UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
+[UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 public class DoorLock : UdonSharpBehaviour
 {
     /// <value>ドア本体オブジェクト。</value>
-    public Door door = null;
+    [SerializeField]
+    private Door door = null;
 
     /// <summary>
     /// このコンポーネントをトリガーした時に呼び出す、コールバック。

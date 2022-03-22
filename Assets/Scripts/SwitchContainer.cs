@@ -7,26 +7,29 @@ using VRC.SDKBase;
 [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 public class SwitchContainer : UdonSharpBehaviour
 {
-    /// <summary>施錠可能エリア オブジェクト。</summary>
-    public LockableArea lockableArea = null;
-
     /// <summary>
     /// オブジェクトの動的調整時における、Y軸のオフセット座標。
     /// </summary>
-    public float positionOffsetY = 0.0f;
+    [SerializeField]
+    private float positionOffsetY = -0.2f;
+
+    /// <summary>
+    /// このコンポーネント初期化時に呼び出す、コールバック。
+    /// </summary>
+    void Start()
+    {
+        this.enabled = false;
+    }
 
     /// <summary>毎フレーム呼び出される、コールバック。</summary>
     void Update()
     {
-        if (this.lockableArea != null && this.lockableArea.isLocalPlayerExists)
-        {
-            var trackingData =
-                Networking.LocalPlayer.GetTrackingData(
-                    VRCPlayerApi.TrackingDataType.Head);
-            transform.position = new Vector3(
-                transform.position.x,
-                trackingData.position.y + positionOffsetY,
-                transform.position.z);
-        }
+        var trackingData =
+            Networking.LocalPlayer.GetTrackingData(
+                VRCPlayerApi.TrackingDataType.Head);
+        transform.position = new Vector3(
+            transform.position.x,
+            trackingData.position.y + positionOffsetY,
+            transform.position.z);
     }
 }

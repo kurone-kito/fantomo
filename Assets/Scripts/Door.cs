@@ -1,4 +1,5 @@
 ﻿
+using System;
 using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
@@ -10,21 +11,26 @@ using VRC.Udon.Common.Interfaces;
 public class Door : UdonSharpBehaviour
 {
     /// <value>ドア施錠・解錠オブジェクト。</value>
-    public GameObject lockSwitch = null;
+    [SerializeField]
+    private GameObject lockSwitch = null;
 
     /// <value>ドア施錠・解錠を継続可能な領域。</value>
-    public Collider lockableArea = null;
+    [SerializeField]
+    private Collider lockableArea = null;
 
     /// <value>ドア開放オブジェクト。</value>
-    public GameObject openSwitch = null;
+    [SerializeField]
+    private GameObject openSwitch = null;
 
     /// <value>ドア表示状態コントローラー。</value>
-    public DoorStateViewController stateViewController = null;
+    [SerializeField]
+    private DoorStateViewController stateViewController = null;
 
     /// <value>
     /// <para>ドアを施錠したユーザーの ID。</para>
     /// <para>ID が無効時は、施錠していない状態。</para>
     /// </value>
+    [NonSerialized]
     [UdonSynced]
     public int lockedUser = 0;
 
