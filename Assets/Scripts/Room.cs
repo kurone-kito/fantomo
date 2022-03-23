@@ -18,6 +18,9 @@ public class Room : UdonSharpBehaviour
     /// <value>+Z側のドアが存在するかどうか。</value>
     [SerializeField]
     public bool existsDoorPZ = false;
+    /// <value>探索済みかどうか。</value>
+    [NonSerialized]
+    public bool explored = false;
     /// <value>地雷が存在するかどうか。</value>
     [NonSerialized]
     public bool existsMine = false;
