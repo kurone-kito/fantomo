@@ -1,4 +1,4 @@
-﻿
+
 using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
@@ -62,11 +62,38 @@ public class GameField : UdonSharpBehaviour
         }
     }
 
+    /// <summary>隣接する部屋のインデックス一覧を取得します。</summary>
+    /// <param name="index">インデックス。</param>
+    /// <returns>
+    /// 隣接する部屋のインデックス一覧。存在しない場合、負数。
+    /// </returns>
+    private int[] getNeighborIndexes(int index)
+    {
+        var xy = this.getXYFromIndex(index);
+        return new int[] {
+            this.getIndexFromXY(xy[0] - 1, xy[1]),
+            this.getIndexFromXY(xy[0] + 1, xy[1]),
+            this.getIndexFromXY(xy[0], xy[1] - 1),
+            this.getIndexFromXY(xy[0], xy[1] + 1),
+        };
+    }
+
     /// <summary>インデックスから座標を取得します。</summary>
     /// <param name="index">インデックス。</param>
     /// <returns>X、Y座標を示す、配列。</returns>
     private int[] getXYFromIndex(int index)
     {
         return new int[] { index % WIDTH, index / WIDTH };
+    }
+
+    /// <summary>座標からインデックスを取得します。</summary>
+    /// <param name="x">X 座標。</param>
+    /// <param name="y">Y 座標。</param>
+    /// <returns>インデックス。はみ出た場合、負数。</returns>
+    private int getIndexFromXY(int x, int y)
+    {
+        return x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT
+            ? -1
+            : y * WIDTH + x;
     }
 }
