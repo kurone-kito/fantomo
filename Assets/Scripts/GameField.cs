@@ -1,4 +1,4 @@
-
+﻿
 using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
@@ -36,14 +36,15 @@ public class GameField : UdonSharpBehaviour
     /// <summary>地雷の配置候補先を決定します。</summary>
     private void placeMines()
     {
-        var minesIndex = new int[MINES];
-        for (int i = MINES; --i >= 0;)
-        {
-            var candidate = (int)(Random.value * this.rooms.Length);
-            // TODO: すでに地雷が配置されている部屋は、抽選をやり直す。
-            // TODO: 四方向のうち、少なくとも一方向に地雷がない部屋がない場合は、抽選をやり直す。
-            // TODO: 一部屋でも探索不能な部屋が発生する場合は、抽選をやり直す。
-        }
+        var candidate = (int)(Random.value * this.rooms.Length);
+        var roomScript = this.rooms[candidate].GetComponent<Room>();
+        roomScript.existsMine = true;
+        var index = this.clearExploringFlag();
+        var neighbors = this.getNeighborIndexes(index);
+
+        // TODO: すでに地雷が配置されている部屋は、抽選をやり直す。
+        // TODO: 四方向のうち、少なくとも一方向に地雷がない部屋がない場合は、抽選をやり直す。
+        // TODO: 一部屋でも探索不能な部屋が発生する場合は、抽選をやり直す。
     }
 
     /// <value>壁を配置します。</value>
@@ -60,6 +61,24 @@ public class GameField : UdonSharpBehaviour
             roomScript.existsDoorPZ = xy[1] < HEIGHT - 1;
             roomScript.UpdateVisible();
         }
+    }
+
+    /// <summary>探索フラグを初期化します。</summary>
+    /// <returns>探索を開始する際の起点となる、インデックス。</returns>
+    private int clearExploringFlag()
+    {
+        var result = -1;
+        for (var i = rooms.Length; --i >= 0; )
+        {
+            var roomScript = rooms[i].GetComponent<Room>();
+            roomScript.explored = false;
+            if (result < 0 && !roomScript.existsMine)
+            {
+                result = i;
+                roomScript.explored = true;
+            }
+        }
+        return result;
     }
 
     /// <summary>隣接する部屋のインデックス一覧を取得します。</summary>
