@@ -21,7 +21,7 @@ public class GameField : UdonSharpBehaviour
     /// <value>ゲーム フィールドを初期化します。</value>
     public void Initialize()
     {
-        this.placeWall();
+        this.initializeRooms();
         this.placeMines();
     }
 
@@ -47,20 +47,46 @@ public class GameField : UdonSharpBehaviour
         // TODO: 一部屋でも探索不能な部屋が発生する場合は、抽選をやり直す。
     }
 
-    /// <value>壁を配置します。</value>
-    public void placeWall()
+    /// <value>各部屋を初期化します。</value>
+    private void initializeRooms()
     {
         for (var i = rooms.Length; --i >= 0; )
         {
-            var room = rooms[i];
-            var xy = this.getXYFromIndex(i);
-            var roomScript = room.GetComponent<Room>();
-            roomScript.existsDoorNX = xy[0] > 0;
-            roomScript.existsDoorPX = xy[0] < WIDTH - 1;
-            roomScript.existsDoorNZ = xy[1] > 0;
-            roomScript.existsDoorPZ = xy[1] < HEIGHT - 1;
-            roomScript.UpdateVisible();
+            this.placeWall(i);
+            this.setNeighbors(i);
         }
+    }
+
+
+    /// <value>壁を配置します。</value>
+    /// <param name="index">部屋のインデックス。</param>
+    private void placeWall(int index)
+    {
+        var room = rooms[index];
+        var xy = this.getXYFromIndex(index);
+        var roomScript = room.GetComponent<Room>();
+        roomScript.existsDoorNX = xy[0] > 0;
+        roomScript.existsDoorPX = xy[0] < WIDTH - 1;
+        roomScript.existsDoorNZ = xy[1] > 0;
+        roomScript.existsDoorPZ = xy[1] < HEIGHT - 1;
+        roomScript.UpdateVisible();
+    }
+
+    /// <summary>隣室を設定します。</summary>
+    /// <param name="index">部屋のインデックス。</param>
+    private void setNeighbors(int index)
+    {
+        var room = rooms[index];
+        var neighborsIndex = this.getNeighborIndexes(index);
+        var neighbors = new Room[neighborsIndex.Length];
+        for (var j = neighborsIndex.Length; --j >= 0; )
+        {
+            var i = neighborsIndex[j];
+            neighbors[j] =
+                index < 0 ? null : rooms[i].GetComponent<Room>();
+        }
+        var roomScript = room.GetComponent<Room>();
+        roomScript.Neighbors = neighbors;
     }
 
     /// <summary>探索フラグを初期化します。</summary>

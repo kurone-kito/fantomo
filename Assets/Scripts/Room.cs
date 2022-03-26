@@ -24,6 +24,18 @@ public class Room : UdonSharpBehaviour
     /// <value>地雷が存在するかどうか。</value>
     [NonSerialized]
     public bool existsMine = false;
+    /// <value>-X側の部屋オブジェクト。</value>
+    [NonSerialized]
+    public Room neighborNX = null;
+    /// <value>+X側の部屋オブジェクト。</value>
+    [NonSerialized]
+    public Room neighborPX = null;
+    /// <value>-Z側の部屋オブジェクト。</value>
+    [NonSerialized]
+    public Room neighborNZ = null;
+    /// <value>+Z側の部屋オブジェクト。</value>
+    [NonSerialized]
+    public Room neighborPZ = null;
     /// <value>-X側のドアと周囲のオブジェクトを含むコンテナ。</value>
     [SerializeField]
     private GameObject doorContainerNX = null;
@@ -48,6 +60,22 @@ public class Room : UdonSharpBehaviour
     /// <value>+Z側の壁オブジェクトを含むコンテナ。</value>
     [SerializeField]
     private GameObject wallContainerPZ = null;
+    /// <value>隣室一覧。</value>
+    public Room[] Neighbors
+    {
+        get
+        {
+            return new Room[] { neighborNX, neighborPX, neighborNZ, neighborPZ };
+        }
+        set
+        {
+            neighborNX = value[0];
+            neighborPX = value[1];
+            neighborNZ = value[2];
+            neighborPZ = value[3];
+        }
+    }
+
     /// <summary>
     /// このコンポーネント初期化時に呼び出す、コールバック。
     /// </summary>
