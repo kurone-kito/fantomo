@@ -21,8 +21,8 @@ public class GameField : UdonSharpBehaviour
     /// <value>ゲーム フィールドを初期化します。</value>
     public void Initialize()
     {
-        this.initializeRooms();
-        this.placeMines();
+        // this.initializeRooms();
+        // this.placeMines();
     }
 
     /// <summary>プレイヤーをフィールドへ転送します。</summary>
