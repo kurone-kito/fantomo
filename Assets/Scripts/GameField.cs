@@ -18,9 +18,18 @@ public class GameField : UdonSharpBehaviour
     [SerializeField]
     private GameObject[] rooms = new GameObject[WIDTH * HEIGHT];
 
+    /// <value>
+    /// フィールド初期化の進捗状況を示すための、プログレス バー。
+    /// </value>
+    [SerializeField]
+    private InitialGameProgress progressBar = null;
+
     /// <value>ゲーム フィールドを初期化します。</value>
     public void Initialize()
     {
+        this.progressBar.Progress = 0f;
+        // TODO: Instanciate the rooms.
+
         // this.initializeRooms();
         // this.placeMines();
     }
