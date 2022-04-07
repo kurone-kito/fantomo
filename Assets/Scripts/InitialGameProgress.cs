@@ -1,5 +1,6 @@
 ﻿
 using UdonSharp;
+using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
@@ -8,6 +9,10 @@ using UnityEngine.UI;
 [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 public class InitialGameProgress : UdonSharpBehaviour
 {
+    /// <value><seealso cref="Image"/>コンポーネント。</value>
+    [SerializeField]
+    private Image progressImage;
+
     /// <summary>進捗状態を設定・取得します。</summary>
     public float Progress {
         get
@@ -23,15 +28,6 @@ public class InitialGameProgress : UdonSharpBehaviour
                 img.fillAmount = value;
             }
             this.gameObject.SetActive(value > 0f && value < 1f);
-        }
-    }
-
-    /// <value><seealso cref="Image"/>コンポーネントを取得します。</value>
-    private Image progressImage
-    {
-        get
-        {
-            return this.gameObject.GetComponent<Image>();
         }
     }
 
