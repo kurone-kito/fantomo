@@ -42,6 +42,15 @@ public class EntrySystem : UdonSharpBehaviour
     [SerializeField]
     private Text[] playerNamesLabel = new Text[MAX_PLAYERS];
 
+    /// <value>現在プレイしているプレイヤーの ID を取得します。</value>
+    private int localPlayerId
+    {
+        get =>
+            Networking.LocalPlayer == null
+                ? int.MaxValue
+                : Networking.LocalPlayer.playerId;
+    }
+
     /// <summary>
     /// 同期データを受領・適用した後に呼び出す、コールバック。
     /// </summary>
@@ -152,15 +161,29 @@ public class EntrySystem : UdonSharpBehaviour
             "参加する";
         entryButton.interactable = !full && !this.gameStarted;
         startButton.SetActive(entried && !this.gameStarted);
+        var nobody = this.localPlayerId == int.MaxValue;
         for (var i = this.playersId.Length; --i >= 0; )
         {
-            var id = this.playersId[i];
-            var player = VRCPlayerApi.GetPlayerById(id);
-            playerNamesLabel[i].text =
-                player != null && player.IsValid()
-                    ? string.Format("{0}(ID: {1})", player.displayName, id)
-                    : string.Empty;
+            playerNamesLabel[i].text = getDisplayName(this.playersId[i]);
         }
+    }
+
+    /// <summary>
+    /// 指定した <paramref name="id"/> に対応する、
+    /// プレイヤーの表示名を取得します。
+    /// </summary>
+    /// <param name="id">このワールドにおける、プレイヤー ID。</param>
+    /// <returns>プレイヤーの表示名。無効である場合、空文字。</returns>
+    private string getDisplayName(int id)
+    {
+        if (this.localPlayerId == int.MaxValue)
+        {
+            return id == int.MaxValue ? "Anonymous" : string.Empty;
+        }
+        var player = VRCPlayerApi.GetPlayerById(id);
+        return player != null && player.IsValid()
+            ? player.displayName
+            : string.Empty;
     }
 
     /// <summary>ローカル プレイヤーを追加または削除します。</summary>
@@ -169,7 +192,7 @@ public class EntrySystem : UdonSharpBehaviour
         this.changeOwner();
         if (this.isEntried())
         {
-            this.owner__removeId(Networking.LocalPlayer.playerId);
+            this.owner__removeId(this.localPlayerId);
         }
         else
         {
@@ -185,7 +208,11 @@ public class EntrySystem : UdonSharpBehaviour
     private int getEmpty()
     {
         // NOTE: UDON では Lambda も delegate も使えない。。
-        var localId = Networking.LocalPlayer.playerId;
+        var localId = this.localPlayerId;
+        if (localId == int.MaxValue)
+        {
+            return 0;
+        }
         for (var i = this.playersId.Length; --i >= 0; )
         {
             var player = VRCPlayerApi.GetPlayerById(this.playersId[i]);
@@ -219,7 +246,7 @@ public class EntrySystem : UdonSharpBehaviour
     private bool isEntried()
     {
         // NOTE: UDON では Lambda も delegate も使えない。。
-        var localId = Networking.LocalPlayer.playerId;
+        var localId = this.localPlayerId;
         foreach (var id in this.playersId)
         {
             if (id == localId)
@@ -246,7 +273,7 @@ public class EntrySystem : UdonSharpBehaviour
     /// </summary>
     private void owner__addId()
     {
-        this.playersId[this.getEmpty()] = Networking.LocalPlayer.playerId;
+        this.playersId[this.getEmpty()] = this.localPlayerId;
     }
 
     /// <summary>
