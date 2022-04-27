@@ -21,11 +21,21 @@ public class InitializeManager : UdonSharpBehaviour
     /// <value>部屋数。</value>
     private const int ROOMS_NUM = 64;
 
+    /// <value>
+    /// <seealso cref="UdonSharpBehaviour.VRCInstantiate"/>すべき、
+    /// ソースとなるオブジェクト一覧の要素数。
+    /// </value>
+    private const int SOURCES_LENGTH = KEYS_NUM + MINES_NUM + ROOMS_NUM + 2;
+
     [Header("Lobby room")]
 
     /// <value>エントリーフォーム オブジェクト。</value>
     [SerializeField]
     private GameObject entrySystem;
+
+    /// <value>ロビールーム オブジェクト。</value>
+    [SerializeField]
+    private GameObject lobbyRoom;
 
     /// <value>ミラー表示 オブジェクト。</value>
     [SerializeField]
@@ -53,15 +63,19 @@ public class InitializeManager : UdonSharpBehaviour
     /// <seealso cref="UdonSharpBehaviour.VRCInstantiate"/>すべき、
     /// ソースとなるオブジェクト一覧。
     /// </value>
-    private GameObject[] sources =
-        new GameObject[KEYS_NUM + MINES_NUM + ROOMS_NUM + 2];
+    private GameObject[] sources = new GameObject[SOURCES_LENGTH];
+
+    /// <value>
+    /// <seealso cref="InitializeManager.sources"/>に対する、
+    /// 所属する親の一覧。
+    /// </value>
+    private GameObject[] parents = new GameObject[SOURCES_LENGTH];
 
     /// <value>
     /// <seealso cref="InitializeManager.sources"/>に対する、
     /// 生成先座標の一覧。
     /// </value>
-    private Vector3[] positions =
-        new Vector3[KEYS_NUM + MINES_NUM + ROOMS_NUM + 2];
+    private Vector3[] positions = new Vector3[SOURCES_LENGTH];
 
     /// <value>
     /// <seealso cref="InitializeManager.sources"/>に対する、
@@ -74,10 +88,12 @@ public class InitializeManager : UdonSharpBehaviour
     /// </summary>
     public void StartInitialize()
     {
-        this.sources[0] = this.mirrorSystem;
+        this.parents[0] = this.lobbyRoom;
         this.positions[0] = new Vector3(0f, 1.4f, -4.8f);
-        this.sources[1] = this.entrySystem;
+        this.sources[0] = this.mirrorSystem;
+        this.parents[1] = this.lobbyRoom;
         this.positions[1] = new Vector3(4.94f, 1.4f, 0f);
+        this.sources[1] = this.entrySystem;
         var index = 2;
         for (var i = 0; i < KEYS_NUM; i++)
         {
@@ -107,6 +123,11 @@ public class InitializeManager : UdonSharpBehaviour
                 if (i == 0)
                 {
                     obj.transform.Rotate(0f, 180f, 0f);
+                }
+                var parent = this.parents[i];
+                if (parent != null)
+                {
+                    obj.transform.parent = parent.transform;
                 }
             }
             this.progress.Progress = (float)this.iterator / this.sources.Length;
