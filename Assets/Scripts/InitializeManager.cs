@@ -138,6 +138,9 @@ public class InitializeManager : UdonSharpBehaviour
         this.SendCustomEventDelayedSeconds("RunInstantiateIteration", .1f);
     }
 
+    /// <summary>
+    /// 1 イテレーションごとの初期化をします。
+    /// </summary>
     public void RunInstantiateIteration()
     {
         if (this.iterator < this.sources.Length)
@@ -167,7 +170,27 @@ public class InitializeManager : UdonSharpBehaviour
         }
         else
         {
+            this.SendCustomEventDelayedSeconds("FinishInstantiate", .1f);
+        }
+    }
+
+    /// <summary>
+    /// すべてのイテレーション完了後に、
+    /// ゲームフィールド初期化処理を引き継ぎます。
+    /// </summary>
+    public void FinishInstantiate()
+    {
+        var entrySystem = this.lobbyRoom.GetComponentInChildren<EntrySystem>();
+        if (entrySystem)
+        {
+            this.gameField.Initialize();
+            entrySystem.gameField = this.gameField;
+            entrySystem.UpdateView();
             this.progress.Progress = 1f;
+        }
+        else
+        {
+            this.SendCustomEventDelayedSeconds("FinishInstantiate", .1f);
         }
     }
 

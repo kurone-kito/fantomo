@@ -12,6 +12,10 @@ public class EntrySystem : UdonSharpBehaviour
     /// <value>最大エントリー可能数。</value>
     private const int MAX_PLAYERS = 3;
 
+    /// <value>ゲームフィールドのロジック。</value>
+    [NonSerialized]
+    public GameField gameField = null;
+
     /// <value>エントリーボタン本体。</value>
     [SerializeField]
     private Button entryButton = null;
@@ -19,10 +23,6 @@ public class EntrySystem : UdonSharpBehaviour
     /// <value>エントリーボタンのラベル。</value>
     [SerializeField]
     private Text entryButtonLabel = null;
-
-    /// <value>ゲームフィールドのロジック。</value>
-    [SerializeField]
-    private GameField gameField = null;
 
     /// <value>ゲーム開始ボタン本体。</value>
     [SerializeField]
@@ -56,7 +56,7 @@ public class EntrySystem : UdonSharpBehaviour
     /// </summary>
     public override void OnDeserialization()
     {
-        this.updateView();
+        this.UpdateView();
     }
 
     /// <summary>
@@ -71,7 +71,7 @@ public class EntrySystem : UdonSharpBehaviour
             this.gameStarted = false;
             this.RequestSerialization();
         }
-        this.updateView();
+        this.UpdateView();
     }
 
     /// <summary>
@@ -99,7 +99,7 @@ public class EntrySystem : UdonSharpBehaviour
             }
             this.RequestSerialization();
         }
-        this.updateView();
+        this.UpdateView();
     }
 
     /// <summary>
@@ -107,7 +107,7 @@ public class EntrySystem : UdonSharpBehaviour
     /// </summary>
     public override void OnSpawn()
     {
-        this.updateView();
+        this.UpdateView();
     }
 
     /// <summary>
@@ -115,14 +115,14 @@ public class EntrySystem : UdonSharpBehaviour
     /// </summary>
     void Start()
     {
-        this.updateView();
+        this.UpdateView();
     }
 
     /// <summary>エントリーします。</summary>
     public void Entry()
     {
         this.addOrRemoveLocalPlayer();
-        this.updateView();
+        this.UpdateView();
     }
 
     /// <summary>ゲーム開始ボタンを押下した際に呼び出します。</summary>
@@ -131,7 +131,7 @@ public class EntrySystem : UdonSharpBehaviour
         this.changeOwner();
         this.gameStarted = true;
         this.RequestSerialization();
-        this.updateView();
+        this.UpdateView();
         this.SendCustomNetworkEvent(
             NetworkEventTarget.All, nameof(teleportToGameField));
     }
@@ -150,7 +150,7 @@ public class EntrySystem : UdonSharpBehaviour
     }
 
     /// <summary>ビューを最新の状態に更新します。</summary>
-    private void updateView()
+    public void UpdateView()
     {
         var entried = this.isEntried();
         var full = !entried && this.getEmpty() < 0;
@@ -160,7 +160,7 @@ public class EntrySystem : UdonSharpBehaviour
             full ? "満員です" :
             "参加する";
         entryButton.interactable = !full && !this.gameStarted;
-        startButton.SetActive(entried && !this.gameStarted);
+        startButton.SetActive(entried && !this.gameStarted && this.gameField != null);
         var nobody = this.localPlayerId == int.MaxValue;
         for (var i = this.playersId.Length; --i >= 0; )
         {

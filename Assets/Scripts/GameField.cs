@@ -22,7 +22,7 @@ public class GameField : UdonSharpBehaviour
     /// <value>ゲーム フィールドを初期化します。</value>
     public void Initialize()
     {
-        // this.initializeRooms();
+        this.initializeRooms();
         // this.placeMines();
     }
 
@@ -30,8 +30,12 @@ public class GameField : UdonSharpBehaviour
     public void teleportToGameField()
     {
         var player = Networking.LocalPlayer;
-        var pos = new Vector3(20, 1, 0);
-        player.TeleportTo(pos, player.GetRotation());
+        if (player == null)
+        {
+            Debug.LogError("UnityEditor ではここから先には進めません。");
+            return;
+        }
+        player.TeleportTo(new Vector3(20, 1, 0), player.GetRotation());
     }
 
     /// <summary>地雷の配置候補先を決定します。</summary>
@@ -51,13 +55,12 @@ public class GameField : UdonSharpBehaviour
     /// <value>各部屋を初期化します。</value>
     private void initializeRooms()
     {
-        for (var i = rooms.Length; --i >= 0; )
+        for (var i = this.rooms.Length; --i >= 0; )
         {
             this.placeWall(i);
             this.setNeighbors(i);
         }
     }
-
 
     /// <value>壁を配置します。</value>
     /// <param name="index">部屋のインデックス。</param>
@@ -77,14 +80,14 @@ public class GameField : UdonSharpBehaviour
     /// <param name="index">部屋のインデックス。</param>
     private void setNeighbors(int index)
     {
-        var room = rooms[index];
+        var room = this.rooms[index];
         var neighborsIndex = this.getNeighborIndexes(index);
         var neighbors = new Room[neighborsIndex.Length];
         for (var j = neighborsIndex.Length; --j >= 0; )
         {
             var i = neighborsIndex[j];
             neighbors[j] =
-                index < 0 ? null : rooms[i].GetComponent<Room>();
+                i < 0 ? null : this.rooms[i].GetComponent<Room>();
         }
         var roomScript = room.GetComponent<Room>();
         roomScript.Neighbors = neighbors;
