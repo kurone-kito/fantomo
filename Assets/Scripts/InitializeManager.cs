@@ -18,8 +18,14 @@ public class InitializeManager : UdonSharpBehaviour
     /// <value>地雷数。</value>
     private const int MINES_NUM = 9;
 
+    /// <value>部屋の大きさ。</value>
+    private const float ROOM_SIZE = 10f;
+
     /// <value>部屋数。</value>
     private const int ROOMS_NUM = 64;
+
+    /// <value>ゲームフィールドの一辺における部屋数。</value>
+    private const int ROOMS_NUM_BY_EDGE = 8;
 
     /// <value>
     /// <seealso cref="UdonSharpBehaviour.VRCInstantiate"/>すべき、
@@ -47,6 +53,10 @@ public class InitializeManager : UdonSharpBehaviour
 
     [Header("Game Field")]
 
+    /// <value>ゲーム フィールド オブジェクト。</value>
+    [SerializeField]
+    private GameField gameField;
+
     /// <value>鍵オブジェクト。</value>
     [SerializeField]
     private GameObject key;
@@ -58,6 +68,18 @@ public class InitializeManager : UdonSharpBehaviour
     /// <value>部屋オブジェクト。</value>
     [SerializeField]
     private GameObject room;
+
+    /// <value>
+    /// <seealso cref="InitializeManager.sources"/>に対する、
+    /// 生成物のインデックス一覧。
+    /// </value>
+    private int[] indexes = new int[SOURCES_LENGTH];
+
+    /// <value>
+    /// <seealso cref="InitializeManager.sources"/>に対する、
+    /// イテレーターを示すインデックス。
+    /// </value>
+    private int iterator = 0;
 
     /// <value>
     /// <seealso cref="UdonSharpBehaviour.VRCInstantiate"/>すべき、
@@ -77,12 +99,6 @@ public class InitializeManager : UdonSharpBehaviour
     /// </value>
     private Vector3[] positions = new Vector3[SOURCES_LENGTH];
 
-    /// <value>
-    /// <seealso cref="InitializeManager.sources"/>に対する、
-    /// イテレーターを示すインデックス。
-    /// </value>
-    private int iterator = 0;
-
     /// <summary>
     /// 初期化を開始します。
     /// </summary>
@@ -97,16 +113,28 @@ public class InitializeManager : UdonSharpBehaviour
         var index = 2;
         for (var i = 0; i < KEYS_NUM; i++)
         {
-            this.sources[index++] = this.key;
+            var j = index++;
+            this.indexes[j] = i;
+            this.sources[j] = this.key;
+            this.parents[j] = this.gameField ? this.gameField.gameObject : null;
         }
         for (var i = 0; i < MINES_NUM; i++)
         {
-            this.sources[index++] = this.mine;
+            var j = index++;
+            this.indexes[j] = i;
+            this.sources[j] = this.mine;
+            this.parents[j] = this.gameField ? this.gameField.gameObject : null;
         }
-        // for (var i = 0; i < ROOMS_NUM; i++)
-        // {
-        //     this.sources[index++] = this.room;
-        // }
+        for (var i = 0; i < ROOMS_NUM; i++)
+        {
+            var j = index++;
+            this.indexes[j] = i;
+            this.sources[j] = this.room;
+            this.parents[j] = this.gameField ? this.gameField.gameObject : null;
+            this.positions[j] =
+                Vector3.right * (i % ROOMS_NUM_BY_EDGE) * ROOM_SIZE +
+                Vector3.forward * (i / ROOMS_NUM_BY_EDGE) * ROOM_SIZE;
+        }
         this.SendCustomEventDelayedSeconds("RunInstantiateIteration", .1f);
     }
 
@@ -119,15 +147,19 @@ public class InitializeManager : UdonSharpBehaviour
             if (src != null)
             {
                 var obj = UdonSharpBehaviour.VRCInstantiate(src);
-                obj.transform.position = this.positions[i];
-                if (i == 0)
-                {
-                    obj.transform.Rotate(0f, 180f, 0f);
-                }
                 var parent = this.parents[i];
                 if (parent != null)
                 {
                     obj.transform.parent = parent.transform;
+                }
+                obj.transform.localPosition = this.positions[i];
+                if (i == 0)
+                {
+                    obj.transform.Rotate(0f, 180f, 0f);
+                }
+                if (src == this.room && this.gameField != null)
+                {
+                    this.gameField.rooms[this.indexes[i]] = obj;
                 }
             }
             this.progress.Progress = (float)this.iterator / this.sources.Length;

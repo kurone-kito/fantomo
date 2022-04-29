@@ -1,4 +1,5 @@
 ﻿
+using System;
 using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
@@ -15,21 +16,12 @@ public class GameField : UdonSharpBehaviour
     private const int MINES = 9;
 
     /// <value>部屋のオブジェクト一覧。</value>
-    [SerializeField]
-    private GameObject[] rooms = new GameObject[WIDTH * HEIGHT];
-
-    /// <value>
-    /// フィールド初期化の進捗状況を示すための、プログレス バー。
-    /// </value>
-    [SerializeField]
-    private InitialGameProgress progressBar = null;
+    [NonSerialized]
+    public GameObject[] rooms = new GameObject[WIDTH * HEIGHT];
 
     /// <value>ゲーム フィールドを初期化します。</value>
     public void Initialize()
     {
-        this.progressBar.Progress = 0f;
-        // TODO: Instanciate the rooms.
-
         // this.initializeRooms();
         // this.placeMines();
     }
@@ -45,7 +37,7 @@ public class GameField : UdonSharpBehaviour
     /// <summary>地雷の配置候補先を決定します。</summary>
     private void placeMines()
     {
-        var candidate = (int)(Random.value * this.rooms.Length);
+        var candidate = (int)(UnityEngine.Random.value * this.rooms.Length);
         var roomScript = this.rooms[candidate].GetComponent<Room>();
         roomScript.existsMine = true;
         var index = this.clearExploringFlag();

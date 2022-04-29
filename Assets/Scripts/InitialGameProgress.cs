@@ -27,7 +27,7 @@ public class InitialGameProgress : UdonSharpBehaviour
             {
                 img.fillAmount = value;
             }
-            this.gameObject.SetActive(value > 0f && value < 1f);
+            this.gameObject.SetActive(value < 1f);
         }
     }
 
@@ -36,6 +36,6 @@ public class InitialGameProgress : UdonSharpBehaviour
     /// </summary>
     void Start()
     {
-        this.gameObject.SetActive(false);
+        this.Progress = 0f;
     }
 }
