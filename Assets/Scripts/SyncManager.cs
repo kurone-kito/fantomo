@@ -1,6 +1,7 @@
 ﻿
 using System;
 using UdonSharp;
+using UnityEngine;
 using VRC.SDKBase;
 
 /// <summary>同期機能のロジック。</summary>
@@ -18,6 +19,15 @@ public class SyncManager : UdonSharpBehaviour
 
     /// <value>鍵の数。</value>
     private const int KEYS = 10;
+
+    /// <value>エントリーフォーム オブジェクト。</value>
+    [NonSerialized]
+    public GameObject entrySystem;
+
+    /// <value>参加メンバーが確定したかどうか。</value>
+    [NonSerialized]
+    [UdonSynced]
+    public bool decided = false;
 
     /// <value>鍵の配置インデックス一覧。</value>
     [NonSerialized]
@@ -38,6 +48,13 @@ public class SyncManager : UdonSharpBehaviour
     [NonSerialized]
     [UdonSynced]
     public short[] playersId = new short[MAX_PLAYERS];
+
+    /// <value>前回同期時の<seealso cref="SyncManager.decided"/>の値。</value>
+    public bool prevDecided
+    {
+        get;
+        private set;
+    }
 
     /// <value>前回同期時の<seealso cref="SyncManager.keys"/>の値。</value>
     public sbyte[] prevKeys
@@ -105,6 +122,7 @@ public class SyncManager : UdonSharpBehaviour
     /// </summary>
     private void storeValues()
     {
+        this.prevDecided = this.decided;
         this.prevKeys = this.keys;
         this.prevLocked = this.locked;
         this.prevMines = this.mines;

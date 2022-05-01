@@ -33,6 +33,10 @@ public class InitializeManager : UdonSharpBehaviour
     /// </value>
     private const int SOURCES_LENGTH = KEYS_NUM + MINES_NUM + ROOMS_NUM + 2;
 
+    /// <value>同期管理オブジェクト。</value>
+    [SerializeField]
+    private SyncManager syncManager;
+
     [Header("Lobby room")]
 
     /// <value>エントリーフォーム オブジェクト。</value>
@@ -156,7 +160,11 @@ public class InitializeManager : UdonSharpBehaviour
                     obj.transform.parent = parent.transform;
                 }
                 obj.transform.localPosition = this.positions[i];
-                if (i == 0)
+                if (src == this.entrySystem)
+                {
+                    this.SetSyncManagerToEntrySystem();
+                }
+                if (src == this.mirrorSystem)
                 {
                     obj.transform.Rotate(0f, 180f, 0f);
                 }
@@ -191,6 +199,24 @@ public class InitializeManager : UdonSharpBehaviour
         else
         {
             this.SendCustomEventDelayedSeconds("FinishInstantiate", .1f);
+        }
+    }
+
+    /// <summary>
+    /// エントリー フォーム オブジェクトに対し、
+    /// 同期マネージャーを設定します。
+    /// </summary>
+    public void SetSyncManagerToEntrySystem()
+    {
+        var entrySystem = this.lobbyRoom.GetComponentInChildren<EntrySystem>();
+        if (entrySystem)
+        {
+            entrySystem.syncManager = this.syncManager;
+            entrySystem.UpdateView();
+        }
+        else
+        {
+            this.SendCustomEventDelayedSeconds("SetSyncManagerToEntrySystem", .1f);
         }
     }
 

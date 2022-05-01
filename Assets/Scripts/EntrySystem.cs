@@ -16,6 +16,10 @@ public class EntrySystem : UdonSharpBehaviour
     [NonSerialized]
     public GameField gameField = null;
 
+    /// <value>同期管理オブジェクト。</value>
+    [NonSerialized]
+    public SyncManager syncManager;
+
     /// <value>エントリーボタン本体。</value>
     [SerializeField]
     private Button entryButton = null;
@@ -159,8 +163,10 @@ public class EntrySystem : UdonSharpBehaviour
             entried ? "参加を取り消す" :
             full ? "満員です" :
             "参加する";
-        entryButton.interactable = !full && !this.gameStarted;
-        startButton.SetActive(entried && !this.gameStarted && this.gameField != null);
+        entryButton.interactable =
+            !full && !this.gameStarted && this.syncManager != null;
+        startButton.SetActive(
+            entried && !this.gameStarted && this.gameField != null);
         var nobody = this.localPlayerId == int.MaxValue;
         for (var i = this.playersId.Length; --i >= 0; )
         {
