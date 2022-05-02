@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using VRC.SDKBase;
 using VRC.Udon.Common.Interfaces;
 
-/// <summary>エントリー機能のロジック。</summary>
+/// <summary>エントリー フォーム表示制御のロジック。</summary>
 [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
 public class EntrySystem : UdonSharpBehaviour
 {
