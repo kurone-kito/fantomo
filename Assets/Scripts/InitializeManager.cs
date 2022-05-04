@@ -33,9 +33,9 @@ public class InitializeManager : UdonSharpBehaviour
     /// </value>
     private const int SOURCES_LENGTH = KEYS_NUM + MINES_NUM + ROOMS_NUM + 2;
 
-    /// <value>同期管理オブジェクト。</value>
+    /// <value>管理ロジックの親となるオブジェクト。</value>
     [SerializeField]
-    private SyncManager syncManager;
+    private GameObject managers;
 
     [Header("Lobby room")]
 
@@ -208,10 +208,17 @@ public class InitializeManager : UdonSharpBehaviour
     /// </summary>
     public void SetSyncManagerToEntrySystem()
     {
+        if (this.managers == null)
+        {
+            Debug.LogError(
+                "managers が null のため、初期化を行えません。: InitializeManager.SetSyncManagerToEntrySystem");
+            return;
+        }
         var entrySystem = this.lobbyRoom.GetComponentInChildren<EntrySystem>();
         if (entrySystem)
         {
-            entrySystem.syncManager = this.syncManager;
+            entrySystem.entryManager =
+                this.managers.GetComponentInChildren<EntryManager>();
             entrySystem.UpdateView();
         }
         else

@@ -3,6 +3,7 @@ using System;
 using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
+using VRC.Udon.Common;
 
 /// <summary>同期機能のロジック。</summary>
 [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
@@ -20,9 +21,9 @@ public class SyncManager : UdonSharpBehaviour
     /// <value>鍵の数。</value>
     private const int KEYS = 10;
 
-    /// <value>エントリーフォーム オブジェクト。</value>
-    [NonSerialized]
-    public GameObject entrySystem;
+    /// <value>エントリー機能ロジック。</value>
+    [SerializeField]
+    private EntryManager entryManager;
 
     /// <value>参加メンバーが確定したかどうか。</value>
     [NonSerialized]
@@ -101,11 +102,22 @@ public class SyncManager : UdonSharpBehaviour
     }
 
     /// <summary>
+    /// 同期データの送信直後に呼び出す、コールバック。
+    /// </summary>
+    public override void OnPostSerialization(SerializationResult result)
+    {
+        this.OnDeserialization();
+    }
+
+    /// <summary>
     /// 同期データを受領・適用した後に呼び出す、コールバック。
     /// </summary>
     public override void OnDeserialization()
     {
-        // TODO: Notify
+        if (this.entryManager != null)
+        {
+            this.entryManager.OnDeserialization();
+        }
         this.storeValues();
     }
 
