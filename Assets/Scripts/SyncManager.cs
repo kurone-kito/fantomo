@@ -45,6 +45,16 @@ public class SyncManager : UdonSharpBehaviour
     [UdonSynced]
     public sbyte[] mines = new sbyte[MINES];
 
+    /// <value>X 軸側のドアが開いているかどうか。</value>
+    [NonSerialized]
+    [UdonSynced]
+    public ulong openedX = 0ul;
+
+    /// <value>Y 軸側のドアが開いているかどうか。</value>
+    [NonSerialized]
+    [UdonSynced]
+    public ulong openedY = 0ul;
+
     /// <value>エントリーしている、プレイヤーの一覧。</value>
     [NonSerialized]
     [UdonSynced]
@@ -77,6 +87,24 @@ public class SyncManager : UdonSharpBehaviour
     /// 前回同期時の<seealso cref="SyncManager.mines"/>の値。
     /// </value>
     public sbyte[] prevMines
+    {
+        get;
+        private set;
+    }
+
+    /// <value>
+    /// 前回同期時の<seealso cref="SyncManager.openedX"/>の値。
+    /// </value>
+    public ulong prevOpenedX
+    {
+        get;
+        private set;
+    }
+
+    /// <value>
+    /// 前回同期時の<seealso cref="SyncManager.openedY"/>の値。
+    /// </value>
+    public ulong prevOpenedY
     {
         get;
         private set;
@@ -138,6 +166,8 @@ public class SyncManager : UdonSharpBehaviour
         this.prevKeys = this.keys;
         this.prevLocked = this.locked;
         this.prevMines = this.mines;
+        this.prevOpenedX = this.openedX;
+        this.prevOpenedY = this.openedY;
         this.prevPlayersId = this.playersId;
     }
 }
