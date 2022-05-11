@@ -1,4 +1,4 @@
-﻿
+
 using UdonSharp;
 using UnityEngine;
 
@@ -12,27 +12,6 @@ using UnityEngine;
 [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 public class InitializeManager : UdonSharpBehaviour
 {
-    /// <value>鍵数。</value>
-    private const int KEYS_NUM = 10;
-
-    /// <value>地雷数。</value>
-    private const int MINES_NUM = 9;
-
-    /// <value>部屋の大きさ。</value>
-    private const float ROOM_SIZE = 10f;
-
-    /// <value>部屋数。</value>
-    private const int ROOMS_NUM = 64;
-
-    /// <value>ゲームフィールドの一辺における部屋数。</value>
-    private const int ROOMS_NUM_BY_EDGE = 8;
-
-    /// <value>
-    /// <seealso cref="UdonSharpBehaviour.VRCInstantiate"/>すべき、
-    /// ソースとなるオブジェクト一覧の要素数。
-    /// </value>
-    private const int SOURCES_LENGTH = KEYS_NUM + MINES_NUM + ROOMS_NUM + 2;
-
     /// <value>管理ロジックの親となるオブジェクト。</value>
     [SerializeField]
     private GameObject managers;
@@ -77,7 +56,7 @@ public class InitializeManager : UdonSharpBehaviour
     /// <seealso cref="InitializeManager.sources"/>に対する、
     /// 生成物のインデックス一覧。
     /// </value>
-    private int[] indexes = new int[SOURCES_LENGTH];
+    private int[] indexes;
 
     /// <value>
     /// <seealso cref="InitializeManager.sources"/>に対する、
@@ -89,25 +68,30 @@ public class InitializeManager : UdonSharpBehaviour
     /// <seealso cref="UdonSharpBehaviour.VRCInstantiate"/>すべき、
     /// ソースとなるオブジェクト一覧。
     /// </value>
-    private GameObject[] sources = new GameObject[SOURCES_LENGTH];
+    private GameObject[] sources;
 
     /// <value>
     /// <seealso cref="InitializeManager.sources"/>に対する、
     /// 所属する親の一覧。
     /// </value>
-    private GameObject[] parents = new GameObject[SOURCES_LENGTH];
+    private GameObject[] parents;
 
     /// <value>
     /// <seealso cref="InitializeManager.sources"/>に対する、
     /// 生成先座標の一覧。
     /// </value>
-    private Vector3[] positions = new Vector3[SOURCES_LENGTH];
+    private Vector3[] positions;
 
     /// <summary>
     /// 初期化を開始します。
     /// </summary>
     public void StartInitialize()
     {
+        var constants = this.managers.GetComponentInChildren<Constants>();
+        this.indexes = new int[constants.NUM_INSTANTIATES];
+        this.sources = new GameObject[constants.NUM_INSTANTIATES];
+        this.parents = new GameObject[constants.NUM_INSTANTIATES];
+        this.positions = new Vector3[constants.NUM_INSTANTIATES];
         this.parents[0] = this.lobbyRoom;
         this.positions[0] = new Vector3(0f, 1.4f, -4.8f);
         this.sources[0] = this.mirrorSystem;
@@ -115,29 +99,29 @@ public class InitializeManager : UdonSharpBehaviour
         this.positions[1] = new Vector3(4.94f, 1.4f, 0f);
         this.sources[1] = this.entrySystem;
         var index = 2;
-        for (var i = 0; i < KEYS_NUM; i++)
+        for (var i = 0; i < constants.NUM_KEYS; i++)
         {
             var j = index++;
             this.indexes[j] = i;
             this.sources[j] = this.key;
             this.parents[j] = this.gameField ? this.gameField.gameObject : null;
         }
-        for (var i = 0; i < MINES_NUM; i++)
+        for (var i = 0; i < constants.NUM_MINES; i++)
         {
             var j = index++;
             this.indexes[j] = i;
             this.sources[j] = this.mine;
             this.parents[j] = this.gameField ? this.gameField.gameObject : null;
         }
-        for (var i = 0; i < ROOMS_NUM; i++)
+        for (var i = 0; i < constants.NUM_ROOMS; i++)
         {
             var j = index++;
             this.indexes[j] = i;
             this.sources[j] = this.room;
             this.parents[j] = this.gameField ? this.gameField.gameObject : null;
             this.positions[j] =
-                Vector3.right * (i % ROOMS_NUM_BY_EDGE) * ROOM_SIZE +
-                Vector3.forward * (i / ROOMS_NUM_BY_EDGE) * ROOM_SIZE;
+                Vector3.right * (i % constants.ROOMS_WIDTH) * constants.ROOM_SIZE +
+                Vector3.forward * (i / constants.ROOMS_WIDTH) * constants.ROOM_SIZE;
         }
         this.SendCustomEventDelayedSeconds("RunInstantiateIteration", .1f);
     }
@@ -232,7 +216,7 @@ public class InitializeManager : UdonSharpBehaviour
     /// </summary>
     void Start()
     {
-        if (this.progress)
+        if (this.progress && this.managers && this.managers.GetComponentInChildren<Constants>() != null)
         {
             this.SendCustomEventDelayedSeconds("StartInitialize", 1f);
         }

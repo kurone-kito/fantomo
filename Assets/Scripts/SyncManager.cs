@@ -9,20 +9,14 @@ using VRC.Udon.Common;
 [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
 public class SyncManager : UdonSharpBehaviour
 {
-    /// <value>最大エントリー可能数。</value>
-    private const int MAX_PLAYERS = 3;
+    /// <value>管理ロジックの親となるオブジェクト。</value>
+    [SerializeField]
+    private GameObject managers;
 
-    /// <value>部屋数。</value>
-    private const int ROOMS = 64;
-
-    /// <value>地雷数。</value>
-    private const int MINES = 10;
-
-    /// <value>鍵の数。</value>
-    private const int KEYS = 10;
+    /// <value>定数一覧。</value>
+    private Constants constants;
 
     /// <value>エントリー機能ロジック。</value>
-    [SerializeField]
     private EntryManager entryManager;
 
     /// <value>参加メンバーが確定したかどうか。</value>
@@ -33,17 +27,17 @@ public class SyncManager : UdonSharpBehaviour
     /// <value>鍵の配置インデックス一覧。</value>
     [NonSerialized]
     [UdonSynced]
-    public sbyte[] keys = new sbyte[KEYS];
+    public sbyte[] keys = new sbyte[0];
 
     /// <value>ドアをロックしている、プレイヤー ID。</value>
     [NonSerialized]
     [UdonSynced]
-    public short[] locked = new short[ROOMS];
+    public short[] locked = new short[0];
 
     /// <value>地雷の配置インデックス一覧。</value>
     [NonSerialized]
     [UdonSynced]
-    public sbyte[] mines = new sbyte[MINES];
+    public sbyte[] mines = new sbyte[0];
 
     /// <value>X 軸側のドアが開いているかどうか。</value>
     [NonSerialized]
@@ -58,7 +52,7 @@ public class SyncManager : UdonSharpBehaviour
     /// <value>エントリーしている、プレイヤーの一覧。</value>
     [NonSerialized]
     [UdonSynced]
-    public short[] playersId = new short[MAX_PLAYERS];
+    public short[] playersId = new short[0];
 
     /// <value>前回同期時の<seealso cref="SyncManager.decided"/>の値。</value>
     public bool prevDecided
@@ -154,6 +148,18 @@ public class SyncManager : UdonSharpBehaviour
     /// </summary>
     void Start()
     {
+        if (this.managers != null)
+        {
+            this.constants = this.managers.GetComponentInChildren<Constants>();
+            this.entryManager = this.managers.GetComponentInChildren<EntryManager>();
+        }
+        if (this.constants != null)
+        {
+            this.keys = new sbyte[this.constants.NUM_KEYS];
+            this.locked = new short[this.constants.NUM_ROOMS];
+            this.mines = new sbyte[this.constants.NUM_MINES];
+            this.playersId = new short[this.constants.NUM_PLAYERS];
+        }
         this.storeValues();
     }
 
