@@ -1,4 +1,4 @@
-
+﻿
 using UdonSharp;
 using UnityEngine;
 
@@ -123,7 +123,7 @@ public class InitializeManager : UdonSharpBehaviour
                 Vector3.right * (i % constants.ROOMS_WIDTH) * constants.ROOM_SIZE +
                 Vector3.forward * (i / constants.ROOMS_WIDTH) * constants.ROOM_SIZE;
         }
-        this.SendCustomEventDelayedSeconds("RunInstantiateIteration", .1f);
+        this.SendCustomEventDelayedSeconds(nameof(RunInstantiateIteration), .1f);
     }
 
     /// <summary>
@@ -158,11 +158,11 @@ public class InitializeManager : UdonSharpBehaviour
                 }
             }
             this.progress.Progress = (float)this.iterator / this.sources.Length;
-            this.SendCustomEventDelayedSeconds("RunInstantiateIteration", .1f);
+            this.SendCustomEventDelayedSeconds(nameof(RunInstantiateIteration), .1f);
         }
         else
         {
-            this.SendCustomEventDelayedSeconds("FinishInstantiate", .1f);
+            this.SendCustomEventDelayedSeconds(nameof(FinishInstantiate), .1f);
         }
     }
 
@@ -182,7 +182,7 @@ public class InitializeManager : UdonSharpBehaviour
         }
         else
         {
-            this.SendCustomEventDelayedSeconds("FinishInstantiate", .1f);
+            this.SendCustomEventDelayedSeconds(nameof(FinishInstantiate), .1f);
         }
     }
 
@@ -207,7 +207,7 @@ public class InitializeManager : UdonSharpBehaviour
         }
         else
         {
-            this.SendCustomEventDelayedSeconds("SetSyncManagerToEntrySystem", .1f);
+            this.SendCustomEventDelayedSeconds(nameof(SetSyncManagerToEntrySystem), .1f);
         }
     }
 
@@ -218,7 +218,7 @@ public class InitializeManager : UdonSharpBehaviour
     {
         if (this.progress && this.managers && this.managers.GetComponentInChildren<Constants>() != null)
         {
-            this.SendCustomEventDelayedSeconds("StartInitialize", 1f);
+            this.SendCustomEventDelayedSeconds(nameof(StartInitialize), 1f);
         }
     }
 }
