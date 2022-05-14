@@ -1,5 +1,4 @@
-﻿
-using UdonSharp;
+﻿using UdonSharp;
 using UnityEngine;
 
 /// <summary>フィールド算出のロジック。</summary>
@@ -12,16 +11,18 @@ public class FieldCalculator : UdonSharpBehaviour
     private GameObject managers;
     /// <value>定数一覧。</value>
     private Constants constants;
+    /// <value>方角周りの計算ロジック。</value>
+    private DirectionCalculator directionCalculator;
     /// <value>同期管理オブジェクト。</value>
     private SyncManager syncManager;
+    /// <value>方角別通路状況一覧。</value>
+    private bool[][] directions;
     /// <value>地雷設置状況一覧。</value>
-    private bool[] mines;
-    /// <value>探索済みのインデックス一覧。</value>
-    private int[] explored;
-    /// <value>
-    /// <seealso cref="FieldCalculator.explored"/>に対するインデックス。
-    /// </value>
-    private int pointer = 0;
+    private bool[] hasMines;
+    /// <value>鍵設置状況一覧。</value>
+    private bool[] hasKeys;
+    /// <value>プレイヤー スポーン座標設置状況一覧。</value>
+    private bool[] hasSpawns;
 
     /// <summary>
     /// フィールドの計算をします。
@@ -40,34 +41,24 @@ public class FieldCalculator : UdonSharpBehaviour
                 "syncManager が null のため、フィールドを算出できません。: FieldCalculator.Calculate");
             return;
         }
-        var candidate = Random.Range(0, this.constants.NUM_ROOMS);
-        var startPoint = -1;
-        foreach (var index in this.getNeighborIndexes(candidate))
-        {
-            if (!this.mines[index])
-            {
-                startPoint = index;
-                break;
-            }
-        }
-        explored[pointer++] = startPoint;
-        this.Calculate();
-
     }
 
     /// <summary>隣接する部屋のインデックス一覧を取得します。</summary>
     /// <param name="index">インデックス。</param>
     /// <returns>
-    /// 隣接する部屋のインデックス一覧。存在しない場合、負数。
+    /// 隣接する部屋のインデックス一覧。
+    /// 存在しないか、通路がふさがれている場合、負数。
     /// </returns>
     private int[] getNeighborIndexes(int index)
     {
         var xy = this.getXYFromIndex(index);
-        return new int[] {
-            this.getIndexFromXY(xy[0] - 1, xy[1]),
-            this.getIndexFromXY(xy[0] + 1, xy[1]),
-            this.getIndexFromXY(xy[0], xy[1] - 1),
-            this.getIndexFromXY(xy[0], xy[1] + 1),
+        var directions = this.directions[index];
+        return new int[]
+        {
+            directions[0] ? this.getIndexFromXY(xy[0] - 1, xy[1]) : -1,
+            directions[1] ? this.getIndexFromXY(xy[0] + 1, xy[1]) : -1,
+            directions[2] ? this.getIndexFromXY(xy[0], xy[1] - 1) : -1,
+            directions[3] ? this.getIndexFromXY(xy[0], xy[1] + 1) : -1,
         };
     }
 
@@ -93,6 +84,14 @@ public class FieldCalculator : UdonSharpBehaviour
     }
 
     /// <summary>
+    /// 指定した部屋が何らかのアイテムを持っているかどうかを取得します。
+    /// </summary>
+    /// <param name="index">部屋の位置を示す、インデックス。</param>
+    /// <returns>何らかのアイテムがある場合、<c>true</c>。</returns>
+    private bool hasAnyItems(int index) =>
+        this.hasMines[index] || this.hasKeys[index] || this.hasSpawns[index];
+
+    /// <summary>
     /// このコンポーネントが初期化された時に呼び出す、コールバック。
     /// </summary>
     void Start()
@@ -100,12 +99,19 @@ public class FieldCalculator : UdonSharpBehaviour
         if (this.managers)
         {
             this.constants = this.managers.GetComponentInChildren<Constants>();
+            this.directionCalculator = this.managers.GetComponentInChildren<DirectionCalculator>();
             this.syncManager = this.managers.GetComponentInChildren<SyncManager>();
         }
         if (this.constants != null)
         {
-            this.mines = new bool[this.constants.NUM_ROOMS];
-            this.explored = new int[this.constants.NUM_ROOMS];
+            this.directions = new bool[this.constants.NUM_ROOMS][];
+            for (var i = this.constants.NUM_ROOMS; --i >= 0; )
+            {
+                this.directions[i] = new bool[] { true, true, true, true };
+            }
+            this.hasMines = new bool[this.constants.NUM_ROOMS];
+            this.hasKeys = new bool[this.constants.NUM_ROOMS];
+            this.hasSpawns = new bool[this.constants.NUM_ROOMS];
         }
     }
 }
