@@ -188,6 +188,10 @@ public class EntryManager : UdonSharpBehaviour
             }
             this.syncManager.RequestSerialization();
         }
+        if (this.entrySystem != null)
+        {
+            this.entrySystem.UpdateView();
+        }
     }
 
     /// <summary>
