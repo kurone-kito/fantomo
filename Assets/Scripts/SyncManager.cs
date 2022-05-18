@@ -9,105 +9,123 @@ using VRC.Udon.Common;
 [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
 public class SyncManager : UdonSharpBehaviour
 {
-    /// <value>管理ロジックの親となるオブジェクト。</value>
+    /// <summary>管理ロジックの親となるオブジェクト。</summary>
     [SerializeField]
     private GameObject managers;
 
-    /// <value>定数一覧。</value>
+    /// <summary>定数一覧。</summary>
     private Constants constants;
 
-    /// <value>エントリー機能ロジック。</value>
+    /// <summary>エントリー機能ロジック。</summary>
     private EntryManager entryManager;
 
-    /// <value>参加メンバーが確定したかどうか。</value>
+    /// <summary>参加メンバーが確定したかどうか。</summary>
     [NonSerialized]
     [UdonSynced]
     public bool decided = false;
 
-    /// <value>鍵の配置インデックス一覧。</value>
+    /// <summary>鍵の配置インデックス一覧。</summary>
     [NonSerialized]
     [UdonSynced]
     public sbyte[] keys = new sbyte[0];
 
-    /// <value>ドアをロックしている、プレイヤー ID。</value>
+    /// <summary>ドアをロックしている、プレイヤー ID。</summary>
     [NonSerialized]
     [UdonSynced]
     public short[] locked = new short[0];
 
-    /// <value>地雷の配置インデックス一覧。</value>
+    /// <summary>地雷の配置インデックス一覧。</summary>
     [NonSerialized]
     [UdonSynced]
     public sbyte[] mines = new sbyte[0];
 
-    /// <value>X 軸側のドアが開いているかどうか。</value>
+    /// <summary>X 軸側のドアが開いているかどうか。</summary>
     [NonSerialized]
     [UdonSynced]
     public ulong openedX = 0ul;
 
-    /// <value>Y 軸側のドアが開いているかどうか。</value>
+    /// <summary>Y 軸側のドアが開いているかどうか。</summary>
     [NonSerialized]
     [UdonSynced]
     public ulong openedY = 0ul;
 
-    /// <value>エントリーしている、プレイヤーの一覧。</value>
+    /// <summary>エントリーしている、プレイヤーの一覧。</summary>
     [NonSerialized]
     [UdonSynced]
     public short[] playersId = new short[0];
 
-    /// <value>前回同期時の<seealso cref="SyncManager.decided"/>の値。</value>
+    /// <summary>部屋情報一覧。</summary>
+    [NonSerialized]
+    [UdonSynced]
+    public byte[] rooms = new byte[0];
+
+    /// <summary>
+    /// 前回同期時の<seealso cref="SyncManager.decided"/>の値。
+    /// </summary>
     public bool prevDecided
     {
         get;
         private set;
     }
 
-    /// <value>前回同期時の<seealso cref="SyncManager.keys"/>の値。</value>
+    /// <summary>
+    /// 前回同期時の<seealso cref="SyncManager.keys"/>の値。
+    /// </summary>
     public sbyte[] prevKeys
     {
         get;
         private set;
     }
 
-    /// <value>
+    /// <summary>
     /// 前回同期時の<seealso cref="SyncManager.locked"/>の値。
-    /// </value>
+    /// </summary>
     public short[] prevLocked
     {
         get;
         private set;
     }
 
-    /// <value>
+    /// <summary>
     /// 前回同期時の<seealso cref="SyncManager.mines"/>の値。
-    /// </value>
+    /// </summary>
     public sbyte[] prevMines
     {
         get;
         private set;
     }
 
-    /// <value>
+    /// <summary>
     /// 前回同期時の<seealso cref="SyncManager.openedX"/>の値。
-    /// </value>
+    /// </summary>
     public ulong prevOpenedX
     {
         get;
         private set;
     }
 
-    /// <value>
+    /// <summary>
     /// 前回同期時の<seealso cref="SyncManager.openedY"/>の値。
-    /// </value>
+    /// </summary>
     public ulong prevOpenedY
     {
         get;
         private set;
     }
 
-    /// <value>
+    /// <summary>
     /// 前回同期時の<seealso cref="SyncManager.playersId"/>の値。
-    /// </value>
+    /// </summary>
     public short[] prevPlayersId
+    {
+        get;
+        private set;
+    }
+
+    /// <summary>
+    /// 前回同期時の<seealso cref="SyncManager.rooms"/>の値。
+    /// </summary>
+    public byte[] prevRooms
     {
         get;
         private set;
@@ -159,6 +177,7 @@ public class SyncManager : UdonSharpBehaviour
             this.locked = new short[this.constants.NUM_ROOMS];
             this.mines = new sbyte[this.constants.NUM_MINES];
             this.playersId = new short[this.constants.NUM_PLAYERS];
+            this.rooms = new byte[this.constants.NUM_ROOMS];
         }
         this.storeValues();
     }
@@ -175,5 +194,6 @@ public class SyncManager : UdonSharpBehaviour
         this.prevOpenedX = this.openedX;
         this.prevOpenedY = this.openedY;
         this.prevPlayersId = this.playersId;
+        this.prevRooms = this.rooms;
     }
 }

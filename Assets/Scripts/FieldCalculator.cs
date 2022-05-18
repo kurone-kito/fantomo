@@ -13,86 +13,154 @@ public class FieldCalculator : UdonSharpBehaviour
     private Constants constants;
     /// <value>方角周りの計算ロジック。</value>
     private DirectionCalculator directionCalculator;
+    /// <value>部屋情報算出のロジック。</value>
+    private RoomsCalculator roomsCalculator;
     /// <value>同期管理オブジェクト。</value>
     private SyncManager syncManager;
-    /// <value>方角別通路状況一覧。</value>
-    private bool[][] directions;
-    /// <value>地雷設置状況一覧。</value>
-    private bool[] hasMines;
-    /// <value>鍵設置状況一覧。</value>
-    private bool[] hasKeys;
-    /// <value>プレイヤー スポーン座標設置状況一覧。</value>
-    private bool[] hasSpawns;
 
     /// <summary>
     /// フィールドの計算をします。
     /// </summary>
-    public void Calculate()
+    public byte[] Calculate()
     {
         if (this.constants == null)
         {
             Debug.LogError(
                 "constants が null のため、フィールドを算出できません。: FieldCalculator.Calculate");
-            return;
+            return null;
         }
-        if (this.syncManager == null)
+        if (this.roomsCalculator == null)
         {
             Debug.LogError(
-                "syncManager が null のため、フィールドを算出できません。: FieldCalculator.Calculate");
-            return;
+                "roomsCalculator が null のため、フィールドを算出できません。: FieldCalculator.Calculate");
+            return null;
         }
+        return calculateIntenalRooms();
     }
 
-    /// <summary>隣接する部屋のインデックス一覧を取得します。</summary>
-    /// <param name="index">インデックス。</param>
-    /// <returns>
-    /// 隣接する部屋のインデックス一覧。
-    /// 存在しないか、通路がふさがれている場合、負数。
-    /// </returns>
-    private int[] getNeighborIndexes(int index)
+    private byte[] calculateIntenalRooms()
     {
-        var xy = this.getXYFromIndex(index);
-        var directions = this.directions[index];
-        return new int[]
+        var started = Time.realtimeSinceStartup;
+        var NUM_KEYS = this.constants.NUM_KEYS;
+        var NUM_PLAYERS = this.constants.NUM_PLAYERS;
+        var ROOM_REMOVE_DOOR_RATE = this.constants.ROOM_REMOVE_DOOR_RATE;
+        var ROOM_FLG_HAS_KEY = this.constants.ROOM_FLG_HAS_KEY;
+        var ROOM_FLG_HAS_SPAWN = this.constants.ROOM_FLG_HAS_SPAWN;
+        var rooms = roomsCalculator.CreateIdentityRooms();
+        var cutted = this.cutRoute(rooms, ROOM_REMOVE_DOOR_RATE);
+        var puttedMines = this.putMinesRecursively(cutted, 0);
+        var puttedKeys =
+            this.putItemsRecursively(
+                puttedMines, NUM_KEYS, ROOM_FLG_HAS_KEY);
+        var result = this.putItemsRecursively(
+            puttedKeys, NUM_PLAYERS, ROOM_FLG_HAS_SPAWN);
+        return result;
+    }
+
+    /// <summary>再帰的に指定数の扉を削除します。</summary>
+    /// <param name="rooms">部屋情報一覧。</param>
+    /// <param name="removes">削除する扉の数。</param>
+    /// <returns>新しい部屋情報一覧。</returns>
+    [RecursiveMethod]
+    private byte[] cutRouteRecursively(byte[] rooms, int removes)
+    {
+        if (removes < 0)
         {
-            directions[0] ? this.getIndexFromXY(xy[0] - 1, xy[1]) : -1,
-            directions[1] ? this.getIndexFromXY(xy[0] + 1, xy[1]) : -1,
-            directions[2] ? this.getIndexFromXY(xy[0], xy[1] - 1) : -1,
-            directions[3] ? this.getIndexFromXY(xy[0], xy[1] + 1) : -1,
-        };
+            return rooms;
+        }
+        var dirs = this.directionCalculator.Direction;
+        var targetIndex = Random.Range(0, rooms.Length);
+        var dirMark = ~(uint)dirs[Random.Range(0, dirs.Length)];
+        var nextRooms = new byte[rooms.Length];
+        for (int i = rooms.Length; --i >= 0;)
+        {
+            nextRooms[i] =
+                i == targetIndex ? (byte)(rooms[i] & dirMark) : rooms[i];
+        }
+        var explorable =
+            this.roomsCalculator.GetExplorableRoomsLength(nextRooms);
+        var next = explorable == rooms.Length;
+        return this.cutRouteRecursively(
+            next ? nextRooms : rooms, removes - (next ? 1 : 0));
     }
 
-    /// <summary>インデックスから座標を取得します。</summary>
-    /// <param name="index">インデックス。</param>
-    /// <returns>X、Y座標を示す、配列。</returns>
-    private int[] getXYFromIndex(int index)
+    /// <summary>扉を指定の確率で削除します。</summary>
+    /// <param name="rooms">部屋情報一覧。</param>
+    /// <param name="percentage">確率を 0f～1f の間で指定します。</param>
+    /// <returns>新しい部屋情報一覧。</returns>
+    private byte[] cutRoute(byte[] rooms, float percentage) =>
+        this.cutRouteRecursively(
+            rooms,
+            (int)(rooms.Length * this.constants.DIR_MAX * percentage));
+
+    /// <summary>再帰的に地雷を設置します。</summary>
+    /// <param name="rooms">部屋情報一覧。</param>
+    /// <param name="putted">設置済み地雷の個数。</param>
+    /// <returns>新しい部屋情報一覧。</returns>
+    [RecursiveMethod]
+    private byte[] putMinesRecursively(byte[] rooms, int putted)
     {
-        var width = this.constants.ROOMS_WIDTH;
-        return new int[] { index % width, index / width };
+        var NUM_MINES = this.constants.NUM_MINES;
+        var ROOM_FLG_HAS_MINE = this.constants.ROOM_FLG_HAS_MINE;
+        if (putted >= NUM_MINES)
+        {
+            return rooms;
+        }
+        var targetIndex = Random.Range(0, rooms.Length);
+        if ((rooms[targetIndex] & ROOM_FLG_HAS_MINE) != 0)
+        {
+            return this.putMinesRecursively(rooms, putted);
+        }
+        var nextRooms = new byte[rooms.Length];
+        for (int i = rooms.Length; --i >= 0;)
+        {
+            nextRooms[i] =
+                i == targetIndex
+                    ? (byte)(rooms[i] | ROOM_FLG_HAS_MINE)
+                    : rooms[i];
+        }
+        var next =
+            !this.roomsCalculator.HasUnExplorableMine(nextRooms) &&
+            this.roomsCalculator.GetExplorableRoomsLength(nextRooms) ==
+                rooms.Length - putted;
+        return this.putMinesRecursively(
+            next ? nextRooms : rooms, putted + (next ? 1 : 0));
     }
 
-    /// <summary>座標からインデックスを取得します。</summary>
-    /// <param name="x">X 座標。</param>
-    /// <param name="y">Y 座標。</param>
-    /// <returns>インデックス。はみ出た場合、負数。</returns>
-    private int getIndexFromXY(int x, int y)
+    /// <summary>再帰的にアイテムを設置します。</summary>
+    /// <param name="rooms">部屋情報一覧。</param>
+    /// <param name="amount">設置個数。</param>
+    /// <param name="itemFlag">アイテムを示すフラグ。</param>
+    /// <returns>新しい部屋情報一覧。</returns>
+    [RecursiveMethod]
+    private byte[] putItemsRecursively(byte[] rooms, int amount, byte itemFlag)
     {
-        var width = this.constants.ROOMS_WIDTH;
-        return x < 0 || x >= width || y < 0 || y >= width
-            ? -1
-            : y * width + x;
+        if (amount <= 0)
+        {
+            return rooms;
+        }
+        var targetIndex = Random.Range(0, rooms.Length);
+        if (this.roomsCalculator.HasAnyItems(rooms[targetIndex]))
+        {
+            return this.putItemsRecursively(rooms, amount, itemFlag);
+        }
+        var nextRooms = new byte[rooms.Length];
+        for (int i = rooms.Length; --i >= 0;)
+        {
+            nextRooms[i] =
+                i == targetIndex
+                    ? (byte)(rooms[i] | itemFlag)
+                    : rooms[i];
+        }
+        return this.putItemsRecursively(
+            nextRooms, amount - 1, itemFlag);
     }
 
     /// <summary>
-    /// 指定した部屋が何らかのアイテムを持っているかどうかを取得します。
-    /// </summary>
-    /// <param name="index">部屋の位置を示す、インデックス。</param>
-    /// <returns>何らかのアイテムがある場合、<c>true</c>。</returns>
-    private bool hasAnyItems(int index) =>
-        this.hasMines[index] || this.hasKeys[index] || this.hasSpawns[index];
-
-    /// <summary>
+    /// <para>
     /// このコンポーネントが初期化された時に呼び出す、コールバック。
+    /// </para>
+    /// <para>ここでは、各フィールドの確保を行います。</para>
     /// </summary>
     void Start()
     {
@@ -100,18 +168,9 @@ public class FieldCalculator : UdonSharpBehaviour
         {
             this.constants = this.managers.GetComponentInChildren<Constants>();
             this.directionCalculator = this.managers.GetComponentInChildren<DirectionCalculator>();
+            this.roomsCalculator = this.managers.GetComponentInChildren<RoomsCalculator>();
             this.syncManager = this.managers.GetComponentInChildren<SyncManager>();
         }
-        if (this.constants != null)
-        {
-            this.directions = new bool[this.constants.NUM_ROOMS][];
-            for (var i = this.constants.NUM_ROOMS; --i >= 0; )
-            {
-                this.directions[i] = new bool[] { true, true, true, true };
-            }
-            this.hasMines = new bool[this.constants.NUM_ROOMS];
-            this.hasKeys = new bool[this.constants.NUM_ROOMS];
-            this.hasSpawns = new bool[this.constants.NUM_ROOMS];
-        }
+        this.SendCustomEventDelayedSeconds(nameof(this.Calculate), .1f);
     }
 }

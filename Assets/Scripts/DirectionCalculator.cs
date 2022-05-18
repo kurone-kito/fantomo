@@ -6,18 +6,19 @@ using UnityEngine;
 [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 public class DirectionCalculator : UdonSharpBehaviour
 {
-    /// <summary>全方向の扉が閉じている状態。</summary>
-    public readonly bool[] closed = new bool[] { false, false, false, false };
-
-    /// <summary>全方向の扉が開いている状態。</summary>
-    public readonly bool[] opened = new bool[] { true, true, true, true };
-
     /// <summary>定数一覧。</summary>
     [SerializeField]
     private Constants constants;
 
+    /// <summary>順方向の定数一覧。</summary>
+    public byte[] Direction
+    {
+        get;
+        private set;
+    }
+
     /// <summary>逆方向の定数一覧。</summary>
-    public int[] InvertDirection
+    public byte[] InvertDirection
     {
         get;
         private set;
@@ -34,13 +35,21 @@ public class DirectionCalculator : UdonSharpBehaviour
                 "constants が null のため、初期化を行えません。: DirectionCalculator.constants");
             return;
         }
-        this.InvertDirection =
-            new int[]
+        this.Direction =
+            new byte[]
             {
-                this.constants.DIR_S,
-                this.constants.DIR_W,
-                this.constants.DIR_E,
-                this.constants.DIR_N
+                this.constants.ROOM_FLG_DIR_N,
+                this.constants.ROOM_FLG_DIR_S,
+                this.constants.ROOM_FLG_DIR_W,
+                this.constants.ROOM_FLG_DIR_E
+            };
+        this.InvertDirection =
+            new byte[]
+            {
+                this.constants.ROOM_FLG_DIR_S,
+                this.constants.ROOM_FLG_DIR_N,
+                this.constants.ROOM_FLG_DIR_E,
+                this.constants.ROOM_FLG_DIR_W
             };
     }
 }
