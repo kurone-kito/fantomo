@@ -171,6 +171,5 @@ public class FieldCalculator : UdonSharpBehaviour
             this.roomsCalculator = this.managers.GetComponentInChildren<RoomsCalculator>();
             this.syncManager = this.managers.GetComponentInChildren<SyncManager>();
         }
-        this.SendCustomEventDelayedSeconds(nameof(this.Calculate), .1f);
     }
 }

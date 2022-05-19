@@ -8,7 +8,14 @@ using VRC.SDKBase;
 public class EntryManager : UdonSharpBehaviour
 {
     /// <value>同期管理オブジェクト。</value>
+    /// <value>管理ロジックの親となるオブジェクト。</value>
     [SerializeField]
+    private GameObject managers;
+
+    /// <value>フィールド算出のロジック。</value>
+    private FieldCalculator fieldCalculator;
+
+    /// <value>同期管理オブジェクト。</value>
     private SyncManager syncManager;
 
     /// <value>エントリーしている、プレイヤーの一覧。。</value>
@@ -59,9 +66,16 @@ public class EntryManager : UdonSharpBehaviour
                 "syncManager が null のため、エントリーを行えません。: EntryManager.Decide");
             return;
         }
+        if (this.fieldCalculator == null)
+        {
+            Debug.LogError(
+                "fieldCalculator が null のため、エントリーを行えません。: EntryManager.Decide");
+            return;
+        }
         this.syncManager.ChangeOwner();
         this.syncManager.decided = true;
         this.syncManager.RequestSerialization();
+        this.fieldCalculator.Calculate();
     }
 
     /// <summary>空きスロットのインデックスを取得します。</summary>
@@ -191,6 +205,24 @@ public class EntryManager : UdonSharpBehaviour
         if (this.entrySystem != null)
         {
             this.entrySystem.UpdateView();
+        }
+    }
+
+
+    /// <summary>
+    /// <para>
+    /// このコンポーネントが初期化された時に呼び出す、コールバック。
+    /// </para>
+    /// <para>ここでは、各フィールドの確保を行います。</para>
+    /// </summary>
+    void Start()
+    {
+        if (this.managers)
+        {
+            this.syncManager =
+                this.managers.GetComponentInChildren<SyncManager>();
+            this.fieldCalculator =
+                this.managers.GetComponentInChildren<FieldCalculator>();
         }
     }
 
