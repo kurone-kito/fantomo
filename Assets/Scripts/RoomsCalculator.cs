@@ -15,6 +15,8 @@ public class RoomsCalculator : UdonSharpBehaviour
     private Constants constants;
     /// <summary>方角周りの計算ロジック。</summary>
     private DirectionCalculator directionCalculator;
+    /// <summary>探索済みの部屋インデックス一覧。</summary>
+    private int[] visited;
 
     /// <summary>初期状態の部屋情報一覧を取得します。</summary>
     public byte[] CreateIdentityRooms()
@@ -48,13 +50,11 @@ public class RoomsCalculator : UdonSharpBehaviour
                 "constants が null のため、部屋を算出できません。: RoomsCalculator.GetExplorableRoomsLength");
             return 0;
         }
-        var visited = new int[rooms.Length];
         for (var i = rooms.Length; --i >= 0; )
         {
-            visited[i] = -1;
+            this.visited[i] = -1;
         }
-        return this.getExplorableRoomsLengthRecursive(
-            rooms, visited, 0) + 1;
+        return this.getExplorableRoomsLengthRecursive(rooms, 0) + 1;
     }
 
     /// <summary>
@@ -148,16 +148,14 @@ public class RoomsCalculator : UdonSharpBehaviour
     /// 探索可能な部屋数を取得するために、再帰的探索を行います。
     /// </summary>
     /// <param name="rooms">現在の部屋状況一覧。</param>
-    /// <param name="visited">探索済みの部屋インデックス。</param>
     /// <param name="index">現在探索中の部屋インデックス。</param>
-    /// <param name="visitedLength">探索済みの部屋数。</param>
     /// <returns>探索可能な部屋数。</returns>
     [RecursiveMethod]
-    private int getExplorableRoomsLengthRecursive(
-        byte[] rooms, int[] visited, int index)
+    private int getExplorableRoomsLengthRecursive(byte[] rooms, int index)
     {
         var DIR_MAX = this.constants.DIR_MAX;
         var ROOM_FLG_HAS_MINE = this.constants.ROOM_FLG_HAS_MINE;
+        var visited = this.visited;
         var neighbors = this.getNeighborIndexes(rooms[index], index);
         for (var i = visited.Length; --i >= 0;)
         {
@@ -191,9 +189,7 @@ public class RoomsCalculator : UdonSharpBehaviour
                 continue;
             }
             result +=
-                1 +
-                this.getExplorableRoomsLengthRecursive(
-                    rooms, visited, (int)ni);
+                1 + this.getExplorableRoomsLengthRecursive(rooms, (int)ni);
         }
         return result;
     }
@@ -279,6 +275,7 @@ public class RoomsCalculator : UdonSharpBehaviour
                 this.managers.GetComponentInChildren<Constants>();
             this.directionCalculator =
                 this.managers.GetComponentInChildren<DirectionCalculator>();
+            this.visited = new int[this.constants.NUM_ROOMS];
         }
     }
 }

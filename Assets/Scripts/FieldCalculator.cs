@@ -40,120 +40,100 @@ public class FieldCalculator : UdonSharpBehaviour
 
     private byte[] calculateIntenalRooms()
     {
-        var started = Time.realtimeSinceStartup;
         var NUM_KEYS = this.constants.NUM_KEYS;
         var NUM_PLAYERS = this.constants.NUM_PLAYERS;
         var ROOM_REMOVE_DOOR_RATE = this.constants.ROOM_REMOVE_DOOR_RATE;
         var ROOM_FLG_HAS_KEY = this.constants.ROOM_FLG_HAS_KEY;
         var ROOM_FLG_HAS_SPAWN = this.constants.ROOM_FLG_HAS_SPAWN;
         var rooms = roomsCalculator.CreateIdentityRooms();
-        var cutted = this.cutRoute(rooms, ROOM_REMOVE_DOOR_RATE);
-        var puttedMines = this.putMinesRecursively(cutted, 0);
-        var puttedKeys =
-            this.putItemsRecursively(
-                puttedMines, NUM_KEYS, ROOM_FLG_HAS_KEY);
-        var result = this.putItemsRecursively(
-            puttedKeys, NUM_PLAYERS, ROOM_FLG_HAS_SPAWN);
-        return result;
-    }
-
-    /// <summary>再帰的に指定数の扉を削除します。</summary>
-    /// <param name="rooms">部屋情報一覧。</param>
-    /// <param name="removes">削除する扉の数。</param>
-    /// <returns>新しい部屋情報一覧。</returns>
-    [RecursiveMethod]
-    private byte[] cutRouteRecursively(byte[] rooms, int removes)
-    {
-        if (removes < 0)
-        {
-            return rooms;
-        }
-        var dirs = this.directionCalculator.Direction;
-        var targetIndex = Random.Range(0, rooms.Length);
-        var dirMark = ~(uint)dirs[Random.Range(0, dirs.Length)];
-        var nextRooms = new byte[rooms.Length];
-        for (int i = rooms.Length; --i >= 0;)
-        {
-            nextRooms[i] =
-                i == targetIndex ? (byte)(rooms[i] & dirMark) : rooms[i];
-        }
-        var explorable =
-            this.roomsCalculator.GetExplorableRoomsLength(nextRooms);
-        var next = explorable == rooms.Length;
-        return this.cutRouteRecursively(
-            next ? nextRooms : rooms, removes - (next ? 1 : 0));
+        this.cutRoute(rooms, ROOM_REMOVE_DOOR_RATE);
+        this.putMines(rooms);
+        this.putItems(rooms, NUM_KEYS, ROOM_FLG_HAS_KEY);
+        this.putItems(rooms, NUM_PLAYERS, ROOM_FLG_HAS_SPAWN);
+        return rooms;
     }
 
     /// <summary>扉を指定の確率で削除します。</summary>
     /// <param name="rooms">部屋情報一覧。</param>
     /// <param name="percentage">確率を 0f～1f の間で指定します。</param>
-    /// <returns>新しい部屋情報一覧。</returns>
-    private byte[] cutRoute(byte[] rooms, float percentage) =>
-        this.cutRouteRecursively(
-            rooms,
-            (int)(rooms.Length * this.constants.DIR_MAX * percentage));
+    private void cutRoute(byte[] rooms, float percentage)
+    {
+        var roomsCalculator = this.roomsCalculator;
+        var amount =
+            (int)(rooms.Length * this.constants.DIR_MAX * percentage);
+        while (amount >= 0)
+        {
+            var dirs = this.directionCalculator.Direction;
+            var targetIndex = Random.Range(0, rooms.Length);
+            var currentRoom = rooms[targetIndex];
+            var dirMark = ~(uint)dirs[Random.Range(0, dirs.Length)];
+            var nextRoom = (byte)(currentRoom & dirMark);
+            rooms[targetIndex] = nextRoom;
+            var explorable =
+                roomsCalculator.GetExplorableRoomsLength(rooms);
+            var next = explorable == rooms.Length;
+            if (next)
+            {
+                amount--;
+            }
+            else
+            {
+                rooms[targetIndex] = currentRoom;
+            }
+        }
+    }
 
-    /// <summary>再帰的に地雷を設置します。</summary>
+    /// <summary>地雷を設置します。</summary>
     /// <param name="rooms">部屋情報一覧。</param>
-    /// <param name="putted">設置済み地雷の個数。</param>
-    /// <returns>新しい部屋情報一覧。</returns>
-    [RecursiveMethod]
-    private byte[] putMinesRecursively(byte[] rooms, int putted)
+    private void putMines(byte[] rooms)
     {
         var NUM_MINES = this.constants.NUM_MINES;
         var ROOM_FLG_HAS_MINE = this.constants.ROOM_FLG_HAS_MINE;
-        if (putted >= NUM_MINES)
+        var roomsCalculator = this.roomsCalculator;
+        int putted = 0;
+        while (putted < NUM_MINES)
         {
-            return rooms;
+            var targetIndex = Random.Range(0, rooms.Length);
+            var currentRoom = rooms[targetIndex];
+            if ((currentRoom & ROOM_FLG_HAS_MINE) != 0)
+            {
+                continue;
+            }
+            var nextRoom = (byte)(currentRoom | ROOM_FLG_HAS_MINE);
+            rooms[targetIndex] = nextRoom;
+            var amount = rooms.Length - putted;
+            var next =
+                !roomsCalculator.HasUnExplorableMine(rooms) &&
+                roomsCalculator.GetExplorableRoomsLength(rooms) == amount;
+            if (next)
+            {
+                putted++;
+            }
+            else
+            {
+                rooms[targetIndex] = currentRoom;
+            }
         }
-        var targetIndex = Random.Range(0, rooms.Length);
-        if ((rooms[targetIndex] & ROOM_FLG_HAS_MINE) != 0)
-        {
-            return this.putMinesRecursively(rooms, putted);
-        }
-        var nextRooms = new byte[rooms.Length];
-        for (int i = rooms.Length; --i >= 0;)
-        {
-            nextRooms[i] =
-                i == targetIndex
-                    ? (byte)(rooms[i] | ROOM_FLG_HAS_MINE)
-                    : rooms[i];
-        }
-        var next =
-            !this.roomsCalculator.HasUnExplorableMine(nextRooms) &&
-            this.roomsCalculator.GetExplorableRoomsLength(nextRooms) ==
-                rooms.Length - putted;
-        return this.putMinesRecursively(
-            next ? nextRooms : rooms, putted + (next ? 1 : 0));
     }
 
-    /// <summary>再帰的にアイテムを設置します。</summary>
+    /// <summary>アイテムを設置します。</summary>
     /// <param name="rooms">部屋情報一覧。</param>
     /// <param name="amount">設置個数。</param>
-    /// <param name="itemFlag">アイテムを示すフラグ。</param>
-    /// <returns>新しい部屋情報一覧。</returns>
-    [RecursiveMethod]
-    private byte[] putItemsRecursively(byte[] rooms, int amount, byte itemFlag)
+    /// <param name="flag">アイテムを示すフラグ。</param>
+    private void putItems(byte[] rooms, int amount, int flag)
     {
-        if (amount <= 0)
+        var roomsCalculator = this.roomsCalculator;
+        while (amount > 0)
         {
-            return rooms;
+            var targetIndex = Random.Range(0, rooms.Length);
+            var currentRoom = rooms[targetIndex];
+            if (roomsCalculator.HasAnyItems(currentRoom))
+            {
+                continue;
+            }
+            rooms[targetIndex] = (byte)(currentRoom | flag);
+            amount--;
         }
-        var targetIndex = Random.Range(0, rooms.Length);
-        if (this.roomsCalculator.HasAnyItems(rooms[targetIndex]))
-        {
-            return this.putItemsRecursively(rooms, amount, itemFlag);
-        }
-        var nextRooms = new byte[rooms.Length];
-        for (int i = rooms.Length; --i >= 0;)
-        {
-            nextRooms[i] =
-                i == targetIndex
-                    ? (byte)(rooms[i] | itemFlag)
-                    : rooms[i];
-        }
-        return this.putItemsRecursively(
-            nextRooms, amount - 1, itemFlag);
     }
 
     /// <summary>
