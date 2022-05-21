@@ -52,6 +52,9 @@ public class InitializeManager : UdonSharpBehaviour
     [SerializeField]
     private GameObject room;
 
+    /// <summary>定数一覧。</summary>
+    private Constants constants;
+
     /// <value>
     /// <seealso cref="InitializeManager.sources"/>に対する、
     /// 生成物のインデックス一覧。
@@ -87,11 +90,18 @@ public class InitializeManager : UdonSharpBehaviour
     /// </summary>
     public void StartInitialize()
     {
-        var constants = this.managers.GetComponentInChildren<Constants>();
-        this.indexes = new int[constants.NUM_INSTANTIATES];
-        this.sources = new GameObject[constants.NUM_INSTANTIATES];
-        this.parents = new GameObject[constants.NUM_INSTANTIATES];
-        this.positions = new Vector3[constants.NUM_INSTANTIATES];
+        var constants = this.constants;
+        var LOAD_INTERVAL = constants.LOAD_INTERVAL;
+        var NUM_INSTANTIATES = constants.NUM_INSTANTIATES;
+        var NUM_KEYS = constants.NUM_KEYS;
+        var NUM_MINES = constants.NUM_MINES;
+        var NUM_ROOMS = constants.NUM_ROOMS;
+        var ROOM_SIZE = constants.ROOM_SIZE;
+        var ROOMS_WIDTH = constants.ROOMS_WIDTH;
+        this.indexes = new int[NUM_INSTANTIATES];
+        this.sources = new GameObject[NUM_INSTANTIATES];
+        this.parents = new GameObject[NUM_INSTANTIATES];
+        this.positions = new Vector3[NUM_INSTANTIATES];
         this.parents[0] = this.lobbyRoom;
         this.positions[0] = new Vector3(0f, 1.4f, -4.8f);
         this.sources[0] = this.mirrorSystem;
@@ -99,31 +109,33 @@ public class InitializeManager : UdonSharpBehaviour
         this.positions[1] = new Vector3(4.94f, 1.4f, 0f);
         this.sources[1] = this.entrySystem;
         var index = 2;
-        for (var i = 0; i < constants.NUM_KEYS; i++)
+        for (var i = 0; i < NUM_KEYS; i++)
         {
             var j = index++;
             this.indexes[j] = i;
             this.sources[j] = this.key;
             this.parents[j] = this.gameField ? this.gameField.gameObject : null;
         }
-        for (var i = 0; i < constants.NUM_MINES; i++)
+        for (var i = 0; i < NUM_MINES; i++)
         {
             var j = index++;
             this.indexes[j] = i;
             this.sources[j] = this.mine;
             this.parents[j] = this.gameField ? this.gameField.gameObject : null;
         }
-        for (var i = 0; i < constants.NUM_ROOMS; i++)
+        for (var i = 0; i < NUM_ROOMS; i++)
         {
             var j = index++;
             this.indexes[j] = i;
             this.sources[j] = this.room;
             this.parents[j] = this.gameField ? this.gameField.gameObject : null;
             this.positions[j] =
-                Vector3.right * (i % constants.ROOMS_WIDTH) * constants.ROOM_SIZE +
-                Vector3.forward * (i / constants.ROOMS_WIDTH) * constants.ROOM_SIZE;
+                Vector3.right * (i % ROOMS_WIDTH) * ROOM_SIZE +
+                Vector3.forward * (i / ROOMS_WIDTH) * ROOM_SIZE;
         }
-        this.SendCustomEventDelayedSeconds(nameof(RunInstantiateIteration), .1f);
+        this.SendCustomEventDelayedSeconds(
+            nameof(RunInstantiateIteration),
+            LOAD_INTERVAL);
     }
 
     /// <summary>
@@ -131,6 +143,7 @@ public class InitializeManager : UdonSharpBehaviour
     /// </summary>
     public void RunInstantiateIteration()
     {
+        var LOAD_INTERVAL = this.constants.LOAD_INTERVAL;
         if (this.iterator < this.sources.Length)
         {
             var i = this.iterator++;
@@ -158,11 +171,15 @@ public class InitializeManager : UdonSharpBehaviour
                 }
             }
             this.progress.Progress = (float)this.iterator / this.sources.Length;
-            this.SendCustomEventDelayedSeconds(nameof(RunInstantiateIteration), .1f);
+            this.SendCustomEventDelayedSeconds(
+                nameof(RunInstantiateIteration),
+                LOAD_INTERVAL);
         }
         else
         {
-            this.SendCustomEventDelayedSeconds(nameof(FinishInstantiate), .1f);
+            this.SendCustomEventDelayedSeconds(
+                nameof(FinishInstantiate),
+                LOAD_INTERVAL);
         }
     }
 
@@ -182,7 +199,9 @@ public class InitializeManager : UdonSharpBehaviour
         }
         else
         {
-            this.SendCustomEventDelayedSeconds(nameof(FinishInstantiate), .1f);
+            this.SendCustomEventDelayedSeconds(
+                nameof(FinishInstantiate),
+                this.constants.LOAD_INTERVAL);
         }
     }
 
@@ -216,9 +235,16 @@ public class InitializeManager : UdonSharpBehaviour
     /// </summary>
     void Start()
     {
-        if (this.progress && this.managers && this.managers.GetComponentInChildren<Constants>() != null)
+        if (this.managers)
         {
-            this.SendCustomEventDelayedSeconds(nameof(StartInitialize), 1f);
+            this.constants =
+                this.managers.GetComponentInChildren<Constants>();
+        }
+        if (this.progress && this.constants)
+        {
+            this.SendCustomEventDelayedSeconds(
+                nameof(StartInitialize),
+                this.constants.LOAD_INTERVAL);
         }
     }
 }

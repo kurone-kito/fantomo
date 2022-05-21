@@ -20,6 +20,9 @@ public class Constants : UdonSharpBehaviour
     /// <summary>方角を示す定数の最大値。</summary>
     public int DIR_MAX => 4;
 
+    /// <summary>初期化処理におけるインターバル。</summary>
+    public float LOAD_INTERVAL => 0.2f;
+
     /// <summary>解錠状態を示すフラグ定数。</summary>
     public int LOCKSTATE_UNLOCKED => 0;
 
