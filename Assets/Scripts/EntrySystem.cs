@@ -5,12 +5,16 @@ using UnityEngine.UI;
 using VRC.SDKBase;
 using VRC.Udon.Common.Interfaces;
 
-/// <summary>エントリー機能のロジック。</summary>
-[UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
+/// <summary>エントリー フォーム表示制御のロジック。</summary>
+[UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 public class EntrySystem : UdonSharpBehaviour
 {
     /// <value>最大エントリー可能数。</value>
     private const int MAX_PLAYERS = 3;
+
+    /// <value>ゲームフィールドのロジック。</value>
+    [NonSerialized]
+    public GameField gameField = null;
 
     /// <value>エントリーボタン本体。</value>
     [SerializeField]
@@ -20,77 +24,26 @@ public class EntrySystem : UdonSharpBehaviour
     [SerializeField]
     private Text entryButtonLabel = null;
 
-    /// <value>ゲームフィールドのロジック。</value>
-    [SerializeField]
-    private GameField gameField = null;
-
     /// <value>ゲーム開始ボタン本体。</value>
     [SerializeField]
     private GameObject startButton = null;
-
-    /// <value>エントリーしている、プレイヤーの一覧。</value>
-    [NonSerialized]
-    [UdonSynced]
-    public int[] playersId = new int[MAX_PLAYERS];
-
-    /// <value>エントリーしている、プレイヤーの一覧。</value>
-    [NonSerialized]
-    [UdonSynced]
-    public bool gameStarted = false;
 
     /// <value>エントリーしている、プレイヤーの一覧を表示するためのラベル。</value>
     [SerializeField]
     private Text[] playerNamesLabel = new Text[MAX_PLAYERS];
 
-    /// <summary>
-    /// 同期データを受領・適用した後に呼び出す、コールバック。
-    /// </summary>
-    public override void OnDeserialization()
-    {
-        this.updateView();
-    }
+    /// <value>エントリー管理オブジェクト。</value>
+    private EntryManager _entryManager;
 
-    /// <summary>
-    /// プレイヤーがこのワールドを去ったときに呼び出す、コールバック。
-    /// </summary>
-    public override void OnPlayerLeft(VRCPlayerApi player)
+    public EntryManager entryManager
     {
-        if (
-            Networking.IsOwner(Networking.LocalPlayer, this.gameObject) &&
-            !this.isEntriedAny())
+        get => this._entryManager;
+        set
         {
-            this.gameStarted = false;
-            this.RequestSerialization();
+            value.entrySystem = this;
+            this._entryManager = value;
+            this.UpdateView();
         }
-        this.updateView();
-    }
-
-    /// <summary>
-    /// <para>
-    /// 任意のプレイヤーがリスポーンした際に呼び出す、コールバック。
-    /// </para>
-    /// <para>
-    /// このワールドでは、リスポーンはリタイアと同義であるため、
-    /// エントリーを強制的に取り消しています。
-    /// </para>
-    /// </summary>
-    /// <param name="player">リスポーンしたプレイヤー。</param>
-    public override void OnPlayerRespawn(VRCPlayerApi player)
-    {
-        if (player.isLocal && !Networking.IsOwner(player, this.gameObject))
-        {
-            this.changeOwner();
-        }
-        if (Networking.IsOwner(player, this.gameObject))
-        {
-            this.owner__removeId(player.playerId);
-            if (!this.isEntriedAny())
-            {
-                this.gameStarted = false;
-            }
-            this.RequestSerialization();
-        }
-        this.updateView();
     }
 
     /// <summary>
@@ -98,7 +51,7 @@ public class EntrySystem : UdonSharpBehaviour
     /// </summary>
     public override void OnSpawn()
     {
-        this.updateView();
+        this.UpdateView();
     }
 
     /// <summary>
@@ -106,23 +59,33 @@ public class EntrySystem : UdonSharpBehaviour
     /// </summary>
     void Start()
     {
-        this.updateView();
+        this.UpdateView();
     }
 
     /// <summary>エントリーします。</summary>
     public void Entry()
     {
-        this.addOrRemoveLocalPlayer();
-        this.updateView();
+        if (this.entryManager == null)
+        {
+            Debug.LogError(
+                "entryManager が null のため、エントリーを行えません。: EntrySystem.Entry");
+            return;
+        }
+        this.entryManager.ToggleEntry();
+        this.UpdateView();
     }
 
     /// <summary>ゲーム開始ボタンを押下した際に呼び出します。</summary>
     public void GameStart()
     {
-        this.changeOwner();
-        this.gameStarted = true;
-        this.RequestSerialization();
-        this.updateView();
+        if (this.entryManager == null)
+        {
+            Debug.LogError(
+                "entryManager が null のため、ゲーム開始できません。: EntrySystem.GameStart");
+            return;
+        }
+        this.entryManager.Decide();
+        this.UpdateView();
         this.SendCustomNetworkEvent(
             NetworkEventTarget.All, nameof(teleportToGameField));
     }
@@ -132,136 +95,61 @@ public class EntrySystem : UdonSharpBehaviour
     /// </summary>
     public void teleportToGameField()
     {
-        if (this.isEntried() && this.gameField != null)
+        var manager = this.entryManager;
+        var gameField = this.gameField;
+        if (manager == null || gameField == null)
         {
-            this.gameField.Initialize();
-            this.gameField.teleportToGameField();
+            Debug.LogError(
+                "entryManager または gameField が null のため、転送できません。: EntrySystem.teleportToGameField");
+            return;
         }
-
+        if (!manager.IsEntried())
+        {
+            Debug.LogError(
+                "誰も参加していないため、転送できません。: EntrySystem.teleportToGameField");
+            return;
+        }
+        gameField.Initialize();
+        gameField.teleportToGameField();
     }
 
     /// <summary>ビューを最新の状態に更新します。</summary>
-    private void updateView()
+    public void UpdateView()
     {
-        var entried = this.isEntried();
-        var full = !entried && this.getEmpty() < 0;
+        var manager = this.entryManager;
+        var valid = manager != null;
+        var entried = valid && manager.IsEntried();
+        var full = !entried && manager.GetEmpty() < 0;
         entryButtonLabel.text =
-            this.gameStarted ? "ゲームが始まります..." :
+            valid && manager.Decided ? "ゲームが始まります..." :
             entried ? "参加を取り消す" :
             full ? "満員です" :
             "参加する";
-        entryButton.interactable = !full && !this.gameStarted;
-        startButton.SetActive(entried && !this.gameStarted);
-        for (var i = this.playersId.Length; --i >= 0; )
+        entryButton.interactable = !full && valid && !manager.Decided;
+        startButton.SetActive(
+            entried && !manager.Decided && this.gameField != null);
+        for (var i = playerNamesLabel.Length; --i >= 0; )
         {
-            var id = this.playersId[i];
-            var player = VRCPlayerApi.GetPlayerById(id);
-            playerNamesLabel[i].text =
-                player != null && player.IsValid()
-                    ? string.Format("{0}(ID: {1})", player.displayName, id)
-                    : string.Empty;
-        }
-    }
-
-    /// <summary>ローカル プレイヤーを追加または削除します。</summary>
-    private void addOrRemoveLocalPlayer()
-    {
-        this.changeOwner();
-        if (this.isEntried())
-        {
-            this.owner__removeId(Networking.LocalPlayer.playerId);
-        }
-        else
-        {
-            this.owner__addId();
-        }
-        this.RequestSerialization();
-    }
-
-    /// <summary>空きスロットのインデックスを取得します。</summary>
-    /// <returns>
-    /// 空きスロットのインデックス。存在しない場合、負数。
-    /// </returns>
-    private int getEmpty()
-    {
-        // NOTE: UDON では Lambda も delegate も使えない。。
-        var localId = Networking.LocalPlayer.playerId;
-        for (var i = this.playersId.Length; --i >= 0; )
-        {
-            var player = VRCPlayerApi.GetPlayerById(this.playersId[i]);
-            if (player == null || !player.IsValid())
-            {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    /// <summary>
-    /// 任意のプレイヤーがエントリーしているかどうかを取得します。
-    /// </summary>
-    /// <returns>エントリーしている場合、true。</returns>
-    private bool isEntriedAny()
-    {
-        for (var i = this.playersId.Length; --i >= 0; )
-        {
-            var player = VRCPlayerApi.GetPlayerById(this.playersId[i]);
-            if (player != null && player.IsValid())
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /// <summary>エントリーしているかどうかを取得します。</summary>
-    /// <returns>エントリーしている場合、<c>true</c>。</returns>
-    private bool isEntried()
-    {
-        // NOTE: UDON では Lambda も delegate も使えない。。
-        var localId = Networking.LocalPlayer.playerId;
-        foreach (var id in this.playersId)
-        {
-            if (id == localId)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /// <summary>オブジェクトオーナーを奪取・変更します。</summary>
-    private void changeOwner()
-    {
-        var player = Networking.LocalPlayer;
-        if (!Networking.IsOwner(player, this.gameObject))
-        {
-            Networking.SetOwner(player, this.gameObject);
+            playerNamesLabel[i].text = getDisplayName(manager.Ids[i]);
         }
     }
 
     /// <summary>
-    /// <para>プレイヤー ID をエントリー一覧に追加します。</para>
-    /// <para>この関数はオブジェクトオーナーのみ使用可能です。</para>
+    /// 指定した <paramref name="id"/> に対応する、
+    /// プレイヤーの表示名を取得します。
     /// </summary>
-    private void owner__addId()
+    /// <param name="id">このワールドにおける、プレイヤー ID。</param>
+    /// <returns>プレイヤーの表示名。無効である場合、空文字。</returns>
+    private string getDisplayName(int id)
     {
-        this.playersId[this.getEmpty()] = Networking.LocalPlayer.playerId;
-    }
-
-    /// <summary>
-    /// <para>プレイヤー ID をエントリー一覧から削除します。</para>
-    /// <para>この関数はオブジェクトオーナーのみ使用可能です。</para>
-    /// </summary>
-    /// <param name="id">プレイヤー ID。</param>
-    private void owner__removeId(int id)
-    {
-        for (var i = this.playersId.Length; --i >= 0; )
+        var manager = this.entryManager;
+        if (manager == null || manager.InvalidLocalPlayer)
         {
-            if (this.playersId[i] == id)
-            {
-                this.playersId[i] = 0;
-            }
+            return id > 0 ? "Anonymous" : string.Empty;
         }
+        var player = VRCPlayerApi.GetPlayerById(id);
+        return player != null && player.IsValid()
+            ? player.displayName
+            : string.Empty;
     }
 }

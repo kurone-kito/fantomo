@@ -24,6 +24,10 @@ public class SwitchContainer : UdonSharpBehaviour
     /// <summary>毎フレーム呼び出される、コールバック。</summary>
     void Update()
     {
+        if (Networking.LocalPlayer == null)
+        {
+            return;
+        }
         var trackingData =
             Networking.LocalPlayer.GetTrackingData(
                 VRCPlayerApi.TrackingDataType.Head);

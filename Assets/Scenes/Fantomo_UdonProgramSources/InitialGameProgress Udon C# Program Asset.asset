@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
-  m_Name: Hello
+  m_Name: InitialGameProgress Udon C# Program Asset
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: bc66f89604e277142bfd5a14ef1d2d7d,
+  serializedUdonProgramAsset: {fileID: 11400000, guid: 4b9736bffe4de1c43a00487f37911057,
     type: 2}
   udonAssembly: 
   assemblyError: 
-  sourceCsScript: {fileID: 11500000, guid: e23ec503bd66b664e83ef2d898de61ac, type: 3}
-  behaviourSyncMode: 0
+  sourceCsScript: {fileID: 11500000, guid: 9bb8357f8d0e81344b4910b0dd60696c, type: 3}
+  behaviourSyncMode: 1
   behaviourIDHeapVarName: __refl_const_intnl_udonTypeID
   compileErrors: []
   hasInteractEvent: 0
@@ -49,7 +49,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: textObject
+      Data: progressImage
     - Name: $v
       Entry: 7
       Data: 2|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
@@ -61,7 +61,7 @@ MonoBehaviour:
       Data: 4|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: UnityEngine.GameObject, UnityEngine.CoreModule
+      Data: UnityEngine.UI.Image, UnityEngine.UI
     - Name: 
       Entry: 8
       Data: 
@@ -73,13 +73,13 @@ MonoBehaviour:
       Data: 0
     - Name: symbolResolvedTypeName
       Entry: 1
-      Data: UnityEngineGameObject
+      Data: UnityEngineUIImage
     - Name: symbolOriginalName
       Entry: 1
-      Data: textObject
+      Data: progressImage
     - Name: symbolUniqueName
       Entry: 1
-      Data: textObject
+      Data: progressImage
     - Name: symbolDefaultValue
       Entry: 6
       Data: 
@@ -91,7 +91,13 @@ MonoBehaviour:
       Data: 5|System.Collections.Generic.List`1[[System.Attribute, mscorlib]], mscorlib
     - Name: 
       Entry: 12
-      Data: 0
+      Data: 1
+    - Name: 
+      Entry: 7
+      Data: 6|UnityEngine.SerializeField, UnityEngine.CoreModule
+    - Name: 
+      Entry: 8
+      Data: 
     - Name: 
       Entry: 13
       Data: 
