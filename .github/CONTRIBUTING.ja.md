@@ -1,6 +1,6 @@
 # プロジェクトへの貢献
 
-Language: [🇬🇧](./CONTRIBUTING.md) | [🇯🇵](./CONTRIBUTING.ja.md) | [🇨🇳](./CONTRIBUTING.zh.md)
+Language: [🇬🇧](./CONTRIBUTING.md) | 🇯🇵 | [🇨🇳](./CONTRIBUTING.zh.md)
 
 このリポジトリに貢献する際には、変更を加える前に、このリポジトリの所有者と
 [Issues](https://github.com/kurone-kito/fantomo/issues)
@@ -13,6 +13,5 @@ Language: [🇬🇧](./CONTRIBUTING.md) | [🇯🇵](./CONTRIBUTING.ja.md) | [�
 [Pull request](https://github.com/kurone-kito/fantomo/pulls)
 を直接活用してください。
 
-このリポジトリでは、
-[英語、または日本語](https://translate.google.com/)
+このリポジトリでは、[英語、または日本語](https://translate.google.com/)
 での議論を推奨しています。
