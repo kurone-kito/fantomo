@@ -19,6 +19,7 @@
   "files.exclude": {
     "Assets/Scripts/*.meta": true
   },
+  "omnisharp.useModernNet": false,
   "search.exclude": {
     "**/.DS_Store": true,
     "**/.git": true,
