@@ -169,7 +169,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: LOCLED_BY_ME
+      Data: LOCKED_BY_ME
     - Name: $v
       Entry: 7
       Data: 9|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
@@ -190,10 +190,10 @@ MonoBehaviour:
       Data: SystemInt32
     - Name: symbolOriginalName
       Entry: 1
-      Data: LOCLED_BY_ME
+      Data: LOCKED_BY_ME
     - Name: symbolUniqueName
       Entry: 1
-      Data: LOCLED_BY_ME
+      Data: LOCKED_BY_ME
     - Name: symbolDefaultValue
       Entry: 6
       Data: 
@@ -226,7 +226,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: LOCLED_BY_ANYTHING
+      Data: LOCKED_BY_ANYTHING
     - Name: $v
       Entry: 7
       Data: 12|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
@@ -247,10 +247,10 @@ MonoBehaviour:
       Data: SystemInt32
     - Name: symbolOriginalName
       Entry: 1
-      Data: LOCLED_BY_ANYTHING
+      Data: LOCKED_BY_ANYTHING
     - Name: symbolUniqueName
       Entry: 1
-      Data: LOCLED_BY_ANYTHING
+      Data: LOCKED_BY_ANYTHING
     - Name: symbolDefaultValue
       Entry: 6
       Data: 

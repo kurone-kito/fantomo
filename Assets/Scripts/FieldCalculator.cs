@@ -35,10 +35,10 @@ public class FieldCalculator : UdonSharpBehaviour
                 "roomsCalculator が null のため、フィールドを算出できません。: FieldCalculator.Calculate");
             return null;
         }
-        return calculateIntenalRooms();
+        return calculateInternalRooms();
     }
 
-    private byte[] calculateIntenalRooms()
+    private byte[] calculateInternalRooms()
     {
         var NUM_KEYS = this.constants.NUM_KEYS;
         var NUM_PLAYERS = this.constants.NUM_PLAYERS;
@@ -69,9 +69,9 @@ public class FieldCalculator : UdonSharpBehaviour
             var dirMark = ~(uint)dirs[Random.Range(0, dirs.Length)];
             var nextRoom = (byte)(currentRoom & dirMark);
             rooms[targetIndex] = nextRoom;
-            var explorable =
-                roomsCalculator.GetExplorableRoomsLength(rooms);
-            var next = explorable == rooms.Length;
+            var reachable =
+                roomsCalculator.GetReachableRoomsLength(rooms);
+            var next = reachable == rooms.Length;
             if (next)
             {
                 amount--;
@@ -103,8 +103,8 @@ public class FieldCalculator : UdonSharpBehaviour
             rooms[targetIndex] = nextRoom;
             var amount = rooms.Length - putted;
             var next =
-                !roomsCalculator.HasUnExplorableMine(rooms) &&
-                roomsCalculator.GetExplorableRoomsLength(rooms) == amount;
+                !roomsCalculator.HasUnReachableMine(rooms) &&
+                roomsCalculator.GetReachableRoomsLength(rooms) == amount;
             if (next)
             {
                 putted++;
