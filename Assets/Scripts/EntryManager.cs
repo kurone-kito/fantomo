@@ -75,7 +75,8 @@ public class EntryManager : UdonSharpBehaviour
         this.syncManager.ChangeOwner();
         this.syncManager.decided = true;
         this.syncManager.RequestSerialization();
-        this.fieldCalculator.Calculate();
+        // TODO: 呼び出し先は仮実装。
+        this.fieldCalculator.Calculate(this, nameof(GetEmpty));
     }
 
     /// <summary>空きスロットのインデックスを取得します。</summary>
