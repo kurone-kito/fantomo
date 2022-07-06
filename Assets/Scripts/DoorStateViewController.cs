@@ -14,10 +14,10 @@ public class DoorStateViewController : UdonSharpBehaviour
     public readonly int LOCKED_BY_ENEMY = 1;
 
     /// <value>自プレイヤーによる施錠状態を示す定数。</value>
-    public readonly int LOCLED_BY_ME = 2;
+    public readonly int LOCKED_BY_ME = 2;
 
     /// <value>任意のプレイヤーによる施錠状態を示す定数。</value>
-    public readonly int LOCLED_BY_ANYTHING = 3;
+    public readonly int LOCKED_BY_ANYTHING = 3;
 
     /// <value>自分自身による施錠における、表示文字色。</value>
     [SerializeField]
@@ -93,8 +93,8 @@ public class DoorStateViewController : UdonSharpBehaviour
         foreach (var text in this.lockedTexts)
         {
             text.gameObject.SetActive(
-                (lockState & this.LOCLED_BY_ANYTHING) != 0);
-            text.color = (lockState & this.LOCLED_BY_ME) != 0
+                (lockState & this.LOCKED_BY_ANYTHING) != 0);
+            text.color = (lockState & this.LOCKED_BY_ME) != 0
                 ? this.myLockColor
                 : this.enemyLockColor;
         }

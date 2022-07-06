@@ -264,7 +264,7 @@ public class Door : UdonSharpBehaviour
         if (this.stateViewController != null)
         {
             this.stateViewController.UpdateLockState(
-                this.isMyLock() ? stateViewController.LOCLED_BY_ME :
+                this.isMyLock() ? stateViewController.LOCKED_BY_ME :
                 this.isLocked() ? stateViewController.LOCKED_BY_ENEMY :
                 stateViewController.UNLOCKED);
         }

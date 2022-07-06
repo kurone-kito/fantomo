@@ -42,19 +42,19 @@ public class RoomsCalculator : UdonSharpBehaviour
     /// </summary>
     /// <param name="rooms">現在の部屋状況一覧。</param>
     /// <returns>探索可能な部屋数。</returns>
-    public int GetExplorableRoomsLength(byte[] rooms)
+    public int GetReachableRoomsLength(byte[] rooms)
     {
         if (this.constants == null)
         {
             Debug.LogError(
-                "constants が null のため、部屋を算出できません。: RoomsCalculator.GetExplorableRoomsLength");
+                "constants が null のため、部屋を算出できません。: RoomsCalculator.GetReachableRoomsLength");
             return 0;
         }
         for (var i = rooms.Length; --i >= 0; )
         {
             this.visited[i] = -1;
         }
-        return this.getExplorableRoomsLengthRecursive(rooms, 0) + 1;
+        return this.getReachableRoomsLengthRecursive(rooms, 0) + 1;
     }
 
     /// <summary>
@@ -83,12 +83,12 @@ public class RoomsCalculator : UdonSharpBehaviour
     /// </summary>
     /// <param name="rooms">現在の部屋状況一覧。</param>
     /// <returns>探索不能な地雷が存在する場合、<c>true</c>。</returns>
-    public bool HasUnExplorableMine(byte[] rooms)
+    public bool HasUnReachableMine(byte[] rooms)
     {
         if (this.constants == null)
         {
             Debug.LogError(
-                "constants が null のため、部屋を算出できません。: RoomsCalculator.HasUnExplorableMine");
+                "constants が null のため、部屋を算出できません。: RoomsCalculator.HasUnReachableMine");
             return false;
         }
         var DIR_MAX = this.constants.DIR_MAX;
@@ -151,7 +151,7 @@ public class RoomsCalculator : UdonSharpBehaviour
     /// <param name="index">現在探索中の部屋インデックス。</param>
     /// <returns>探索可能な部屋数。</returns>
     [RecursiveMethod]
-    private int getExplorableRoomsLengthRecursive(byte[] rooms, int index)
+    private int getReachableRoomsLengthRecursive(byte[] rooms, int index)
     {
         var DIR_MAX = this.constants.DIR_MAX;
         var ROOM_FLG_HAS_MINE = this.constants.ROOM_FLG_HAS_MINE;
@@ -189,7 +189,7 @@ public class RoomsCalculator : UdonSharpBehaviour
                 continue;
             }
             result +=
-                1 + this.getExplorableRoomsLengthRecursive(rooms, (int)ni);
+                1 + this.getReachableRoomsLengthRecursive(rooms, (int)ni);
         }
         return result;
     }
@@ -230,12 +230,12 @@ public class RoomsCalculator : UdonSharpBehaviour
         var constants = this.constants;
         if (constants == null)
         {
-            return this.packNeightborIndexes(INV, INV, INV, INV);
+            return this.packNeighborIndexes(INV, INV, INV, INV);
         }
         var xy = this.getXYFromIndex(index);
         var x = xy & 0xF;
         var y = (xy >> 4) & 0xF;
-        return this.packNeightborIndexes(
+        return this.packNeighborIndexes(
             (room & (1 << constants.ROOM_FLG_DIR_N)) == 0
                 ? INV
                 : this.getIndexFromXY(x - 1, y),
@@ -260,7 +260,7 @@ public class RoomsCalculator : UdonSharpBehaviour
     /// 隣接する部屋のインデックス一覧を、上位から 8bit ごとに
     /// +X、-X、+Y、-Y の順で返します。
     /// </returns>
-    private uint packNeightborIndexes(byte n, byte s, byte w, byte e) =>
+    private uint packNeighborIndexes(byte n, byte s, byte w, byte e) =>
         ((uint)e << 24) | ((uint)w << 16) | ((uint)s << 8) | (uint)n;
 
     /// <summary>

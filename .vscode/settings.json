@@ -1,15 +1,33 @@
 {
+  "[csharp]": {
+    "editor.defaultFormatter": "satokaz.vscode-bs-ctrlchar-remover"
+  },
+  "cSpell.ignorePaths": [".git/objects", "CODE_OF_CONDUCT.*", ".vscode"],
+  "cSpell.words": [
+    "behaviour",
+    "cref",
+    "kito",
+    "kurone",
+    "lerp",
+    "mathf",
+    "paramref",
+    "respawn",
+    "seealso",
+    "udon"
+  ],
+  "editor.formatOnSave": true,
   "files.exclude": {
+    "Assets/Scripts/*.meta": true
+  },
+  "omnisharp.useModernNet": false,
+  "search.exclude": {
     "**/.DS_Store": true,
     "**/.git": true,
-    "**/.gitignore": true,
-    "**/.gitmodules": true,
     "**/*.booproj": true,
     "**/*.pidb": true,
     "**/*.suo": true,
     "**/*.user": true,
     "**/*.userprefs": true,
-    "**/*.unityproj": true,
     "**/*.dll": true,
     "**/*.exe": true,
     "**/*.pdf": true,
@@ -39,16 +57,15 @@
     "**/*.cubemap": true,
     "**/*.flare": true,
     "**/*.mat": true,
-    "**/*.meta": true,
     "**/*.prefab": true,
     "**/*.unity": true,
+    "Assets/Scripts/*.meta": true,
     "build/": true,
     "Build/": true,
     "Library/": true,
     "library/": true,
     "obj/": true,
     "Obj/": true,
-    "ProjectSettings/": true,
     "temp/": true,
     "Temp/": true
   }

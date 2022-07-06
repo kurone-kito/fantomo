@@ -75,7 +75,8 @@ public class EntryManager : UdonSharpBehaviour
         this.syncManager.ChangeOwner();
         this.syncManager.decided = true;
         this.syncManager.RequestSerialization();
-        this.fieldCalculator.Calculate();
+        // TODO: 呼び出し先は仮実装。
+        this.fieldCalculator.Calculate(this, nameof(GetEmpty));
     }
 
     /// <summary>空きスロットのインデックスを取得します。</summary>
@@ -103,7 +104,7 @@ public class EntryManager : UdonSharpBehaviour
 
     /// <summary>エントリーしているかどうかを取得します。</summary>
     /// <returns>エントリーしている場合、<c>true</c>。</returns>
-    public bool IsEntried()
+    public bool IsEntry()
     {
         if (this.syncManager != null)
         {
@@ -123,7 +124,7 @@ public class EntryManager : UdonSharpBehaviour
     /// 任意のプレイヤーがエントリーしているかどうかを取得します。
     /// </summary>
     /// <returns>エントリーしている場合、<c>true</c>。</returns>
-    public bool IsEntriedAny()
+    public bool IsEntryAny()
     {
         if (this.syncManager != null)
         {
@@ -152,13 +153,13 @@ public class EntryManager : UdonSharpBehaviour
             return;
         }
         this.syncManager.ChangeOwner();
-        if (this.IsEntried())
+        if (this.IsEntry())
         {
-            this.UNSYNC__removeId((short)this.LocalPlayerId);
+            this.SYNC__removeId((short)this.LocalPlayerId);
         }
         else
         {
-            this.UNSYNC__addId();
+            this.SYNC__addId();
         }
         this.syncManager.RequestSerialization();
     }
@@ -195,8 +196,8 @@ public class EntryManager : UdonSharpBehaviour
         if (player.isLocal)
         {
             this.syncManager.ChangeOwner();
-            this.UNSYNC__removeId((short)player.playerId);
-            if (!this.IsEntriedAny())
+            this.SYNC__removeId((short)player.playerId);
+            if (!this.IsEntryAny())
             {
                 this.syncManager.decided = false;
             }
@@ -234,7 +235,7 @@ public class EntryManager : UdonSharpBehaviour
     /// メソッドを呼び出してください。
     /// </para>
     /// </summary>
-    private void UNSYNC__addId()
+    private void SYNC__addId()
     {
         this.Ids[this.GetEmpty()] =
             (short)this.LocalPlayerId;
@@ -249,7 +250,7 @@ public class EntryManager : UdonSharpBehaviour
     /// </para>
     /// </summary>
     /// <param name="id">プレイヤー ID。</param>
-    private void UNSYNC__removeId(short id)
+    private void SYNC__removeId(short id)
     {
         var ids = this.Ids;
         for (var i = ids.Length; --i >= 0; )

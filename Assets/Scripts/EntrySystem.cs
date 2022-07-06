@@ -103,7 +103,7 @@ public class EntrySystem : UdonSharpBehaviour
                 "entryManager または gameField が null のため、転送できません。: EntrySystem.teleportToGameField");
             return;
         }
-        if (!manager.IsEntried())
+        if (!manager.IsEntry())
         {
             Debug.LogError(
                 "誰も参加していないため、転送できません。: EntrySystem.teleportToGameField");
@@ -118,16 +118,16 @@ public class EntrySystem : UdonSharpBehaviour
     {
         var manager = this.entryManager;
         var valid = manager != null;
-        var entried = valid && manager.IsEntried();
-        var full = !entried && manager.GetEmpty() < 0;
+        var isEntry = valid && manager.IsEntry();
+        var full = !isEntry && manager.GetEmpty() < 0;
         entryButtonLabel.text =
             valid && manager.Decided ? "ゲームが始まります..." :
-            entried ? "参加を取り消す" :
+            isEntry ? "参加を取り消す" :
             full ? "満員です" :
             "参加する";
         entryButton.interactable = !full && valid && !manager.Decided;
         startButton.SetActive(
-            entried && !manager.Decided && this.gameField != null);
+            isEntry && !manager.Decided && this.gameField != null);
         for (var i = playerNamesLabel.Length; --i >= 0; )
         {
             playerNamesLabel[i].text = getDisplayName(manager.Ids[i]);

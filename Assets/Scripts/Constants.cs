@@ -24,16 +24,16 @@ public class Constants : UdonSharpBehaviour
     public float LOAD_INTERVAL => 0.2f;
 
     /// <summary>解錠状態を示すフラグ定数。</summary>
-    public int LOCKSTATE_UNLOCKED => 0;
+    public int LOCK_STATE_UNLOCKED => 0;
 
     /// <summary>自プレイヤーによる施錠状態を示すフラグ定数。</summary>
-    public int LOCKSTATE_LOCKED_BY_ME => 1;
+    public int LOCK_STATE_LOCKED_BY_ME => 1;
 
     /// <summary>他プレイヤーによる施錠状態を示すフラグ定数。</summary>
-    public int LOCKSTATE_LOCKED_BY_EMEMY => 2;
+    public int LOCK_STATE_LOCKED_BY_ENEMY => 2;
 
     /// <summary>施錠状態の固定を示すフラグ定数。</summary>
-    public int LOCKSTATE_DISABLED => 4;
+    public int LOCK_STATE_DISABLED => 4;
 
     /// <summary>鍵の設置数。</summary>
     public int NUM_KEYS => 9;
