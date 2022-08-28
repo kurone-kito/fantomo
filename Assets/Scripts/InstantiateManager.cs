@@ -1,4 +1,4 @@
-
+﻿
 using UdonSharp;
 using UnityEngine;
 
@@ -47,8 +47,8 @@ public class InstantiateManager : UdonSharpBehaviour
     /// <summary>定数一覧。</summary>
     private Constants constants;
 
-    /// <summary>プログレス バー コンポーネント。</summary>
-    private InitialGameProgress progressBar;
+    /// <summary>初期化マネージャー コンポーネント。</summary>
+    private InitializeManager initializeManager;
 
     /// <summary>
     /// <seealso cref="InstantiateManager.sources"/>に対する、
@@ -79,6 +79,22 @@ public class InstantiateManager : UdonSharpBehaviour
     /// 生成先座標の一覧。
     /// </summary>
     private Vector3[] positions;
+
+    /// <summary>進捗率。</summary>
+    private float progress = 0.0f;
+
+    /// <summary>進捗率。</summary>
+    public float Progress {
+        get => progress;
+        private set
+        {
+            progress = value;
+            if (this.initializeManager != null)
+            {
+                this.initializeManager.RefreshProgressBar();
+            }
+        }
+    }
 
     /// <summary>初期化を開始します。</summary>
     public void StartInitialize()
@@ -161,7 +177,7 @@ public class InstantiateManager : UdonSharpBehaviour
                     this.gameField.rooms[this.indexes[i]] = obj;
                 }
             }
-            this.progressBar.Progress = (float)this.iterator / this.sources.Length;
+            this.Progress = (float)this.iterator / this.sources.Length;
             this.SendCustomEventDelayedSeconds(
                 nameof(RunInstantiateIteration),
                 LOAD_INTERVAL);
@@ -186,7 +202,7 @@ public class InstantiateManager : UdonSharpBehaviour
             this.gameField.Initialize();
             entrySystem.gameField = this.gameField;
             entrySystem.UpdateView();
-            this.progressBar.Progress = 1f;
+            this.Progress = 1f;
         }
         else
         {
@@ -230,12 +246,10 @@ public class InstantiateManager : UdonSharpBehaviour
         {
             this.constants =
                 this.managers.GetComponentInChildren<Constants>();
+            this.initializeManager =
+                this.managers.GetComponentInChildren<InitializeManager>();
         }
-        if (this.lobbyRoom)
-        {
-            this.progressBar = this.lobbyRoom.GetComponentInChildren<InitialGameProgress>();
-        }
-        if (this.progressBar && this.constants)
+        if (this.constants)
         {
             this.SendCustomEventDelayedSeconds(
                 nameof(StartInitialize),

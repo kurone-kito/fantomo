@@ -1,4 +1,4 @@
-
+﻿
 using UdonSharp;
 using UnityEngine;
 
@@ -21,9 +21,33 @@ public class InitializeManager : UdonSharpBehaviour
     private InitialGameProgress progress;
 
     /// <summary>
+    /// 動的なゲームオブジェクトの読み込みマネージャー。
+    /// </summary>
+    private InstantiateManager instantiateManager;
+
+    /// <summary>プログレス バーに現在の進捗状態を適用します。</summary>
+    public void RefreshProgressBar()
+    {
+        if (this.progress == null)
+        {
+            Debug.LogError(
+                "progress が null のため、処理を継続できません。: InitializeManager.RefreshProgressBar");
+            return;
+        }
+        this.progress.Progress = instantiateManager.Progress;
+    }
+
+    /// <summary>
     /// このコンポーネントが初期化された時に呼び出す、コールバック。
     /// </summary>
     void Start()
     {
+        if (this.managers == null)
+        {
+            Debug.LogError(
+                "managers が null のため、初期化を行えません。: InitializeManager.Start");
+            return;
+        }
+        this.instantiateManager = managers.GetComponentInChildren<InstantiateManager>();
     }
 }
