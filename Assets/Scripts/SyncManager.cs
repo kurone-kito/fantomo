@@ -24,6 +24,11 @@ public class SyncManager : UdonSharpBehaviour
     [UdonSynced]
     public bool decided = false;
 
+    /// <summary>フィールド再計算の進捗状況。</summary>
+    [NonSerialized]
+    [UdonSynced]
+    public float fieldCalculateProgress = 0f;
+
     /// <summary>鍵の配置インデックス一覧。</summary>
     [NonSerialized]
     [UdonSynced]
@@ -63,6 +68,15 @@ public class SyncManager : UdonSharpBehaviour
     /// 前回同期時の<seealso cref="SyncManager.decided"/>の値。
     /// </summary>
     public bool prevDecided
+    {
+        get;
+        private set;
+    }
+
+    /// <summary>
+    /// 前回同期時の<seealso cref="SyncManager.fieldCalculateProgress"/>の値。
+    /// </summary>
+    public float prevFieldCalculateProgress
     {
         get;
         private set;
@@ -188,6 +202,7 @@ public class SyncManager : UdonSharpBehaviour
     private void storeValues()
     {
         this.prevDecided = this.decided;
+        this.prevFieldCalculateProgress = this.fieldCalculateProgress;
         this.prevKeys = this.keys;
         this.prevLocked = this.locked;
         this.prevMines = this.mines;
