@@ -7,23 +7,23 @@ using UnityEngine.UI;
 [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 public class LockProgress : UdonSharpBehaviour
 {
-    /// <value>既定時のプログレス バー色。</value>
+    /// <summary>既定時のプログレス バー色。</summary>
     [SerializeField]
     private Color defaultColor;
 
-    /// <value>無効時のプログレス バー色。</value>
+    /// <summary>無効時のプログレス バー色。</summary>
     [SerializeField]
     private Color ignoredColor;
 
-    /// <value>開始時間。非稼働時は <seealso cref="float.NaN"/>。</value>
+    /// <summary>開始時間。非稼働時は <seealso cref="float.NaN"/>。</summary>
     private float startTime = float.NaN;
 
-    /// <value>
+    /// <summary>
     /// 終了時間。非稼働時は<seealso cref="float.MinValue"/>。
-    /// </value>
+    /// </summary>
     private float endTime = float.MinValue;
 
-    /// <value><seealso cref="Image"/>コンポーネントを取得します。</value>
+    /// <summary><seealso cref="Image"/>コンポーネントを取得します。</summary>
     private Image lockImage
     {
         get

@@ -6,7 +6,7 @@ using UnityEngine;
 [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 public class DoorLock : UdonSharpBehaviour
 {
-    /// <value>ドア本体オブジェクト。</value>
+    /// <summary>ドア本体オブジェクト。</summary>
     [SerializeField]
     private Door door = null;
 

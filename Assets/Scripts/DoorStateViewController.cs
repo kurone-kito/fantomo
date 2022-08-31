@@ -7,39 +7,39 @@ using UnityEngine.UI;
 [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 public class DoorStateViewController : UdonSharpBehaviour
 {
-    /// <value>解錠状態を示す定数。</value>
+    /// <summary>解錠状態を示す定数。</summary>
     public readonly int UNLOCKED = 0;
 
-    /// <value>他プレイヤーによる施錠状態を示す定数。</value>
+    /// <summary>他プレイヤーによる施錠状態を示す定数。</summary>
     public readonly int LOCKED_BY_ENEMY = 1;
 
-    /// <value>自プレイヤーによる施錠状態を示す定数。</value>
+    /// <summary>自プレイヤーによる施錠状態を示す定数。</summary>
     public readonly int LOCKED_BY_ME = 2;
 
-    /// <value>任意のプレイヤーによる施錠状態を示す定数。</value>
+    /// <summary>任意のプレイヤーによる施錠状態を示す定数。</summary>
     public readonly int LOCKED_BY_ANYTHING = 3;
 
-    /// <value>自分自身による施錠における、表示文字色。</value>
+    /// <summary>自分自身による施錠における、表示文字色。</summary>
     [SerializeField]
     private Color myLockColor;
 
-    /// <value>他プレイヤーによる施錠における、表示文字色。</value>
+    /// <summary>他プレイヤーによる施錠における、表示文字色。</summary>
     [SerializeField]
     private Color enemyLockColor;
 
-    /// <value>ドア施錠・解錠のための、プログレス バー一覧。</value>
+    /// <summary>ドア施錠・解錠のための、プログレス バー一覧。</summary>
     [SerializeField]
     private GameObject[] lockProgresses = new GameObject[2];
 
-    /// <value>ドア施錠状態の表示一覧。</value>
+    /// <summary>ドア施錠状態の表示一覧。</summary>
     [SerializeField]
     private Text[] lockedTexts = new Text[2];
 
-    /// <value>隣接状態の表示一覧。</value>
+    /// <summary>隣接状態の表示一覧。</summary>
     [SerializeField]
     private Text[] neighborTexts = new Text[2];
 
-    /// <value>プログレス バーを無効状態にします。</value>
+    /// <summary>プログレス バーを無効状態にします。</summary>
     public void IgnoreProgress()
     {
         foreach (var progress in this.lockProgresses)

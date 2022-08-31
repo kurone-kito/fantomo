@@ -9,7 +9,7 @@ using UnityEngine.UI;
 [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 public class InitialGameProgress : UdonSharpBehaviour
 {
-    /// <value><seealso cref="Image"/>コンポーネント。</value>
+    /// <summary><seealso cref="Image"/>コンポーネント。</summary>
     [SerializeField]
     private Image progressImage;
 

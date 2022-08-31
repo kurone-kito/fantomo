@@ -7,18 +7,18 @@ using VRC.SDKBase;
 [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 public class EntryManager : UdonSharpBehaviour
 {
-    /// <value>同期管理オブジェクト。</value>
-    /// <value>管理ロジックの親となるオブジェクト。</value>
+    /// <summary>同期管理オブジェクト。</summary>
+    /// <summary>管理ロジックの親となるオブジェクト。</summary>
     [SerializeField]
     private GameObject managers;
 
-    /// <value>フィールド算出のロジック。</value>
+    /// <summary>フィールド算出のロジック。</summary>
     private FieldCalculator fieldCalculator;
 
-    /// <value>同期管理オブジェクト。</value>
+    /// <summary>同期管理オブジェクト。</summary>
     private SyncManager syncManager;
 
-    /// <value>エントリーしている、プレイヤーの一覧。。</value>
+    /// <summary>エントリーしている、プレイヤーの一覧。。</summary>
     public short[] Ids
     {
         get =>
@@ -27,7 +27,7 @@ public class EntryManager : UdonSharpBehaviour
                 : this.syncManager.playersId;
     }
 
-    /// <value>参加メンバーが確定したかどうかを取得します。</value>
+    /// <summary>参加メンバーが確定したかどうかを取得します。</summary>
     public bool Decided
     {
         get => this.syncManager != null && this.syncManager.decided;
@@ -40,15 +40,15 @@ public class EntryManager : UdonSharpBehaviour
         set;
     }
 
-    /// <value>
+    /// <summary>
     /// 現在プレイしているプレイヤーが無効であるかどうかを取得します。
-    /// </value>
+    /// </summary>
     public bool InvalidLocalPlayer
     {
         get => Networking.LocalPlayer == null;
     }
 
-    /// <value>現在プレイしているプレイヤーの ID を取得します。</value>
+    /// <summary>現在プレイしているプレイヤーの ID を取得します。</summary>
     public short LocalPlayerId
     {
         get =>

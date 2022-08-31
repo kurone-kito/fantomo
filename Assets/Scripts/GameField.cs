@@ -8,18 +8,20 @@ using VRC.SDKBase;
 [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
 public class GameField : UdonSharpBehaviour
 {
-    /// <value>ゲームフィールドの X 軸における部屋数。</value>
+    /// <summary>ゲームフィールドの X 軸における部屋数。</summary>
     private const int WIDTH = 8;
-    /// <value>ゲームフィールドの Y 軸における部屋数。</value>
+
+    /// <summary>ゲームフィールドの Y 軸における部屋数。</summary>
     private const int HEIGHT = 8;
-    /// <value>地雷の設置数。</value>
+
+    /// <summary>地雷の設置数。</summary>
     private const int MINES = 9;
 
-    /// <value>部屋のオブジェクト一覧。</value>
+    /// <summary>部屋のオブジェクト一覧。</summary>
     [NonSerialized]
     public GameObject[] rooms = new GameObject[WIDTH * HEIGHT];
 
-    /// <value>ゲーム フィールドを初期化します。</value>
+    /// <summary>ゲーム フィールドを初期化します。</summary>
     public void Initialize()
     {
         this.initializeRooms();
@@ -52,7 +54,7 @@ public class GameField : UdonSharpBehaviour
         // TODO: 一部屋でも探索不能な部屋が発生する場合は、抽選をやり直す。
     }
 
-    /// <value>各部屋を初期化します。</value>
+    /// <summary>各部屋を初期化します。</summary>
     private void initializeRooms()
     {
         for (var i = this.rooms.Length; --i >= 0; )
@@ -62,7 +64,7 @@ public class GameField : UdonSharpBehaviour
         }
     }
 
-    /// <value>壁を配置します。</value>
+    /// <summary>壁を配置します。</summary>
     /// <param name="index">部屋のインデックス。</param>
     private void placeWall(int index)
     {

@@ -9,30 +9,30 @@ using VRC.Udon.Common.Interfaces;
 [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 public class EntrySystem : UdonSharpBehaviour
 {
-    /// <value>最大エントリー可能数。</value>
+    /// <summary>最大エントリー可能数。</summary>
     private const int MAX_PLAYERS = 3;
 
-    /// <value>ゲームフィールドのロジック。</value>
+    /// <summary>ゲームフィールドのロジック。</summary>
     [NonSerialized]
     public GameField gameField = null;
 
-    /// <value>エントリーボタン本体。</value>
+    /// <summary>エントリーボタン本体。</summary>
     [SerializeField]
     private Button entryButton = null;
 
-    /// <value>エントリーボタンのラベル。</value>
+    /// <summary>エントリーボタンのラベル。</summary>
     [SerializeField]
     private Text entryButtonLabel = null;
 
-    /// <value>ゲーム開始ボタン本体。</value>
+    /// <summary>ゲーム開始ボタン本体。</summary>
     [SerializeField]
     private GameObject startButton = null;
 
-    /// <value>エントリーしている、プレイヤーの一覧を表示するためのラベル。</value>
+    /// <summary>エントリーしている、プレイヤーの一覧を表示するためのラベル。</summary>
     [SerializeField]
     private Text[] playerNamesLabel = new Text[MAX_PLAYERS];
 
-    /// <value>エントリー管理オブジェクト。</value>
+    /// <summary>エントリー管理オブジェクト。</summary>
     private EntryManager _entryManager;
 
     public EntryManager entryManager

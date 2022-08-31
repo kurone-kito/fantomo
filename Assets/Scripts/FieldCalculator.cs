@@ -1,43 +1,56 @@
-﻿using UdonSharp;
+using UdonSharp;
 using UnityEngine;
 
 /// <summary>フィールド算出のロジック。</summary>
 [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 public class FieldCalculator : UdonSharpBehaviour
 {
-    /// <value>扉を削除する計算フェーズを示す定数。</value>
+    /// <summary>扉を削除する計算フェーズを示す定数。</summary>
     private const int CALC_PHASE_CUT_ROUTES = 0;
-    /// <value>地雷を設置する計算フェーズを示す定数。</value>
+
+    /// <summary>地雷を設置する計算フェーズを示す定数。</summary>
     private const int CALC_PHASE_PUT_MINES = 1;
-    /// <value>鍵を設置する計算フェーズを示す定数。</value>
+
+    /// <summary>鍵を設置する計算フェーズを示す定数。</summary>
     private const int CALC_PHASE_PUT_KEYS = 2;
-    /// <value>
+
+    /// <summary>
     /// プレイヤーのスポーン地点を設置する計算フェーズを示す定数。
-    /// </value>
+    /// </summary>
     private const int CALC_PHASE_PUT_SPAWNERS = 3;
-    /// <value>無効な計算フェーズを示す定数。</value>
+
+    /// <summary>無効な計算フェーズを示す定数。</summary>
     private const int CALC_PHASE_DONE = 4;
-    /// <value>同期管理オブジェクト。</value>
-    /// <value>管理ロジックの親となるオブジェクト。</value>
+
+    /// <summary>管理ロジックの親となるオブジェクト。</summary>
     [SerializeField]
     private GameObject managers;
-    /// <value>定数一覧。</value>
+
+    /// <summary>定数一覧。</summary>
     private Constants constants;
-    /// <value>方角周りの計算ロジック。</value>
+
+    /// <summary>方角周りの計算ロジック。</summary>
     private DirectionCalculator directionCalculator;
-    /// <value>部屋情報算出のロジック。</value>
+
+    /// <summary>部屋情報算出のロジック。</summary>
     private RoomsCalculator roomsCalculator;
-    /// <value>同期管理オブジェクト。</value>
+
+    /// <summary>同期管理オブジェクト。</summary>
     private SyncManager syncManager;
+
     /// <summary>完了時に処理を戻すオブジェクト。</summary>
     private UdonSharpBehaviour callObjectOnComplete;
+
     /// <summary>完了時に処理を戻すメソッド。</summary>
     private string callMethodOnComplete;
-    /// <value>各部屋の計算状態。</value>
+
+    /// <summary>各部屋の計算状態。</summary>
     private byte[] rooms;
-    /// <value>各部屋の計算フェーズ。</value>
+
+    /// <summary>各部屋の計算フェーズ。</summary>
     private int phase = -1;
-    /// <value>計算フェーズごとのカウント。</value>
+
+    /// <summary>計算フェーズごとのカウント。</summary>
     private int phaseCount = 0;
 
     /// <summary>

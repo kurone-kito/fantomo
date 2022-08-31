@@ -10,31 +10,31 @@ using VRC.Udon.Common.Interfaces;
 [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
 public class Door : UdonSharpBehaviour
 {
-    /// <value>ドア施錠・解錠オブジェクト。</value>
+    /// <summary>ドア施錠・解錠オブジェクト。</summary>
     [SerializeField]
     private GameObject lockSwitch = null;
 
-    /// <value>ドア施錠・解錠を継続可能な領域。</value>
+    /// <summary>ドア施錠・解錠を継続可能な領域。</summary>
     [SerializeField]
     private Collider lockableArea = null;
 
-    /// <value>ドア開放オブジェクト。</value>
+    /// <summary>ドア開放オブジェクト。</summary>
     [SerializeField]
     private GameObject openSwitch = null;
 
-    /// <value>ドア表示状態コントローラー。</value>
+    /// <summary>ドア表示状態コントローラー。</summary>
     [SerializeField]
     private DoorStateViewController stateViewController = null;
 
-    /// <value>
+    /// <summary>
     /// <para>ドアを施錠したユーザーの ID。</para>
     /// <para>ID が無効時は、施錠していない状態。</para>
-    /// </value>
+    /// </summary>
     [NonSerialized]
     [UdonSynced]
     public int lockedUser = 0;
 
-    /// <value>ドア施錠・解錠をキャンセルするかどうか。</value>
+    /// <summary>ドア施錠・解錠をキャンセルするかどうか。</summary>
     private bool isLockCanceled = false;
 
     /// <summary>ドア施錠・解錠をキャンセルします。</summary>
