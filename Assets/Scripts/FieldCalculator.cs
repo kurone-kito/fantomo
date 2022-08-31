@@ -32,6 +32,9 @@ public class FieldCalculator : UdonSharpBehaviour
     /// <summary>方角周りの計算ロジック。</summary>
     private DirectionCalculator directionCalculator;
 
+    /// <summary>初期化マネージャー コンポーネント。</summary>
+    private InitializeManager initializeManager;
+
     /// <summary>部屋情報算出のロジック。</summary>
     private RoomsCalculator roomsCalculator;
 
@@ -52,6 +55,27 @@ public class FieldCalculator : UdonSharpBehaviour
 
     /// <summary>計算フェーズごとのカウント。</summary>
     private int phaseCount = 0;
+
+    /// <summary>進捗率。</summary>
+    private float progress = 0.0f;
+
+    /// <summary>進捗率。</summary>
+    public float Progress {
+        get {
+            float done = CALC_PHASE_DONE;
+            return this.phase < 0
+                ? 1f
+                : this.phase / done + this.progress * (1f / done);
+        }
+        private set
+        {
+            progress = value;
+            if (this.initializeManager != null)
+            {
+                this.initializeManager.RefreshProgressBar();
+            }
+        }
+    }
 
     /// <summary>
     /// フィールドの計算をします。
@@ -79,7 +103,8 @@ public class FieldCalculator : UdonSharpBehaviour
         this.callMethodOnComplete = callMethodOnComplete;
         this.callObjectOnComplete = callObjectOnComplete;
         this.rooms = roomsCalculator.CreateIdentityRooms();
-        this.initializeCutRoute();
+        this.phase = CALC_PHASE_CUT_ROUTES;
+        this.phaseCount = 0;
         this.SendCustomEventDelayedSeconds(
             nameof(RunIteration),
             LOAD_INTERVAL);
@@ -123,14 +148,6 @@ public class FieldCalculator : UdonSharpBehaviour
         }
     }
 
-    private void initializeCutRoute()
-    {
-        var ROOM_REMOVE_DOOR_RATE = this.constants.ROOM_REMOVE_DOOR_RATE;
-        this.phase = CALC_PHASE_CUT_ROUTES;
-        this.phaseCount =
-            (int)(rooms.Length * this.constants.DIR_MAX * ROOM_REMOVE_DOOR_RATE);
-    }
-
     /// <summary>扉を指定の確率で削除します。</summary>
     private void cutRoute()
     {
@@ -146,7 +163,13 @@ public class FieldCalculator : UdonSharpBehaviour
         var next = reachable == rooms.Length;
         if (next)
         {
-            if (--this.phaseCount < 0)
+            var max =
+                (int)(
+                    this.rooms.Length *
+                    this.constants.DIR_MAX *
+                    this.constants.ROOM_REMOVE_DOOR_RATE);
+            this.Progress = (float)(++this.phaseCount) / max;
+            if (this.phaseCount >= max)
             {
                 this.phase = CALC_PHASE_PUT_MINES;
                 this.phaseCount = 0;
@@ -179,7 +202,8 @@ public class FieldCalculator : UdonSharpBehaviour
             roomsCalculator.GetReachableRoomsLength(rooms) == amount;
         if (next)
         {
-            if (++this.phaseCount >= NUM_MINES)
+            this.Progress = (float)(++this.phaseCount) / NUM_MINES;
+            if (this.phaseCount >= NUM_MINES)
             {
                 this.phase = CALC_PHASE_PUT_KEYS;
                 this.phaseCount = 0;
@@ -205,7 +229,8 @@ public class FieldCalculator : UdonSharpBehaviour
             return;
         }
         rooms[targetIndex] = (byte)(currentRoom | flag);
-        if (++this.phaseCount >= items)
+        this.Progress = (float)(++this.phaseCount) / items;
+        if (this.phaseCount >= items)
         {
             if (++this.phase == CALC_PHASE_DONE)
             {
@@ -230,6 +255,8 @@ public class FieldCalculator : UdonSharpBehaviour
                 this.managers.GetComponentInChildren<Constants>();
             this.directionCalculator =
                 this.managers.GetComponentInChildren<DirectionCalculator>();
+            this.initializeManager =
+                this.managers.GetComponentInChildren<InitializeManager>();
             this.roomsCalculator =
                 this.managers.GetComponentInChildren<RoomsCalculator>();
             this.syncManager =
