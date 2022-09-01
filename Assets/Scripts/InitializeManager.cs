@@ -29,6 +29,9 @@ public class InitializeManager : UdonSharpBehaviour
     /// </summary>
     private InstantiateManager instantiateManager;
 
+    /// <summary>同期機能マネージャー。</summary>
+    private SyncManager syncManager;
+
     /// <summary>プログレス バーに現在の進捗状態を適用します。</summary>
     public void RefreshProgressBar()
     {
@@ -38,11 +41,20 @@ public class InitializeManager : UdonSharpBehaviour
                 "progress が null のため、処理を継続できません。: InitializeManager.RefreshProgressBar");
             return;
         }
+        var rawFieldProgress = this.fieldCalculator == null
+            ? 0f
+            : this.fieldCalculator.Progress;
+        var syncedFieldProgress = this.syncManager == null
+            ? 0f
+            : this.syncManager.fieldCalculateProgress;
         var fieldProgress = this.shouldFieldCalculate()
-            ? this.fieldCalculator.Progress
-            : 1f;
+            ? rawFieldProgress
+            : syncedFieldProgress;
+        var instantiateProgress = this.instantiateManager == null
+            ? 0f
+            : this.instantiateManager.Progress;
         this.progress.Progress =
-            (this.instantiateManager.Progress + fieldProgress) * 0.5f;
+            (instantiateProgress + fieldProgress) * 0.5f;
     }
 
     /// <summary>非同期的なバッチ初期化を開始します。</summary>
@@ -82,9 +94,12 @@ public class InitializeManager : UdonSharpBehaviour
                 "managers が null のため、初期化を行えません。: InitializeManager.Start");
             return;
         }
-        this.instantiateManager = managers.GetComponentInChildren<InstantiateManager>();
         this.fieldCalculator =
             this.managers.GetComponentInChildren<FieldCalculator>();
+        this.instantiateManager =
+            this.managers.GetComponentInChildren<InstantiateManager>();
+        this.syncManager =
+            this.managers.GetComponentInChildren<SyncManager>();
         this.SendCustomEventDelayedSeconds(nameof(StartInitializing), 0f);
     }
 }

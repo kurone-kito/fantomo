@@ -74,6 +74,12 @@ public class FieldCalculator : UdonSharpBehaviour
             {
                 this.initializeManager.RefreshProgressBar();
             }
+            if (this.syncManager != null)
+            {
+                this.syncManager.ChangeOwner();
+                this.syncManager.fieldCalculateProgress = this.Progress;
+                this.syncManager.RequestSerialization();
+            }
         }
     }
 
