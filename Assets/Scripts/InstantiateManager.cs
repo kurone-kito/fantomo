@@ -80,11 +80,18 @@ public class InstantiateManager : UdonSharpBehaviour
     /// </summary>
     private Vector3[] positions;
 
+    /// <summary>完了時に処理を戻すオブジェクト。</summary>
+    private UdonSharpBehaviour callObjectOnComplete;
+
+    /// <summary>完了時に処理を戻すメソッド。</summary>
+    private string callMethodOnComplete;
+
     /// <summary>進捗率。</summary>
     private float progress = 0.0f;
 
     /// <summary>進捗率。</summary>
-    public float Progress {
+    public float Progress
+    {
         get => progress;
         private set
         {
@@ -97,8 +104,24 @@ public class InstantiateManager : UdonSharpBehaviour
     }
 
     /// <summary>初期化を開始します。</summary>
-    public void StartInitialize()
+    /// <param name="callObjectOnComplete">完了時に処理を戻すオブジェクト。</param>
+    /// <param name="callMethodOnComplete">完了時に処理を戻すメソッド。</param>
+    public void StartBatchInstantiate(
+        UdonSharpBehaviour callObjectOnComplete,
+        string callMethodOnComplete)
     {
+        if (this.constants == null)
+        {
+            Debug.LogError(
+                "constants が null のため、Instantiate できません。: InstantiateManager.StartBatchInstantiate");
+            return;
+        }
+        if (this.initializeManager == null)
+        {
+            Debug.LogError(
+                "initializeManager が null のため、Instantiate できません。: InstantiateManager.StartBatchInstantiate");
+            return;
+        }
         var constants = this.constants;
         var LOAD_INTERVAL = constants.LOAD_INTERVAL;
         var NUM_INSTANTIATES = constants.NUM_INSTANTIATES;
@@ -107,6 +130,8 @@ public class InstantiateManager : UdonSharpBehaviour
         var NUM_ROOMS = constants.NUM_ROOMS;
         var ROOM_SIZE = constants.ROOM_SIZE;
         var ROOMS_WIDTH = constants.ROOMS_WIDTH;
+        this.callMethodOnComplete = callMethodOnComplete;
+        this.callObjectOnComplete = callObjectOnComplete;
         this.indexes = new int[NUM_INSTANTIATES];
         this.sources = new GameObject[NUM_INSTANTIATES];
         this.parents = new GameObject[NUM_INSTANTIATES];
@@ -203,6 +228,13 @@ public class InstantiateManager : UdonSharpBehaviour
             entrySystem.gameField = this.gameField;
             entrySystem.UpdateView();
             this.Progress = 1f;
+            if (
+                this.callMethodOnComplete != null &&
+                this.callObjectOnComplete != null)
+            {
+                this.callObjectOnComplete.SendCustomEvent(
+                    this.callMethodOnComplete);
+            }
         }
         else
         {
@@ -248,12 +280,6 @@ public class InstantiateManager : UdonSharpBehaviour
                 this.managers.GetComponentInChildren<Constants>();
             this.initializeManager =
                 this.managers.GetComponentInChildren<InitializeManager>();
-        }
-        if (this.constants)
-        {
-            this.SendCustomEventDelayedSeconds(
-                nameof(StartInitialize),
-                this.constants.LOAD_INTERVAL);
         }
     }
 }

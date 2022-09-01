@@ -1,6 +1,7 @@
 ﻿
 using UdonSharp;
 using UnityEngine;
+using VRC.SDKBase;
 
 /// <summary>
 /// <para>初期化処理の進捗管理クラスのロジック。</para>
@@ -20,6 +21,9 @@ public class InitializeManager : UdonSharpBehaviour
     [SerializeField]
     private InitialGameProgress progress;
 
+    /// <summary>フィールド算出のロジック。</summary>
+    private FieldCalculator fieldCalculator;
+
     /// <summary>
     /// 動的なゲームオブジェクトの読み込みマネージャー。
     /// </summary>
@@ -34,7 +38,37 @@ public class InitializeManager : UdonSharpBehaviour
                 "progress が null のため、処理を継続できません。: InitializeManager.RefreshProgressBar");
             return;
         }
-        this.progress.Progress = instantiateManager.Progress;
+        var fieldProgress = this.shouldFieldCalculate()
+            ? this.fieldCalculator.Progress
+            : 1f;
+        this.progress.Progress =
+            (this.instantiateManager.Progress + fieldProgress) * 0.5f;
+    }
+
+    /// <summary>非同期的なバッチ初期化を開始します。</summary>
+    public void StartInitializing()
+    {
+        if (this.fieldCalculator != null && this.shouldFieldCalculate())
+        {
+            this.fieldCalculator.StartCalculate(this, "Dummy");
+        }
+        if (this.instantiateManager != null)
+        {
+            this.instantiateManager.StartBatchInstantiate(this, "Dummy");
+        }
+    }
+
+    public void Dummy() {
+        Debug.Log("Dummy callback");
+    }
+
+    /// <summary>
+    /// ローカルプレイヤーがフィールド計算の責務を持っているかどうかを判定します。
+    /// </summary>
+    /// <returns>フィールド計算の責務を持っている場合、<c>true</c>。</returns>
+    private bool shouldFieldCalculate() {
+        var local = Networking.LocalPlayer;
+        return local == null || Networking.IsOwner(local, this.gameObject);
     }
 
     /// <summary>
@@ -49,5 +83,8 @@ public class InitializeManager : UdonSharpBehaviour
             return;
         }
         this.instantiateManager = managers.GetComponentInChildren<InstantiateManager>();
+        this.fieldCalculator =
+            this.managers.GetComponentInChildren<FieldCalculator>();
+        this.SendCustomEventDelayedSeconds(nameof(StartInitializing), 0f);
     }
 }
