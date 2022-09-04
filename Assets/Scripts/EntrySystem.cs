@@ -24,6 +24,10 @@ public class EntrySystem : UdonSharpBehaviour
     [SerializeField]
     private Text entryButtonLabel = null;
 
+    /// <summary>プログレスバー。</summary>
+    [SerializeField]
+    private PrepareProgress progressBar = null;
+
     /// <summary>ゲーム開始ボタン本体。</summary>
     [SerializeField]
     private GameObject startButton = null;
@@ -43,6 +47,18 @@ public class EntrySystem : UdonSharpBehaviour
             value.entrySystem = this;
             this._entryManager = value;
             this.UpdateView();
+        }
+    }
+
+    /// <summary>進捗状態を設定・取得します。</summary>
+    public float Progress {
+        get => this.progressBar.Progress;
+        set
+        {
+            var bar = this.progressBar;
+            bar.gameObject.SetActive(value < 1f);
+            bar.Progress = value;
+            this.updateStartButtonView();
         }
     }
 
@@ -126,12 +142,23 @@ public class EntrySystem : UdonSharpBehaviour
             full ? "満員です" :
             "参加する";
         entryButton.interactable = !full && valid && !manager.Decided;
-        startButton.SetActive(
-            isEntry && !manager.Decided && this.gameField != null);
+        this.updateStartButtonView();
         for (var i = playerNamesLabel.Length; --i >= 0; )
         {
             playerNamesLabel[i].text = getDisplayName(manager.Ids[i]);
         }
+    }
+
+    /// <summary>ゲーム開始ボタンを最新の状態に更新します。</summary>
+    private void updateStartButtonView()
+    {
+        var manager = this.entryManager;
+        this.startButton.SetActive(
+            !this.progressBar.gameObject.activeSelf &&
+            manager != null &&
+            manager.IsEntry() &&
+            !manager.Decided);
+
     }
 
     /// <summary>
