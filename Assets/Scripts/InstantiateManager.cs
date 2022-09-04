@@ -44,6 +44,12 @@ public class InstantiateManager : UdonSharpBehaviour
     [SerializeField]
     private GameObject room;
 
+    /// <summary>
+    /// <seealso cref="UdonSharpBehaviour.VRCInstantiate"/>によって生成された、
+    /// オブジェクト マネージャー。
+    /// </summary>
+    private ClonesManager clonesManager;
+
     /// <summary>定数一覧。</summary>
     private Constants constants;
 
@@ -201,6 +207,30 @@ public class InstantiateManager : UdonSharpBehaviour
                 {
                     this.gameField.rooms[this.indexes[i]] = obj;
                 }
+                if (
+                    src == this.room &&
+                    this.clonesManager != null &&
+                    this.clonesManager.Rooms != null
+                )
+                {
+                    this.clonesManager.Rooms[this.indexes[i]] = obj;
+                }
+                if (
+                    src == this.key &&
+                    this.clonesManager != null &&
+                    this.clonesManager.Keys != null
+                )
+                {
+                    this.clonesManager.Keys[this.indexes[i]] = obj;
+                }
+                if (
+                    src == this.mine &&
+                    this.clonesManager != null &&
+                    this.clonesManager.Mines != null
+                )
+                {
+                    this.clonesManager.Mines[this.indexes[i]] = obj;
+                }
             }
             this.Progress = (float)this.iterator / this.sources.Length;
             this.SendCustomEventDelayedSeconds(
@@ -276,6 +306,8 @@ public class InstantiateManager : UdonSharpBehaviour
     {
         if (this.managers)
         {
+            this.clonesManager =
+                this.managers.GetComponentInChildren<ClonesManager>();
             this.constants =
                 this.managers.GetComponentInChildren<Constants>();
             this.initializeManager =
