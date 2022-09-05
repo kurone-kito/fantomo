@@ -39,6 +39,7 @@ public class EntrySystem : UdonSharpBehaviour
     /// <summary>エントリー管理オブジェクト。</summary>
     private EntryManager _entryManager;
 
+    /// <summary>エントリー管理オブジェクト。</summary>
     public EntryManager entryManager
     {
         get => this._entryManager;
@@ -48,6 +49,12 @@ public class EntrySystem : UdonSharpBehaviour
             this._entryManager = value;
             this.UpdateView();
         }
+    }
+
+    /// <summary>プログレスバー。</summary>
+    public PrepareProgress ProgressBar
+    {
+        get => this.progressBar;
     }
 
     /// <summary>進捗状態を設定・取得します。</summary>

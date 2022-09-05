@@ -25,7 +25,7 @@ MonoBehaviour:
     SerializedFormat: 2
     SerializedBytes: 
     ReferencedUnityObjects:
-    - {fileID: 11500000, guid: 9bb8357f8d0e81344b4910b0dd60696c, type: 3}
+    - {fileID: 11500000, guid: deffa0941108c6442ad09050736840e6, type: 3}
     - {fileID: 11500000, guid: 6c9b68acb82411348b2e6acb5ca3f9f2, type: 3}
     - {fileID: 11500000, guid: 318bb0e9cabaca8499ae9e0dd977c97f, type: 3}
     - {fileID: 11500000, guid: ac68b301c09173241af7ed1a278a2cd2, type: 3}
@@ -122,7 +122,7 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: progress
+      Data: EntrySystem
     - Name: $v
       Entry: 7
       Data: 7|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
@@ -134,13 +134,13 @@ MonoBehaviour:
       Data: 9|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: InitialGameProgress, Assembly-CSharp
+      Data: EntrySystem, Assembly-CSharp
     - Name: 
       Entry: 8
       Data: 
     - Name: declarationType
       Entry: 3
-      Data: 1
+      Data: 2
     - Name: syncMode
       Entry: 3
       Data: 0
@@ -149,10 +149,10 @@ MonoBehaviour:
       Data: VRCUdonUdonBehaviour
     - Name: symbolOriginalName
       Entry: 1
-      Data: progress
+      Data: EntrySystem
     - Name: symbolUniqueName
       Entry: 1
-      Data: progress
+      Data: EntrySystem
     - Name: symbolDefaultValue
       Entry: 6
       Data: 
@@ -167,7 +167,7 @@ MonoBehaviour:
       Data: 1
     - Name: 
       Entry: 7
-      Data: 11|UnityEngine.SerializeField, UnityEngine.CoreModule
+      Data: 11|System.NonSerializedAttribute, mscorlib
     - Name: 
       Entry: 8
       Data: 

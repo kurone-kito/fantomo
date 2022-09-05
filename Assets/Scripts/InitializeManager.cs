@@ -1,4 +1,5 @@
 ﻿
+using System;
 using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
@@ -17,9 +18,9 @@ public class InitializeManager : UdonSharpBehaviour
     [SerializeField]
     private GameObject managers;
 
-    /// <summary>プログレス バー コンポーネント。</summary>
-    [SerializeField]
-    private InitialGameProgress progress;
+    /// <summary>エントリー フォーム。</summary>
+    [NonSerialized]
+    public EntrySystem EntrySystem;
 
     /// <summary>フィールド算出のロジック。</summary>
     private FieldCalculator fieldCalculator;
@@ -35,10 +36,8 @@ public class InitializeManager : UdonSharpBehaviour
     /// <summary>プログレス バーに現在の進捗状態を適用します。</summary>
     public void RefreshProgressBar()
     {
-        if (this.progress == null)
+        if (this.EntrySystem == null)
         {
-            Debug.LogError(
-                "progress が null のため、処理を継続できません。: InitializeManager.RefreshProgressBar");
             return;
         }
         var rawFieldProgress = this.fieldCalculator == null
@@ -53,7 +52,7 @@ public class InitializeManager : UdonSharpBehaviour
         var instantiateProgress = this.instantiateManager == null
             ? 0f
             : this.instantiateManager.Progress;
-        this.progress.Progress =
+        this.EntrySystem.Progress =
             (instantiateProgress + fieldProgress) * 0.5f;
     }
 

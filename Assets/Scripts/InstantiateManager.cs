@@ -143,11 +143,11 @@ public class InstantiateManager : UdonSharpBehaviour
         this.parents = new GameObject[NUM_INSTANTIATES];
         this.positions = new Vector3[NUM_INSTANTIATES];
         this.parents[0] = this.lobbyRoom;
-        this.positions[0] = new Vector3(0f, 1.4f, -4.8f);
-        this.sources[0] = this.mirrorSystem;
+        this.positions[0] = new Vector3(4.94f, 1.4f, 0f);
+        this.sources[0] = this.entrySystem;
         this.parents[1] = this.lobbyRoom;
-        this.positions[1] = new Vector3(4.94f, 1.4f, 0f);
-        this.sources[1] = this.entrySystem;
+        this.positions[1] = new Vector3(0f, 1.4f, -4.8f);
+        this.sources[1] = this.mirrorSystem;
         var index = 2;
         for (var i = 0; i < NUM_KEYS; i++)
         {
@@ -292,6 +292,7 @@ public class InstantiateManager : UdonSharpBehaviour
             entrySystem.entryManager =
                 this.managers.GetComponentInChildren<EntryManager>();
             entrySystem.UpdateView();
+            this.initializeManager.EntrySystem = entrySystem;
         }
         else
         {
