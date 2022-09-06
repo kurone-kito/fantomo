@@ -9,6 +9,11 @@ root = true
   trim_trailing_whitespace = true
 
 [*.cs]
+  dotnet_diagnostic.ide0007.severity = none
+  dotnet_diagnostic.ide0008.severity = none
+  dotnet_diagnostic.ide0044.severity = none
+  dotnet_diagnostic.ide0051.severity = none
+  dotnet_diagnostic.ide0090.severity = none
   indent_size = 4
 
 [*.md]
