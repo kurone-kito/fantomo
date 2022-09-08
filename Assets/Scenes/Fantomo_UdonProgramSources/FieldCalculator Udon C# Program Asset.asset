@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: FieldCalculator Udon C# Program Asset
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: 2acc9bc0bd6762049a2978cc58221c44,
+  serializedUdonProgramAsset: {fileID: 11400000, guid: a57356a4fbb346d46b2aab19c422b621,
     type: 2}
   udonAssembly: 
   assemblyError: 

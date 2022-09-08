@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: DoorSwitch Udon C# Program Asset
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: b20f6e828ce865a43a1ad637c1127f15,
+  serializedUdonProgramAsset: {fileID: 11400000, guid: ec7b81ea2618a3a47bbed88c67ed2159,
     type: 2}
   udonAssembly: 
   assemblyError: 
