@@ -60,37 +60,40 @@ public class FieldCalculator : UdonSharpBehaviour
     private float progress = 0.0f;
 
     /// <summary>進捗率。</summary>
-    public float Progress {
-        get {
+    public float Progress
+    {
+        get
+        {
             float done = CALC_PHASE_DONE;
-            return this.phase < 0
+            return phase < 0
                 ? 1f
-                : this.phase / done + this.progress * (1f / done);
+                : (phase / done) + (progress * (1f / done));
         }
         private set
         {
             progress = value;
-            if (this.initializeManager != null)
+            if (initializeManager != null)
             {
-                this.initializeManager.RefreshProgressBar();
+                initializeManager.RefreshProgressBar();
             }
-            if (this.syncManager != null)
+            if (syncManager != null)
             {
-                this.syncManager.ChangeOwner();
-                this.syncManager.fieldCalculateProgress = this.Progress;
-                this.syncManager.RequestSerialization();
+                syncManager.ChangeOwner();
+                syncManager.fieldCalculateProgress = Progress;
+                syncManager.RequestSerialization();
             }
         }
     }
 
     /// <summary>各部屋の計算フェーズ。</summary>
-    private int Phase {
-        get => this.phase;
+    private int Phase
+    {
+        get => phase;
         set
         {
-            this.phase = value;
-            this.phaseCount = 0;
-            this.progress = 0f;
+            phase = value;
+            phaseCount = 0;
+            progress = 0f;
         }
     }
 
@@ -103,24 +106,24 @@ public class FieldCalculator : UdonSharpBehaviour
         UdonSharpBehaviour callObjectOnComplete,
         string callMethodOnComplete)
     {
-        if (this.constants == null)
+        if (constants == null)
         {
             Debug.LogError(
                 "constants が null のため、フィールドを算出できません。: FieldCalculator.Calculate");
             return;
         }
-        if (this.roomsCalculator == null)
+        if (roomsCalculator == null)
         {
             Debug.LogError(
                 "roomsCalculator が null のため、フィールドを算出できません。: FieldCalculator.Calculate");
             return;
         }
-        var LOAD_INTERVAL = this.constants.LOAD_INTERVAL;
+        var LOAD_INTERVAL = constants.LOAD_INTERVAL;
         this.callMethodOnComplete = callMethodOnComplete;
         this.callObjectOnComplete = callObjectOnComplete;
-        this.rooms = roomsCalculator.CreateIdentityRooms();
-        this.Phase = CALC_PHASE_CUT_ROUTES;
-        this.SendCustomEventDelayedSeconds(
+        rooms = roomsCalculator.CreateIdentityRooms();
+        Phase = CALC_PHASE_CUT_ROUTES;
+        SendCustomEventDelayedSeconds(
             nameof(RunIteration),
             LOAD_INTERVAL);
     }
@@ -130,42 +133,42 @@ public class FieldCalculator : UdonSharpBehaviour
     /// </summary>
     public void RunIteration()
     {
-        var LOAD_INTERVAL = this.constants.LOAD_INTERVAL;
+        var LOAD_INTERVAL = constants.LOAD_INTERVAL;
         var toBeContinue = true;
-        switch (this.Phase)
+        switch (Phase)
         {
             case CALC_PHASE_CUT_ROUTES:
-                this.cutRoute();
+                cutRoute();
                 break;
             case CALC_PHASE_PUT_MINES:
-                this.putMines();
+                putMines();
                 break;
             case CALC_PHASE_PUT_KEYS:
-                this.putItems(
-                    this.constants.NUM_KEYS,
-                    this.constants.ROOM_FLG_HAS_KEY);
+                putItems(
+                    constants.NUM_KEYS,
+                    (byte)ROOM_FLG.HAS_KEY);
                 break;
             case CALC_PHASE_PUT_SPAWNERS:
-                this.putItems(
-                    this.constants.NUM_PLAYERS,
-                    this.constants.ROOM_FLG_HAS_SPAWN);
+                putItems(
+                    constants.NUM_PLAYERS,
+                    (byte)ROOM_FLG.HAS_SPAWN);
                 break;
             case CALC_PHASE_DONE:
-                if (this.syncManager != null)
+                if (syncManager != null)
                 {
-                    this.syncManager.ChangeOwner();
-                    this.syncManager.rooms = this.rooms;
-                    this.syncManager.RequestSerialization();
+                    syncManager.ChangeOwner();
+                    syncManager.rooms = rooms;
+                    syncManager.RequestSerialization();
                 }
                 if (
-                    this.callMethodOnComplete != null &&
-                    this.callObjectOnComplete != null)
+                    callMethodOnComplete != null &&
+                    callObjectOnComplete != null)
                 {
-                    this.callObjectOnComplete.SendCustomEvent(
-                        this.callMethodOnComplete);
+                    callObjectOnComplete.SendCustomEvent(
+                        callMethodOnComplete);
                 }
                 toBeContinue = false;
-                this.Phase = -1;
+                Phase = -1;
                 break;
             default:
                 toBeContinue = false;
@@ -173,7 +176,7 @@ public class FieldCalculator : UdonSharpBehaviour
         }
         if (toBeContinue)
         {
-            this.SendCustomEventDelayedSeconds(
+            SendCustomEventDelayedSeconds(
                 nameof(RunIteration),
                 LOAD_INTERVAL);
         }
@@ -183,7 +186,7 @@ public class FieldCalculator : UdonSharpBehaviour
     private void cutRoute()
     {
         var rooms = this.rooms;
-        var dirs = this.directionCalculator.Direction;
+        var dirs = directionCalculator.Direction;
         var targetIndex = Random.Range(0, rooms.Length);
         var currentRoom = rooms[targetIndex];
         var dirMark = ~(uint)dirs[Random.Range(0, dirs.Length)];
@@ -197,12 +200,12 @@ public class FieldCalculator : UdonSharpBehaviour
             var max =
                 (int)(
                     this.rooms.Length *
-                    this.constants.DIR_MAX *
-                    this.constants.ROOM_REMOVE_DOOR_RATE);
-            this.Progress = (float)(++this.phaseCount) / max;
-            if (this.phaseCount >= max)
+                    (int)DIR.MAX *
+                    constants.ROOM_REMOVE_DOOR_RATE);
+            Progress = (float)(++phaseCount) / max;
+            if (phaseCount >= max)
             {
-                this.Phase = CALC_PHASE_PUT_MINES;
+                Phase = CALC_PHASE_PUT_MINES;
             }
         }
         else
@@ -214,28 +217,27 @@ public class FieldCalculator : UdonSharpBehaviour
     /// <summary>地雷を設置します。</summary>
     private void putMines()
     {
-        var NUM_MINES = this.constants.NUM_MINES;
-        var ROOM_FLG_HAS_MINE = this.constants.ROOM_FLG_HAS_MINE;
+        var NUM_MINES = constants.NUM_MINES;
         var rooms = this.rooms;
         var roomsCalculator = this.roomsCalculator;
         var targetIndex = Random.Range(0, rooms.Length);
         var currentRoom = rooms[targetIndex];
-        if ((currentRoom & ROOM_FLG_HAS_MINE) != 0)
+        if ((currentRoom & (byte)ROOM_FLG.HAS_MINE) != 0)
         {
             return;
         }
-        var nextRoom = (byte)(currentRoom | ROOM_FLG_HAS_MINE);
+        var nextRoom = (byte)(currentRoom | (byte)ROOM_FLG.HAS_MINE);
         rooms[targetIndex] = nextRoom;
-        var amount = rooms.Length - this.phaseCount;
+        var amount = rooms.Length - phaseCount;
         var next =
             !roomsCalculator.HasUnReachableMine(rooms) &&
             roomsCalculator.GetReachableRoomsLength(rooms) == amount;
         if (next)
         {
-            this.Progress = (float)(++this.phaseCount) / NUM_MINES;
-            if (this.phaseCount >= NUM_MINES)
+            Progress = (float)(++phaseCount) / NUM_MINES;
+            if (phaseCount >= NUM_MINES)
             {
-                this.Phase = CALC_PHASE_PUT_KEYS;
+                Phase = CALC_PHASE_PUT_KEYS;
             }
         }
         else
@@ -247,7 +249,7 @@ public class FieldCalculator : UdonSharpBehaviour
     /// <summary>アイテムを設置します。</summary>
     /// <param name="items">設置個数。</param>
     /// <param name="flag">アイテムを示すフラグ。</param>
-     private void putItems(int items, int flag)
+    private void putItems(int items, int flag)
     {
         var rooms = this.rooms;
         var roomsCalculator = this.roomsCalculator;
@@ -258,10 +260,10 @@ public class FieldCalculator : UdonSharpBehaviour
             return;
         }
         rooms[targetIndex] = (byte)(currentRoom | flag);
-        this.Progress = (float)(++this.phaseCount) / items;
-        if (this.phaseCount >= items)
+        Progress = (float)(++phaseCount) / items;
+        if (phaseCount >= items)
         {
-            this.Phase++;
+            Phase++;
         }
     }
 
@@ -271,20 +273,20 @@ public class FieldCalculator : UdonSharpBehaviour
     /// </para>
     /// <para>ここでは、各フィールドの確保を行います。</para>
     /// </summary>
-    void Start()
+    private void Start()
     {
-        if (this.managers)
+        if (managers)
         {
-            this.constants =
-                this.managers.GetComponentInChildren<Constants>();
-            this.directionCalculator =
-                this.managers.GetComponentInChildren<DirectionCalculator>();
-            this.initializeManager =
-                this.managers.GetComponentInChildren<InitializeManager>();
-            this.roomsCalculator =
-                this.managers.GetComponentInChildren<RoomsCalculator>();
-            this.syncManager =
-                this.managers.GetComponentInChildren<SyncManager>();
+            constants =
+                managers.GetComponentInChildren<Constants>();
+            directionCalculator =
+                managers.GetComponentInChildren<DirectionCalculator>();
+            initializeManager =
+                managers.GetComponentInChildren<InitializeManager>();
+            roomsCalculator =
+                managers.GetComponentInChildren<RoomsCalculator>();
+            syncManager =
+                managers.GetComponentInChildren<SyncManager>();
         }
     }
 }

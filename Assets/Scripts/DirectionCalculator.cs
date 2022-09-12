@@ -27,29 +27,29 @@ public class DirectionCalculator : UdonSharpBehaviour
     /// <summary>
     /// このコンポーネントが初期化された時に呼び出す、コールバック。
     /// </summary>
-    void Start()
+    private void Start()
     {
-        if (this.constants == null)
+        if (constants == null)
         {
             Debug.LogError(
                 "constants が null のため、初期化を行えません。: DirectionCalculator.constants");
             return;
         }
-        this.Direction =
+        Direction =
             new byte[]
             {
-                this.constants.ROOM_FLG_DIR_N,
-                this.constants.ROOM_FLG_DIR_S,
-                this.constants.ROOM_FLG_DIR_W,
-                this.constants.ROOM_FLG_DIR_E
+                (byte)ROOM_FLG.DIR_N,
+                (byte)ROOM_FLG.DIR_S,
+                (byte)ROOM_FLG.DIR_W,
+                (byte)ROOM_FLG.DIR_E,
             };
-        this.InvertDirection =
+        InvertDirection =
             new byte[]
             {
-                this.constants.ROOM_FLG_DIR_S,
-                this.constants.ROOM_FLG_DIR_N,
-                this.constants.ROOM_FLG_DIR_E,
-                this.constants.ROOM_FLG_DIR_W
+                (byte)ROOM_FLG.DIR_S,
+                (byte)ROOM_FLG.DIR_N,
+                (byte)ROOM_FLG.DIR_E,
+                (byte)ROOM_FLG.DIR_W,
             };
     }
 }

@@ -36,40 +36,41 @@ public class InitializeManager : UdonSharpBehaviour
     /// <summary>プログレス バーに現在の進捗状態を適用します。</summary>
     public void RefreshProgressBar()
     {
-        if (this.EntrySystem == null)
+        if (EntrySystem == null)
         {
             return;
         }
-        var rawFieldProgress = this.fieldCalculator == null
+        var rawFieldProgress = fieldCalculator == null
             ? 0f
-            : this.fieldCalculator.Progress;
-        var syncedFieldProgress = this.syncManager == null
+            : fieldCalculator.Progress;
+        var syncedFieldProgress = syncManager == null
             ? 0f
-            : this.syncManager.fieldCalculateProgress;
-        var fieldProgress = this.shouldFieldCalculate()
+            : syncManager.fieldCalculateProgress;
+        var fieldProgress = shouldFieldCalculate()
             ? rawFieldProgress
             : syncedFieldProgress;
-        var instantiateProgress = this.instantiateManager == null
+        var instantiateProgress = instantiateManager == null
             ? 0f
-            : this.instantiateManager.Progress;
-        this.EntrySystem.Progress =
+            : instantiateManager.Progress;
+        EntrySystem.Progress =
             (instantiateProgress + fieldProgress) * 0.5f;
     }
 
     /// <summary>非同期的なバッチ初期化を開始します。</summary>
     public void StartInitializing()
     {
-        if (this.fieldCalculator != null && this.shouldFieldCalculate())
+        if (fieldCalculator != null && shouldFieldCalculate())
         {
-            this.fieldCalculator.StartCalculate(this, "Dummy");
+            fieldCalculator.StartCalculate(this, "Dummy");
         }
-        if (this.instantiateManager != null)
+        if (instantiateManager != null)
         {
-            this.instantiateManager.StartBatchInstantiate(this, "Dummy");
+            instantiateManager.StartBatchInstantiate(this, "Dummy");
         }
     }
 
-    public void Dummy() {
+    public void Dummy()
+    {
         Debug.Log("Dummy callback");
     }
 
@@ -77,28 +78,29 @@ public class InitializeManager : UdonSharpBehaviour
     /// ローカルプレイヤーがフィールド計算の責務を持っているかどうかを判定します。
     /// </summary>
     /// <returns>フィールド計算の責務を持っている場合、<c>true</c>。</returns>
-    private bool shouldFieldCalculate() {
+    private bool shouldFieldCalculate()
+    {
         var local = Networking.LocalPlayer;
-        return local == null || Networking.IsOwner(local, this.gameObject);
+        return local == null || Networking.IsOwner(local, gameObject);
     }
 
     /// <summary>
     /// このコンポーネントが初期化された時に呼び出す、コールバック。
     /// </summary>
-    void Start()
+    private void Start()
     {
-        if (this.managers == null)
+        if (managers == null)
         {
             Debug.LogError(
                 "managers が null のため、初期化を行えません。: InitializeManager.Start");
             return;
         }
-        this.fieldCalculator =
-            this.managers.GetComponentInChildren<FieldCalculator>();
-        this.instantiateManager =
-            this.managers.GetComponentInChildren<InstantiateManager>();
-        this.syncManager =
-            this.managers.GetComponentInChildren<SyncManager>();
-        this.SendCustomEventDelayedSeconds(nameof(StartInitializing), 0f);
+        fieldCalculator =
+            managers.GetComponentInChildren<FieldCalculator>();
+        instantiateManager =
+            managers.GetComponentInChildren<InstantiateManager>();
+        syncManager =
+            managers.GetComponentInChildren<SyncManager>();
+        SendCustomEventDelayedSeconds(nameof(StartInitializing), 0f);
     }
 }
