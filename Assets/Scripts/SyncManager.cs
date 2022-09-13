@@ -24,6 +24,11 @@ public class SyncManager : UdonSharpBehaviour
     [UdonSynced]
     public bool decided = false;
 
+    /// <summary>フィールド再計算の進捗状況。</summary>
+    [NonSerialized]
+    [UdonSynced]
+    public float fieldCalculateProgress = 0f;
+
     /// <summary>鍵の配置インデックス一覧。</summary>
     [NonSerialized]
     [UdonSynced]
@@ -63,6 +68,15 @@ public class SyncManager : UdonSharpBehaviour
     /// 前回同期時の<seealso cref="SyncManager.decided"/>の値。
     /// </summary>
     public bool prevDecided
+    {
+        get;
+        private set;
+    }
+
+    /// <summary>
+    /// 前回同期時の<seealso cref="SyncManager.fieldCalculateProgress"/>の値。
+    /// </summary>
+    public float prevFieldCalculateProgress
     {
         get;
         private set;
@@ -135,9 +149,9 @@ public class SyncManager : UdonSharpBehaviour
     public void ChangeOwner()
     {
         var player = Networking.LocalPlayer;
-        if (player != null && !Networking.IsOwner(player, this.gameObject))
+        if (player != null && !Networking.IsOwner(player, gameObject))
         {
-            Networking.SetOwner(player, this.gameObject);
+            Networking.SetOwner(player, gameObject);
         }
     }
 
@@ -146,7 +160,7 @@ public class SyncManager : UdonSharpBehaviour
     /// </summary>
     public override void OnPostSerialization(SerializationResult result)
     {
-        this.OnDeserialization();
+        OnDeserialization();
     }
 
     /// <summary>
@@ -154,11 +168,11 @@ public class SyncManager : UdonSharpBehaviour
     /// </summary>
     public override void OnDeserialization()
     {
-        if (this.entryManager != null)
+        if (entryManager != null)
         {
-            this.entryManager.OnDeserialization();
+            entryManager.OnDeserialization();
         }
-        this.storeValues();
+        storeValues();
     }
 
     /// <summary>
@@ -166,20 +180,20 @@ public class SyncManager : UdonSharpBehaviour
     /// </summary>
     void Start()
     {
-        if (this.managers != null)
+        if (managers != null)
         {
-            this.constants = this.managers.GetComponentInChildren<Constants>();
-            this.entryManager = this.managers.GetComponentInChildren<EntryManager>();
+            constants = managers.GetComponentInChildren<Constants>();
+            entryManager = managers.GetComponentInChildren<EntryManager>();
         }
-        if (this.constants != null)
+        if (constants != null)
         {
-            this.keys = new sbyte[this.constants.NUM_KEYS];
-            this.locked = new short[this.constants.NUM_ROOMS];
-            this.mines = new sbyte[this.constants.NUM_MINES];
-            this.playersId = new short[this.constants.NUM_PLAYERS];
-            this.rooms = new byte[this.constants.NUM_ROOMS];
+            keys = new sbyte[constants.NUM_KEYS];
+            locked = new short[constants.NUM_ROOMS];
+            mines = new sbyte[constants.NUM_MINES];
+            playersId = new short[constants.NUM_PLAYERS];
+            rooms = new byte[constants.NUM_ROOMS];
         }
-        this.storeValues();
+        storeValues();
     }
 
     /// <summary>
@@ -187,13 +201,14 @@ public class SyncManager : UdonSharpBehaviour
     /// </summary>
     private void storeValues()
     {
-        this.prevDecided = this.decided;
-        this.prevKeys = this.keys;
-        this.prevLocked = this.locked;
-        this.prevMines = this.mines;
-        this.prevOpenedX = this.openedX;
-        this.prevOpenedY = this.openedY;
-        this.prevPlayersId = this.playersId;
-        this.prevRooms = this.rooms;
+        prevDecided = decided;
+        prevFieldCalculateProgress = fieldCalculateProgress;
+        prevKeys = keys;
+        prevLocked = locked;
+        prevMines = mines;
+        prevOpenedX = openedX;
+        prevOpenedY = openedY;
+        prevPlayersId = playersId;
+        prevRooms = rooms;
     }
 }

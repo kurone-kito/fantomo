@@ -6,7 +6,7 @@ using UnityEngine;
 [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 public class Wall : UdonSharpBehaviour
 {
-    /// <value>開始時に壁の位置をずらす定数。</value>
+    /// <summary>開始時に壁の位置をずらす定数。</summary>
     [SerializeField]
     private Vector3 wallMove = new Vector3(0, 3.5f, 0);
 
@@ -19,11 +19,11 @@ public class Wall : UdonSharpBehaviour
     /// 動的に座標移動をしています。
     /// </para>
     /// </summary>
-    void Start()
+    private void Start()
     {
         // これだけの処理なので、Udon graph で十分でしょうと思っていましたが、
         // transform.position に加算するだけなのに、詰みました。。
         transform.position += wallMove;
-        this.enabled = false;
+        enabled = false;
     }
 }

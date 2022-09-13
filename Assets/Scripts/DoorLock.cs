@@ -6,7 +6,7 @@ using UnityEngine;
 [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 public class DoorLock : UdonSharpBehaviour
 {
-    /// <value>ドア本体オブジェクト。</value>
+    /// <summary>ドア本体オブジェクト。</summary>
     [SerializeField]
     private Door door = null;
 
@@ -15,7 +15,7 @@ public class DoorLock : UdonSharpBehaviour
     /// </summary>
     public override void Interact()
     {
-        if (this.door != null)
+        if (door != null)
         {
             door.ReserveToggleLock();
         }

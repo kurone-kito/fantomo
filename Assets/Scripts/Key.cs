@@ -6,10 +6,11 @@ using UnityEngine;
 [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 public class Key : UdonSharpBehaviour
 {
-    /// <value>取得判定。</value>
+    /// <summary>取得判定。</summary>
     [SerializeField]
     private Collider body = null;
-    /// <value>吸引判定。</value>
+
+    /// <summary>吸引判定。</summary>
     [SerializeField]
     private Collider suction = null;
 }

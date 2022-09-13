@@ -7,42 +7,42 @@ using UnityEngine.UI;
 [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 public class DoorStateViewController : UdonSharpBehaviour
 {
-    /// <value>解錠状態を示す定数。</value>
+    /// <summary>解錠状態を示す定数。</summary>
     public readonly int UNLOCKED = 0;
 
-    /// <value>他プレイヤーによる施錠状態を示す定数。</value>
+    /// <summary>他プレイヤーによる施錠状態を示す定数。</summary>
     public readonly int LOCKED_BY_ENEMY = 1;
 
-    /// <value>自プレイヤーによる施錠状態を示す定数。</value>
+    /// <summary>自プレイヤーによる施錠状態を示す定数。</summary>
     public readonly int LOCKED_BY_ME = 2;
 
-    /// <value>任意のプレイヤーによる施錠状態を示す定数。</value>
+    /// <summary>任意のプレイヤーによる施錠状態を示す定数。</summary>
     public readonly int LOCKED_BY_ANYTHING = 3;
 
-    /// <value>自分自身による施錠における、表示文字色。</value>
+    /// <summary>自分自身による施錠における、表示文字色。</summary>
     [SerializeField]
     private Color myLockColor;
 
-    /// <value>他プレイヤーによる施錠における、表示文字色。</value>
+    /// <summary>他プレイヤーによる施錠における、表示文字色。</summary>
     [SerializeField]
     private Color enemyLockColor;
 
-    /// <value>ドア施錠・解錠のための、プログレス バー一覧。</value>
+    /// <summary>ドア施錠・解錠のための、プログレス バー一覧。</summary>
     [SerializeField]
     private GameObject[] lockProgresses = new GameObject[2];
 
-    /// <value>ドア施錠状態の表示一覧。</value>
+    /// <summary>ドア施錠状態の表示一覧。</summary>
     [SerializeField]
     private Text[] lockedTexts = new Text[2];
 
-    /// <value>隣接状態の表示一覧。</value>
+    /// <summary>隣接状態の表示一覧。</summary>
     [SerializeField]
     private Text[] neighborTexts = new Text[2];
 
-    /// <value>プログレス バーを無効状態にします。</value>
+    /// <summary>プログレス バーを無効状態にします。</summary>
     public void IgnoreProgress()
     {
-        foreach (var progress in this.lockProgresses)
+        foreach (var progress in lockProgresses)
         {
             var progressController = progress.GetComponent<LockProgress>();
             if (progressController != null)
@@ -56,7 +56,7 @@ public class DoorStateViewController : UdonSharpBehaviour
     /// <param name="time">所要時間。</param>
     public void StartProgress(float time)
     {
-        foreach (var progress in this.lockProgresses)
+        foreach (var progress in lockProgresses)
         {
             var progressController = progress.GetComponent<LockProgress>();
             if (progressController != null)
@@ -69,7 +69,7 @@ public class DoorStateViewController : UdonSharpBehaviour
     /// <summary>プログレス バーを停止します。</summary>
     public void StopProgress()
     {
-        foreach (var progress in this.lockProgresses)
+        foreach (var progress in lockProgresses)
         {
             var progressController = progress.GetComponent<LockProgress>();
             if (progressController != null)
@@ -90,13 +90,13 @@ public class DoorStateViewController : UdonSharpBehaviour
     /// </param>
     public void UpdateLockState(int lockState)
     {
-        foreach (var text in this.lockedTexts)
+        foreach (var text in lockedTexts)
         {
             text.gameObject.SetActive(
-                (lockState & this.LOCKED_BY_ANYTHING) != 0);
-            text.color = (lockState & this.LOCKED_BY_ME) != 0
-                ? this.myLockColor
-                : this.enemyLockColor;
+                (lockState & LOCKED_BY_ANYTHING) != 0);
+            text.color = (lockState & LOCKED_BY_ME) != 0
+                ? myLockColor
+                : enemyLockColor;
         }
     }
 }

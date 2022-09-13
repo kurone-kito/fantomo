@@ -6,67 +6,82 @@ using UnityEngine;
 [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 public class Room : UdonSharpBehaviour
 {
-    /// <value>-X側のドアが存在するかどうか。</value>
+    /// <summary>-X側のドアが存在するかどうか。</summary>
     [SerializeField]
     public bool existsDoorNX = false;
-    /// <value>+X側のドアが存在するかどうか。</value>
+
+    /// <summary>+X側のドアが存在するかどうか。</summary>
     [SerializeField]
     public bool existsDoorPX = false;
-    /// <value>-Z側のドアが存在するかどうか。</value>
+
+    /// <summary>-Z側のドアが存在するかどうか。</summary>
     [SerializeField]
     public bool existsDoorNZ = false;
-    /// <value>+Z側のドアが存在するかどうか。</value>
+
+    /// <summary>+Z側のドアが存在するかどうか。</summary>
     [SerializeField]
     public bool existsDoorPZ = false;
-    /// <value>探索済みかどうか。</value>
+
+    /// <summary>探索済みかどうか。</summary>
     [NonSerialized]
     public bool explored = false;
-    /// <value>地雷が存在するかどうか。</value>
+
+    /// <summary>地雷が存在するかどうか。</summary>
     [NonSerialized]
     public bool existsMine = false;
-    /// <value>-X側の部屋オブジェクト。</value>
+
+    /// <summary>-X側の部屋オブジェクト。</summary>
     [NonSerialized]
     public Room neighborNX = null;
-    /// <value>+X側の部屋オブジェクト。</value>
+
+    /// <summary>+X側の部屋オブジェクト。</summary>
     [NonSerialized]
     public Room neighborPX = null;
-    /// <value>-Z側の部屋オブジェクト。</value>
+
+    /// <summary>-Z側の部屋オブジェクト。</summary>
     [NonSerialized]
     public Room neighborNZ = null;
-    /// <value>+Z側の部屋オブジェクト。</value>
+
+    /// <summary>+Z側の部屋オブジェクト。</summary>
     [NonSerialized]
     public Room neighborPZ = null;
-    /// <value>-X側のドアと周囲のオブジェクトを含むコンテナ。</value>
+
+    /// <summary>-X側のドアと周囲のオブジェクトを含むコンテナ。</summary>
     [SerializeField]
     private GameObject doorContainerNX = null;
-    /// <value>+X側のドアと周囲のオブジェクトを含むコンテナ。</value>
+
+    /// <summary>+X側のドアと周囲のオブジェクトを含むコンテナ。</summary>
     [SerializeField]
     private GameObject doorContainerPX = null;
-    /// <value>-Z側のドアと周囲のオブジェクトを含むコンテナ。</value>
+
+    /// <summary>-Z側のドアと周囲のオブジェクトを含むコンテナ。</summary>
     [SerializeField]
     private GameObject doorContainerNZ = null;
-    /// <value>+Z側のドアと周囲のオブジェクトを含むコンテナ。</value>
+
+    /// <summary>+Z側のドアと周囲のオブジェクトを含むコンテナ。</summary>
     [SerializeField]
     private GameObject doorContainerPZ = null;
-    /// <value>-X側の壁オブジェクトを含むコンテナ。</value>
+
+    /// <summary>-X側の壁オブジェクトを含むコンテナ。</summary>
     [SerializeField]
     private GameObject wallContainerNX = null;
-    /// <value>+X側の壁オブジェクトを含むコンテナ。</value>
+
+    /// <summary>+X側の壁オブジェクトを含むコンテナ。</summary>
     [SerializeField]
     private GameObject wallContainerPX = null;
-    /// <value>-Z側の壁オブジェクトを含むコンテナ。</value>
+
+    /// <summary>-Z側の壁オブジェクトを含むコンテナ。</summary>
     [SerializeField]
     private GameObject wallContainerNZ = null;
-    /// <value>+Z側の壁オブジェクトを含むコンテナ。</value>
+
+    /// <summary>+Z側の壁オブジェクトを含むコンテナ。</summary>
     [SerializeField]
     private GameObject wallContainerPZ = null;
-    /// <value>隣室一覧。</value>
+
+    /// <summary>隣室一覧。</summary>
     public Room[] Neighbors
     {
-        get
-        {
-            return new Room[] { neighborNX, neighborPX, neighborNZ, neighborPZ };
-        }
+        get => new Room[] { neighborNX, neighborPX, neighborNZ, neighborPZ };
         set
         {
             neighborNX = value[0];
@@ -79,21 +94,21 @@ public class Room : UdonSharpBehaviour
     /// <summary>
     /// このコンポーネント初期化時に呼び出す、コールバック。
     /// </summary>
-    void Start()
+    private void Start()
     {
-        this.UpdateVisible();
+        UpdateVisible();
     }
 
     /// <summary>表示状態を更新します。</summary>
     public void UpdateVisible()
     {
-        this.doorContainerNX.SetActive(this.existsDoorNX);
-        this.doorContainerPX.SetActive(this.existsDoorPX);
-        this.doorContainerNZ.SetActive(this.existsDoorNZ);
-        this.doorContainerPZ.SetActive(this.existsDoorPZ);
-        this.wallContainerNX.SetActive(!this.existsDoorNX);
-        this.wallContainerPX.SetActive(!this.existsDoorPX);
-        this.wallContainerNZ.SetActive(!this.existsDoorNZ);
-        this.wallContainerPZ.SetActive(!this.existsDoorPZ);
+        doorContainerNX.SetActive(existsDoorNX);
+        doorContainerPX.SetActive(existsDoorPX);
+        doorContainerNZ.SetActive(existsDoorNZ);
+        doorContainerPZ.SetActive(existsDoorPZ);
+        wallContainerNX.SetActive(!existsDoorNX);
+        wallContainerPX.SetActive(!existsDoorPX);
+        wallContainerNZ.SetActive(!existsDoorNZ);
+        wallContainerPZ.SetActive(!existsDoorPZ);
     }
 }

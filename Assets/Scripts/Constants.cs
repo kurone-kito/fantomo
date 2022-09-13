@@ -1,25 +1,52 @@
 ﻿
+using System;
 using UdonSharp;
+
+/// <summary>方角を示す定数一覧。</summary>
+public enum DIR
+{
+    /// <summary>-Y の方角を示す定数。</summary>
+    N = 0,
+    /// <summary>+Y の方角を示す定数。</summary>
+    S = 1,
+    /// <summary>-X の方角を示す定数。</summary>
+    W = 2,
+    /// <summary>+X の方角を示す定数。</summary>
+    E = 3,
+    /// <summary>方角を示す定数の最大値。</summary>
+    MAX = 4,
+}
+
+/// <summary>部屋ビットフラグ。</summary>
+[Flags]
+public enum ROOM_FLG
+{
+    /// <summary>部屋フラグにおける、-Y の方角を示すビット。</summary>
+    DIR_N = 1 << DIR.N,
+    /// <summary>部屋フラグにおける、+Y の方角を示すビット。</summary>
+    DIR_S = 1 << DIR.S,
+    /// <summary>部屋フラグにおける、-X の方角を示すビット。</summary>
+    DIR_W = 1 << DIR.W,
+    /// <summary>部屋フラグにおける、+X の方角を示すビット。</summary>
+    DIR_E = 1 << DIR.E,
+    /// <summary>部屋フラグにおける、全方位を示すビット。</summary>
+    DIR_ALL = DIR_N | DIR_S | DIR_W | DIR_E,
+    /// <summary>部屋フラグにおける、鍵所持を示すビット。</summary>
+    HAS_KEY = 1 << 4,
+    /// <summary>部屋フラグにおける、地雷所持を示すビット。</summary>
+    HAS_MINE = 1 << 5,
+    /// <summary>
+    /// 部屋フラグにおける、スポーン地点所持を示すビット。
+    /// </summary>
+    HAS_SPAWN = 1 << 6,
+    /// <summary>全アイテム所持の部屋を示すビット。</summary>
+    HAS_ALL = HAS_KEY | HAS_MINE | HAS_SPAWN,
+}
 
 /// <summary>定数一覧。</summary>
 [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
 public class Constants : UdonSharpBehaviour
 {
-    /// <summary>-Y の方角を示す定数。</summary>
-    public int DIR_N => 0;
-
-    /// <summary>+Y の方角を示す定数。</summary>
-    public int DIR_S => 1;
-
-    /// <summary>-X の方角を示す定数。</summary>
-    public int DIR_W => 2;
-
-    /// <summary>+X の方角を示す定数。</summary>
-    public int DIR_E => 3;
-
-    /// <summary>方角を示す定数の最大値。</summary>
-    public int DIR_MAX => 4;
-
     /// <summary>初期化処理におけるインターバル。</summary>
     public float LOAD_INTERVAL => 0.2f;
 
@@ -43,32 +70,6 @@ public class Constants : UdonSharpBehaviour
 
     /// <summary>最大エントリー可能数。</summary>
     public int NUM_PLAYERS => 3;
-
-    /// <summary>部屋フラグにおける、-Y の方角を示すビット。</summary>
-    public byte ROOM_FLG_DIR_N => (byte)(1 << 0);
-
-    /// <summary>部屋フラグにおける、+Y の方角を示すビット。</summary>
-    public byte ROOM_FLG_DIR_S => (byte)(1 << 1);
-
-    /// <summary>部屋フラグにおける、-X の方角を示すビット。</summary>
-    public byte ROOM_FLG_DIR_W => (byte)(1 << 2);
-
-    /// <summary>部屋フラグにおける、+X の方角を示すビット。</summary>
-    public byte ROOM_FLG_DIR_E => (byte)(1 << 3);
-
-    /// <summary>部屋フラグにおける、全方位を示すビット。</summary>
-    public byte ROOM_FLG_DIR_ALL => (byte)(ROOM_FLG_DIR_E | ROOM_FLG_DIR_W | ROOM_FLG_DIR_S | ROOM_FLG_DIR_N);
-
-    /// <summary>部屋フラグにおける、鍵所持を示すビット。</summary>
-    public byte ROOM_FLG_HAS_KEY => (byte)(1 << 4);
-
-    /// <summary>部屋フラグにおける、地雷所持を示すビット。</summary>
-    public byte ROOM_FLG_HAS_MINE => (byte)(1 << 5);
-
-    /// <summary>
-    /// 部屋フラグにおける、スポーン地点所持を示すビット。
-    /// </summary>
-    public byte ROOM_FLG_HAS_SPAWN => (byte)(1 << 6);
 
     /// <summary>部屋フラグにおける、ビット数。</summary>
     public byte ROOM_BIT_MAX => 8;
