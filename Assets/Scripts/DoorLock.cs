@@ -15,7 +15,7 @@ public class DoorLock : UdonSharpBehaviour
     /// </summary>
     public override void Interact()
     {
-        if (door != null)
+        if (this.door != null)
         {
             door.ReserveToggleLock();
         }

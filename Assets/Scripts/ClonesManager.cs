@@ -44,18 +44,18 @@ public class ClonesManager : UdonSharpBehaviour
     /// <summary>
     /// このコンポーネントが初期化された時に呼び出す、コールバック。
     /// </summary>
-    private void Start()
+    void Start()
     {
-        if (managers == null)
+        if (this.managers == null)
         {
             Debug.LogError(
                 "managers が null のため、初期化を行えません。: ClonesManager.Start");
             return;
         }
-        var constants = managers.GetComponentInChildren<Constants>();
-        Keys = new GameObject[constants.NUM_KEYS];
-        Mines = new GameObject[constants.NUM_MINES];
-        Rooms = new GameObject[constants.NUM_ROOMS];
-        Spawns = new GameObject[constants.NUM_PLAYERS];
+        var constants = this.managers.GetComponentInChildren<Constants>();
+        this.Keys = new GameObject[constants.NUM_KEYS];
+        this.Mines = new GameObject[constants.NUM_MINES];
+        this.Rooms = new GameObject[constants.NUM_ROOMS];
+        this.Spawns = new GameObject[constants.NUM_PLAYERS];
     }
 }

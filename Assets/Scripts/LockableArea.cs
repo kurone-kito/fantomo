@@ -21,10 +21,10 @@ public class LockableArea : UdonSharpBehaviour
     /// <param name="player">対象プレイヤー オブジェクト。</param>
     public override void OnPlayerTriggerEnter(VRCPlayerApi player)
     {
-        Debug.Log(string.Format("OnPlayerTriggerEnter: {0} {1}", switchesContainer == null, door == null));
-        if (player.isLocal && switchesContainer != null)
+        Debug.Log(string.Format("OnPlayerTriggerEnter: {0} {1}", this.switchesContainer == null, this.door == null));
+        if (player.isLocal && this.switchesContainer != null)
         {
-            switchesContainer.enabled = true;
+            this.switchesContainer.enabled = true;
         }
     }
 
@@ -36,13 +36,13 @@ public class LockableArea : UdonSharpBehaviour
     {
         if (player.isLocal)
         {
-            if (switchesContainer != null)
+            if (this.switchesContainer != null)
             {
-                switchesContainer.enabled = false;
+                this.switchesContainer.enabled = false;
             }
-            if (door != null)
+            if (this.door != null)
             {
-                door.CancelLock();
+                this.door.CancelLock();
             }
         }
     }

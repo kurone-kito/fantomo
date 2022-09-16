@@ -19,15 +19,22 @@ public class EntryManager : UdonSharpBehaviour
     private SyncManager syncManager;
 
     /// <summary>エントリーしている、プレイヤーの一覧。。</summary>
-    public short[] Ids => syncManager == null
+    public short[] Ids
+    {
+        get =>
+            this.syncManager == null
                 ? new short[0]
-                : syncManager.playersId;
+                : this.syncManager.playersId;
+    }
 
     /// <summary>参加メンバーが確定したかどうかを取得します。</summary>
-    public bool Decided => syncManager != null && syncManager.decided;
+    public bool Decided
+    {
+        get => this.syncManager != null && this.syncManager.decided;
+    }
 
     /// <summary>エントリー フォーム表示制御のロジック。</summary>
-    public EntrySystem EntrySystem
+    public EntrySystem entrySystem
     {
         get;
         set;
@@ -36,31 +43,38 @@ public class EntryManager : UdonSharpBehaviour
     /// <summary>
     /// 現在プレイしているプレイヤーが無効であるかどうかを取得します。
     /// </summary>
-    public bool InvalidLocalPlayer => Networking.LocalPlayer == null;
+    public bool InvalidLocalPlayer
+    {
+        get => Networking.LocalPlayer == null;
+    }
 
     /// <summary>現在プレイしているプレイヤーの ID を取得します。</summary>
-    public short LocalPlayerId => InvalidLocalPlayer
+    public short LocalPlayerId
+    {
+        get =>
+            this.InvalidLocalPlayer
                 ? short.MaxValue
                 : (short)Networking.LocalPlayer.playerId;
+    }
 
     /// <summary>現在のメンバーでゲームを開始します。</summary>
     public void Decide()
     {
-        if (syncManager == null)
+        if (this.syncManager == null)
         {
             Debug.LogError(
                 "syncManager が null のため、エントリーを行えません。: EntryManager.Decide");
             return;
         }
-        if (fieldCalculator == null)
+        if (this.fieldCalculator == null)
         {
             Debug.LogError(
                 "fieldCalculator が null のため、エントリーを行えません。: EntryManager.Decide");
             return;
         }
-        syncManager.ChangeOwner();
-        syncManager.decided = true;
-        syncManager.RequestSerialization();
+        this.syncManager.ChangeOwner();
+        this.syncManager.decided = true;
+        this.syncManager.RequestSerialization();
     }
 
     /// <summary>空きスロットのインデックスを取得します。</summary>
@@ -69,12 +83,13 @@ public class EntryManager : UdonSharpBehaviour
     /// </returns>
     public int GetEmpty()
     {
-        if (InvalidLocalPlayer)
+        if (this.InvalidLocalPlayer)
         {
             return 0;
         }
-        var ids = Ids;
-        for (var i = ids.Length; --i >= 0;)
+        var localId = this.LocalPlayerId;
+        var ids = this.Ids;
+        for (var i = ids.Length; --i >= 0; )
         {
             var player = VRCPlayerApi.GetPlayerById(ids[i]);
             if (player == null || !player.IsValid())
@@ -89,10 +104,10 @@ public class EntryManager : UdonSharpBehaviour
     /// <returns>エントリーしている場合、<c>true</c>。</returns>
     public bool IsEntry()
     {
-        if (syncManager != null)
+        if (this.syncManager != null)
         {
-            var localId = LocalPlayerId;
-            foreach (var id in Ids)
+            var localId = this.LocalPlayerId;
+            foreach (var id in this.Ids)
             {
                 if (id == localId)
                 {
@@ -109,9 +124,9 @@ public class EntryManager : UdonSharpBehaviour
     /// <returns>エントリーしている場合、<c>true</c>。</returns>
     public bool IsEntryAny()
     {
-        if (syncManager != null)
+        if (this.syncManager != null)
         {
-            foreach (var id in Ids)
+            foreach (var id in this.Ids)
             {
                 var player = VRCPlayerApi.GetPlayerById(id);
                 if (player != null && player.IsValid())
@@ -129,22 +144,22 @@ public class EntryManager : UdonSharpBehaviour
     /// </summary>
     public void ToggleEntry()
     {
-        if (syncManager == null)
+        if (this.syncManager == null)
         {
             Debug.LogError(
                 "syncManager が null のため、エントリーを行えません。: EntryManager.AddOrRemoveLocalPlayer");
             return;
         }
-        syncManager.ChangeOwner();
-        if (IsEntry())
+        this.syncManager.ChangeOwner();
+        if (this.IsEntry())
         {
-            SYNC__removeId(LocalPlayerId);
+            this.SYNC__removeId((short)this.LocalPlayerId);
         }
         else
         {
-            SYNC__addId();
+            this.SYNC__addId();
         }
-        syncManager.RequestSerialization();
+        this.syncManager.RequestSerialization();
     }
 
     /// <summary>
@@ -152,9 +167,9 @@ public class EntryManager : UdonSharpBehaviour
     /// </summary>
     public override void OnDeserialization()
     {
-        if (EntrySystem != null)
+        if (this.entrySystem != null)
         {
-            EntrySystem.UpdateView();
+            this.entrySystem.UpdateView();
         }
     }
 
@@ -170,7 +185,7 @@ public class EntryManager : UdonSharpBehaviour
     /// <param name="player">リスポーンしたプレイヤー。</param>
     public override void OnPlayerRespawn(VRCPlayerApi player)
     {
-        if (syncManager == null)
+        if (this.syncManager == null)
         {
             Debug.LogError(
                 "syncManager が null のため、エントリーを行えません。: EntryManager.OnPlayerRespawn");
@@ -178,17 +193,17 @@ public class EntryManager : UdonSharpBehaviour
         }
         if (player.isLocal)
         {
-            syncManager.ChangeOwner();
-            SYNC__removeId((short)player.playerId);
-            if (!IsEntryAny())
+            this.syncManager.ChangeOwner();
+            this.SYNC__removeId((short)player.playerId);
+            if (!this.IsEntryAny())
             {
-                syncManager.decided = false;
+                this.syncManager.decided = false;
             }
-            syncManager.RequestSerialization();
+            this.syncManager.RequestSerialization();
         }
-        if (EntrySystem != null)
+        if (this.entrySystem != null)
         {
-            EntrySystem.UpdateView();
+            this.entrySystem.UpdateView();
         }
     }
 
@@ -199,14 +214,14 @@ public class EntryManager : UdonSharpBehaviour
     /// </para>
     /// <para>ここでは、各フィールドの確保を行います。</para>
     /// </summary>
-    private void Start()
+    void Start()
     {
-        if (managers)
+        if (this.managers)
         {
-            syncManager =
-                managers.GetComponentInChildren<SyncManager>();
-            fieldCalculator =
-                managers.GetComponentInChildren<FieldCalculator>();
+            this.syncManager =
+                this.managers.GetComponentInChildren<SyncManager>();
+            this.fieldCalculator =
+                this.managers.GetComponentInChildren<FieldCalculator>();
         }
     }
 
@@ -220,8 +235,8 @@ public class EntryManager : UdonSharpBehaviour
     /// </summary>
     private void SYNC__addId()
     {
-        Ids[GetEmpty()] =
-            LocalPlayerId;
+        this.Ids[this.GetEmpty()] =
+            (short)this.LocalPlayerId;
     }
 
     /// <summary>
@@ -235,8 +250,8 @@ public class EntryManager : UdonSharpBehaviour
     /// <param name="id">プレイヤー ID。</param>
     private void SYNC__removeId(short id)
     {
-        var ids = Ids;
-        for (var i = ids.Length; --i >= 0;)
+        var ids = this.Ids;
+        for (var i = ids.Length; --i >= 0; )
         {
             if (ids[i] == id)
             {

@@ -149,9 +149,9 @@ public class SyncManager : UdonSharpBehaviour
     public void ChangeOwner()
     {
         var player = Networking.LocalPlayer;
-        if (player != null && !Networking.IsOwner(player, gameObject))
+        if (player != null && !Networking.IsOwner(player, this.gameObject))
         {
-            Networking.SetOwner(player, gameObject);
+            Networking.SetOwner(player, this.gameObject);
         }
     }
 
@@ -160,7 +160,7 @@ public class SyncManager : UdonSharpBehaviour
     /// </summary>
     public override void OnPostSerialization(SerializationResult result)
     {
-        OnDeserialization();
+        this.OnDeserialization();
     }
 
     /// <summary>
@@ -168,11 +168,11 @@ public class SyncManager : UdonSharpBehaviour
     /// </summary>
     public override void OnDeserialization()
     {
-        if (entryManager != null)
+        if (this.entryManager != null)
         {
-            entryManager.OnDeserialization();
+            this.entryManager.OnDeserialization();
         }
-        storeValues();
+        this.storeValues();
     }
 
     /// <summary>
@@ -180,20 +180,20 @@ public class SyncManager : UdonSharpBehaviour
     /// </summary>
     void Start()
     {
-        if (managers != null)
+        if (this.managers != null)
         {
-            constants = managers.GetComponentInChildren<Constants>();
-            entryManager = managers.GetComponentInChildren<EntryManager>();
+            this.constants = this.managers.GetComponentInChildren<Constants>();
+            this.entryManager = this.managers.GetComponentInChildren<EntryManager>();
         }
-        if (constants != null)
+        if (this.constants != null)
         {
-            keys = new sbyte[constants.NUM_KEYS];
-            locked = new short[constants.NUM_ROOMS];
-            mines = new sbyte[constants.NUM_MINES];
-            playersId = new short[constants.NUM_PLAYERS];
-            rooms = new byte[constants.NUM_ROOMS];
+            this.keys = new sbyte[this.constants.NUM_KEYS];
+            this.locked = new short[this.constants.NUM_ROOMS];
+            this.mines = new sbyte[this.constants.NUM_MINES];
+            this.playersId = new short[this.constants.NUM_PLAYERS];
+            this.rooms = new byte[this.constants.NUM_ROOMS];
         }
-        storeValues();
+        this.storeValues();
     }
 
     /// <summary>
@@ -201,14 +201,14 @@ public class SyncManager : UdonSharpBehaviour
     /// </summary>
     private void storeValues()
     {
-        prevDecided = decided;
-        prevFieldCalculateProgress = fieldCalculateProgress;
-        prevKeys = keys;
-        prevLocked = locked;
-        prevMines = mines;
-        prevOpenedX = openedX;
-        prevOpenedY = openedY;
-        prevPlayersId = playersId;
-        prevRooms = rooms;
+        this.prevDecided = this.decided;
+        this.prevFieldCalculateProgress = this.fieldCalculateProgress;
+        this.prevKeys = this.keys;
+        this.prevLocked = this.locked;
+        this.prevMines = this.mines;
+        this.prevOpenedX = this.openedX;
+        this.prevOpenedY = this.openedY;
+        this.prevPlayersId = this.playersId;
+        this.prevRooms = this.rooms;
     }
 }

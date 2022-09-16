@@ -188,7 +188,7 @@ public class InstantiateManager : UdonSharpBehaviour
             var src = this.sources[i];
             if (src != null)
             {
-                var obj = Instantiate(src);
+                var obj = UdonSharpBehaviour.VRCInstantiate(src);
                 var parent = this.parents[i];
                 if (parent != null)
                 {

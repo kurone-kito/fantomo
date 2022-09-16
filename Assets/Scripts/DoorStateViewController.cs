@@ -42,7 +42,7 @@ public class DoorStateViewController : UdonSharpBehaviour
     /// <summary>プログレス バーを無効状態にします。</summary>
     public void IgnoreProgress()
     {
-        foreach (var progress in lockProgresses)
+        foreach (var progress in this.lockProgresses)
         {
             var progressController = progress.GetComponent<LockProgress>();
             if (progressController != null)
@@ -56,7 +56,7 @@ public class DoorStateViewController : UdonSharpBehaviour
     /// <param name="time">所要時間。</param>
     public void StartProgress(float time)
     {
-        foreach (var progress in lockProgresses)
+        foreach (var progress in this.lockProgresses)
         {
             var progressController = progress.GetComponent<LockProgress>();
             if (progressController != null)
@@ -69,7 +69,7 @@ public class DoorStateViewController : UdonSharpBehaviour
     /// <summary>プログレス バーを停止します。</summary>
     public void StopProgress()
     {
-        foreach (var progress in lockProgresses)
+        foreach (var progress in this.lockProgresses)
         {
             var progressController = progress.GetComponent<LockProgress>();
             if (progressController != null)
@@ -90,13 +90,13 @@ public class DoorStateViewController : UdonSharpBehaviour
     /// </param>
     public void UpdateLockState(int lockState)
     {
-        foreach (var text in lockedTexts)
+        foreach (var text in this.lockedTexts)
         {
             text.gameObject.SetActive(
-                (lockState & LOCKED_BY_ANYTHING) != 0);
-            text.color = (lockState & LOCKED_BY_ME) != 0
-                ? myLockColor
-                : enemyLockColor;
+                (lockState & this.LOCKED_BY_ANYTHING) != 0);
+            text.color = (lockState & this.LOCKED_BY_ME) != 0
+                ? this.myLockColor
+                : this.enemyLockColor;
         }
     }
 }
