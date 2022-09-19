@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: LockableArea Udon C# Program Asset
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: 25a9af156c51f5c4c8df5f0843dacdf3,
+  serializedUdonProgramAsset: {fileID: 11400000, guid: 45e8ac876f4e8bd47bbbb666a71010cd,
     type: 2}
   udonAssembly: 
   assemblyError: 
