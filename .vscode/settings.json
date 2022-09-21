@@ -1,11 +1,17 @@
 {
-  "[csharp]": {
-    "editor.defaultFormatter": "satokaz.vscode-bs-ctrlchar-remover"
-  },
-  "cSpell.ignorePaths": [".git/objects", "CODE_OF_CONDUCT.*", ".vscode"],
+  "cSpell.ignorePaths": [
+    ".git/objects",
+    ".vscode",
+    "*.anim",
+    "CODE_OF_CONDUCT.*",
+    "Assets/SerializedUdonPrograms",
+    "Packages/*"
+  ],
   "cSpell.words": [
     "behaviour",
+    "behaviours",
     "cref",
+    "fantomo",
     "kito",
     "kurone",
     "lerp",
@@ -13,7 +19,8 @@
     "paramref",
     "respawn",
     "seealso",
-    "udon"
+    "udon",
+    "VRChat"
   ],
   "editor.formatOnSave": true,
   "files.exclude": {
