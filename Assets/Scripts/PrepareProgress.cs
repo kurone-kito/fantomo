@@ -14,15 +14,16 @@ public class PrepareProgress : UdonSharpBehaviour
     private Image progressImage;
 
     /// <summary>進捗状態を設定・取得します。</summary>
-    public float Progress {
+    public float Progress
+    {
         get
         {
-            var img = this.progressImage;
-            return img ? this.progressImage.fillAmount : 0f;
+            var img = progressImage;
+            return img ? progressImage.fillAmount : 0f;
         }
         set
         {
-            var img = this.progressImage;
+            var img = progressImage;
             if (img)
             {
                 img.fillAmount = value;
@@ -33,8 +34,8 @@ public class PrepareProgress : UdonSharpBehaviour
     /// <summary>
     /// このコンポーネントが初期化された時に呼び出す、コールバック。
     /// </summary>
-    void Start()
+    private void Start()
     {
-        this.Progress = 0f;
+        Progress = 0f;
     }
 }

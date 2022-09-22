@@ -21,18 +21,17 @@ public class RoomsCalculator : UdonSharpBehaviour
     /// <summary>初期状態の部屋情報一覧を取得します。</summary>
     public byte[] CreateIdentityRooms()
     {
-        if (this.constants == null)
+        if (constants == null)
         {
             Debug.LogError(
                 "constants が null のため、部屋を算出できません。: RoomsCalculator.CreateIdentityRooms");
             return null;
         }
-        var NUM_ROOMS = this.constants.NUM_ROOMS;
-        var ROOM_FLG_DIR_ALL = this.constants.ROOM_FLG_DIR_ALL;
+        var NUM_ROOMS = constants.NUM_ROOMS;
         var rooms = new byte[NUM_ROOMS];
-        for (var i = NUM_ROOMS; --i >= 0; )
+        for (var i = NUM_ROOMS; --i >= 0;)
         {
-            rooms[i] = ROOM_FLG_DIR_ALL;
+            rooms[i] = (byte)ROOM_FLG.DIR_ALL;
         }
         return rooms;
     }
@@ -44,17 +43,17 @@ public class RoomsCalculator : UdonSharpBehaviour
     /// <returns>探索可能な部屋数。</returns>
     public int GetReachableRoomsLength(byte[] rooms)
     {
-        if (this.constants == null)
+        if (constants == null)
         {
             Debug.LogError(
                 "constants が null のため、部屋を算出できません。: RoomsCalculator.GetReachableRoomsLength");
             return 0;
         }
-        for (var i = rooms.Length; --i >= 0; )
+        for (var i = rooms.Length; --i >= 0;)
         {
-            this.visited[i] = -1;
+            visited[i] = -1;
         }
-        return this.getReachableRoomsLengthRecursive(rooms, 0) + 1;
+        return getReachableRoomsLengthRecursive(rooms, 0) + 1;
     }
 
     /// <summary>
@@ -64,18 +63,13 @@ public class RoomsCalculator : UdonSharpBehaviour
     /// <returns>任意のアイテムフラグを持っている場合、<c>true</c></returns>
     public bool HasAnyItems(byte room)
     {
-        if (this.constants == null)
+        if (constants == null)
         {
             Debug.LogError(
                 "constants が null のため、部屋を算出できません。: RoomsCalculator.HasAnyItems");
             return false;
         }
-        var ROOM_FLG_HAS_KEY = this.constants.ROOM_FLG_HAS_KEY;
-        var ROOM_FLG_HAS_MINE = this.constants.ROOM_FLG_HAS_MINE;
-        var ROOM_FLG_HAS_SPAWN = this.constants.ROOM_FLG_HAS_SPAWN;
-        var flagItems =
-            ROOM_FLG_HAS_KEY | ROOM_FLG_HAS_MINE | ROOM_FLG_HAS_SPAWN;
-        return (room & flagItems) != 0;
+        return (room & (byte)ROOM_FLG.HAS_ALL) != 0;
     }
 
     /// <summary>
@@ -85,33 +79,31 @@ public class RoomsCalculator : UdonSharpBehaviour
     /// <returns>探索不能な地雷が存在する場合、<c>true</c>。</returns>
     public bool HasUnReachableMine(byte[] rooms)
     {
-        if (this.constants == null)
+        if (constants == null)
         {
             Debug.LogError(
                 "constants が null のため、部屋を算出できません。: RoomsCalculator.HasUnReachableMine");
             return false;
         }
-        var DIR_MAX = this.constants.DIR_MAX;
-        var ROOM_FLG_HAS_MINE = this.constants.ROOM_FLG_HAS_MINE;
-        for (var i = rooms.Length; --i >= 0; )
+        for (var i = rooms.Length; --i >= 0;)
         {
             var room = rooms[i];
-            if ((room & ROOM_FLG_HAS_MINE) == 0)
+            if ((room & (byte)ROOM_FLG.HAS_MINE) == 0)
             {
                 continue;
             }
-            var neighbors = this.getNeighborIndexes(room, i);
+            var neighbors = getNeighborIndexes(room, i);
             var founds = 0;
-            for (int j = DIR_MAX; --j >= 0; )
+            for (int j = (int)DIR.MAX; --j >= 0;)
             {
                 var ni = (neighbors >> (j * 8)) & 0xFF;
                 if (ni != INVALID_NEIGHBOR_INDEX &&
-                    (rooms[ni] & ROOM_FLG_HAS_MINE) != 0)
+                    (rooms[ni] & (byte)ROOM_FLG.HAS_MINE) != 0)
                 {
                     founds++;
                 }
             }
-            if (founds >= DIR_MAX)
+            if (founds >= (int)DIR.MAX)
             {
                 return true;
             }
@@ -124,15 +116,14 @@ public class RoomsCalculator : UdonSharpBehaviour
     /// <returns>新しい部屋状況一覧。。</returns>
     private byte[] closeInvalidDirections(byte[] rooms)
     {
-        var DIR_MAX = this.constants.DIR_MAX;
-        var directions = this.directionCalculator.Direction;
-        var invertDirections = this.directionCalculator.InvertDirection;
+        var directions = directionCalculator.Direction;
+        var invertDirections = directionCalculator.InvertDirection;
         var result = new byte[rooms.Length];
-        for (int i = rooms.Length; --i >= 0; )
+        for (int i = rooms.Length; --i >= 0;)
         {
             var room = rooms[i];
-            var neighbors = this.getNeighborIndexes(room, i);
-            for (int j = DIR_MAX; --j >= 0; )
+            var neighbors = getNeighborIndexes(room, i);
+            for (int j = (int)DIR.MAX; --j >= 0;)
             {
                 var ni = (neighbors >> (j * 8)) & 0xFF;
                 var closed =
@@ -153,10 +144,8 @@ public class RoomsCalculator : UdonSharpBehaviour
     [RecursiveMethod]
     private int getReachableRoomsLengthRecursive(byte[] rooms, int index)
     {
-        var DIR_MAX = this.constants.DIR_MAX;
-        var ROOM_FLG_HAS_MINE = this.constants.ROOM_FLG_HAS_MINE;
         var visited = this.visited;
-        var neighbors = this.getNeighborIndexes(rooms[index], index);
+        var neighbors = getNeighborIndexes(rooms[index], index);
         for (var i = visited.Length; --i >= 0;)
         {
             if (visited[i] < 0)
@@ -166,17 +155,17 @@ public class RoomsCalculator : UdonSharpBehaviour
             }
         }
         var result = 0;
-        for (int i = DIR_MAX; --i >= 0; )
+        for (int i = (int)DIR.MAX; --i >= 0;)
         {
             var ni = (neighbors >> (i * 8)) & 0xFF;
             if (
                 ni == INVALID_NEIGHBOR_INDEX ||
-                (rooms[ni] & ROOM_FLG_HAS_MINE) != 0)
+                (rooms[ni] & (byte)ROOM_FLG.HAS_MINE) != 0)
             {
                 continue;
             }
             var found = false;
-            for (int j = visited.Length; --j >= 0; )
+            for (int j = visited.Length; --j >= 0;)
             {
                 if (visited[j] == ni)
                 {
@@ -189,7 +178,7 @@ public class RoomsCalculator : UdonSharpBehaviour
                 continue;
             }
             result +=
-                1 + this.getReachableRoomsLengthRecursive(rooms, (int)ni);
+                1 + getReachableRoomsLengthRecursive(rooms, (int)ni);
         }
         return result;
     }
@@ -199,7 +188,7 @@ public class RoomsCalculator : UdonSharpBehaviour
     /// <returns>上位 4bit にX座標、下位 4bit にY座標。</returns>
     private byte getXYFromIndex(int index)
     {
-        var width = this.constants.ROOMS_WIDTH;
+        var width = constants.ROOMS_WIDTH;
         var x = (index % width) & 0xF;
         var y = (index / width) & 0xF;
         return (byte)((x << 4) + y);
@@ -211,10 +200,10 @@ public class RoomsCalculator : UdonSharpBehaviour
     /// <returns>インデックス。はみ出た場合、255。</returns>
     private byte getIndexFromXY(int x, int y)
     {
-        var width = this.constants.ROOMS_WIDTH;
+        var width = constants.ROOMS_WIDTH;
         return x < 0 || x >= width || y < 0 || y >= width
             ? (byte)0xFF
-            : (byte)(y * width + x);
+            : (byte)((y * width) + x);
     }
 
     /// <summary>隣接する部屋のインデックス一覧を取得します。</summary>
@@ -230,24 +219,24 @@ public class RoomsCalculator : UdonSharpBehaviour
         var constants = this.constants;
         if (constants == null)
         {
-            return this.packNeighborIndexes(INV, INV, INV, INV);
+            return packNeighborIndexes(INV, INV, INV, INV);
         }
-        var xy = this.getXYFromIndex(index);
+        var xy = getXYFromIndex(index);
         var x = xy & 0xF;
         var y = (xy >> 4) & 0xF;
-        return this.packNeighborIndexes(
-            (room & (1 << constants.ROOM_FLG_DIR_N)) == 0
+        return packNeighborIndexes(
+            (room & (1 << (byte)ROOM_FLG.DIR_N)) == 0
                 ? INV
-                : this.getIndexFromXY(x - 1, y),
-            (room & (1 << constants.ROOM_FLG_DIR_S)) == 0
+                : getIndexFromXY(x - 1, y),
+            (room & (1 << (byte)ROOM_FLG.DIR_S)) == 0
                 ? INV
-                : this.getIndexFromXY(x + 1, y),
-            (room & (1 << constants.ROOM_FLG_DIR_W)) == 0
+                : getIndexFromXY(x + 1, y),
+            (room & (1 << (byte)ROOM_FLG.DIR_W)) == 0
                 ? INV
-                : this.getIndexFromXY(x, y - 1),
-            (room & (1 << constants.ROOM_FLG_DIR_E)) == 0
+                : getIndexFromXY(x, y - 1),
+            (room & (1 << (byte)ROOM_FLG.DIR_E)) == 0
                 ? INV
-                : this.getIndexFromXY(x, y + 1)
+                : getIndexFromXY(x, y + 1)
         );
     }
 
@@ -260,22 +249,24 @@ public class RoomsCalculator : UdonSharpBehaviour
     /// 隣接する部屋のインデックス一覧を、上位から 8bit ごとに
     /// +X、-X、+Y、-Y の順で返します。
     /// </returns>
-    private uint packNeighborIndexes(byte n, byte s, byte w, byte e) =>
-        ((uint)e << 24) | ((uint)w << 16) | ((uint)s << 8) | (uint)n;
+    private uint packNeighborIndexes(byte n, byte s, byte w, byte e)
+    {
+        return ((uint)e << 24) | ((uint)w << 16) | ((uint)s << 8) | n;
+    }
 
     /// <summary>
     /// <para>このコンポーネントが初期化された時に呼び出す、コールバック。</para>
     /// <para>ここでは、各フィールドの確保を行います。</para>
     /// </summary>
-    void Start()
+    private void Start()
     {
-        if (this.managers)
+        if (managers)
         {
-            this.constants =
-                this.managers.GetComponentInChildren<Constants>();
-            this.directionCalculator =
-                this.managers.GetComponentInChildren<DirectionCalculator>();
-            this.visited = new int[this.constants.NUM_ROOMS];
+            constants =
+                managers.GetComponentInChildren<Constants>();
+            directionCalculator =
+                managers.GetComponentInChildren<DirectionCalculator>();
+            visited = new int[constants.NUM_ROOMS];
         }
     }
 }

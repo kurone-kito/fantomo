@@ -81,10 +81,7 @@ public class Room : UdonSharpBehaviour
     /// <summary>隣室一覧。</summary>
     public Room[] Neighbors
     {
-        get
-        {
-            return new Room[] { neighborNX, neighborPX, neighborNZ, neighborPZ };
-        }
+        get => new Room[] { neighborNX, neighborPX, neighborNZ, neighborPZ };
         set
         {
             neighborNX = value[0];
@@ -97,21 +94,21 @@ public class Room : UdonSharpBehaviour
     /// <summary>
     /// このコンポーネント初期化時に呼び出す、コールバック。
     /// </summary>
-    void Start()
+    private void Start()
     {
-        this.UpdateVisible();
+        UpdateVisible();
     }
 
     /// <summary>表示状態を更新します。</summary>
     public void UpdateVisible()
     {
-        this.doorContainerNX.SetActive(this.existsDoorNX);
-        this.doorContainerPX.SetActive(this.existsDoorPX);
-        this.doorContainerNZ.SetActive(this.existsDoorNZ);
-        this.doorContainerPZ.SetActive(this.existsDoorPZ);
-        this.wallContainerNX.SetActive(!this.existsDoorNX);
-        this.wallContainerPX.SetActive(!this.existsDoorPX);
-        this.wallContainerNZ.SetActive(!this.existsDoorNZ);
-        this.wallContainerPZ.SetActive(!this.existsDoorPZ);
+        doorContainerNX.SetActive(existsDoorNX);
+        doorContainerPX.SetActive(existsDoorPX);
+        doorContainerNZ.SetActive(existsDoorNZ);
+        doorContainerPZ.SetActive(existsDoorPZ);
+        wallContainerNX.SetActive(!existsDoorNX);
+        wallContainerPX.SetActive(!existsDoorPX);
+        wallContainerNZ.SetActive(!existsDoorNZ);
+        wallContainerPZ.SetActive(!existsDoorPZ);
     }
 }

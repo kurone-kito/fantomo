@@ -16,13 +16,13 @@ public class SwitchContainer : UdonSharpBehaviour
     /// <summary>
     /// このコンポーネント初期化時に呼び出す、コールバック。
     /// </summary>
-    void Start()
+    private void Start()
     {
-        this.enabled = false;
+        enabled = false;
     }
 
     /// <summary>毎フレーム呼び出される、コールバック。</summary>
-    void Update()
+    private void Update()
     {
         if (Networking.LocalPlayer == null)
         {

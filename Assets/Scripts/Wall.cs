@@ -19,11 +19,11 @@ public class Wall : UdonSharpBehaviour
     /// 動的に座標移動をしています。
     /// </para>
     /// </summary>
-    void Start()
+    private void Start()
     {
         // これだけの処理なので、Udon graph で十分でしょうと思っていましたが、
         // transform.position に加算するだけなのに、詰みました。。
         transform.position += wallMove;
-        this.enabled = false;
+        enabled = false;
     }
 }
