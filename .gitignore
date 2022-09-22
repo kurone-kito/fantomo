@@ -248,5 +248,4 @@ $RECYCLE.BIN/
 ### THE PROJECT SPECIFIES #################################################
 
 ### Unity ###
-[Aa]ssets/SerializedUdonPrograms*
-[Aa]ssets/[Uu]don/ReferenceDocs*
+[Aa]ssets/SerializedUdonPrograms/*
