@@ -5,6 +5,7 @@
     "*.anim",
     "CODE_OF_CONDUCT.*",
     "Assets/SerializedUdonPrograms",
+    "ProjectSettings/*",
     "Packages/*"
   ],
   "cSpell.words": [
