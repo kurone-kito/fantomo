@@ -249,3 +249,4 @@ $RECYCLE.BIN/
 
 ### Unity ###
 [Aa]ssets/SerializedUdonPrograms/*
+[Aa]ssets/UdonSharp/PrefabBuild*
