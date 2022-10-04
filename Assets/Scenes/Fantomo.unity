@@ -40653,7 +40653,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1101866004
 MonoBehaviour:
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -40708,7 +40708,7 @@ MonoBehaviour:
   gameField: {fileID: 1975535248}
   key: {fileID: 3119436563209748887, guid: 2c2fef693ef6c5e42b89c5b479534e1a, type: 3}
   mine: {fileID: 8511463372352733493, guid: 0c29c146416f985488ea943e96ada9cb, type: 3}
-  room: {fileID: 2074370538350415627, guid: cec28e1522241f04bb32bd0236ef0bfa, type: 3}
+  room: {fileID: 0}
 --- !u!1 &1103938599
 GameObject:
   m_ObjectHideFlags: 0
