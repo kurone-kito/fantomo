@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: ClonesManager Udon C# Program Asset
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: 5c7e0c8f95864e9488ae941ae4348f48,
+  serializedUdonProgramAsset: {fileID: 11400000, guid: 36ba9efd8f515cf439c700bd2f180b13,
     type: 2}
   udonAssembly: 
   assemblyError: 

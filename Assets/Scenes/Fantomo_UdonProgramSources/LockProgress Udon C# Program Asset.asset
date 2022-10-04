@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: LockProgress Udon C# Program Asset
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: 752d44d0cd910ee4696e8a791ef0df85,
+  serializedUdonProgramAsset: {fileID: 11400000, guid: 08030f4bc5afac4479258bb72af4f219,
     type: 2}
   udonAssembly: 
   assemblyError: 
