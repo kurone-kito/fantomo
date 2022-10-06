@@ -13,9 +13,6 @@ public class SyncManager : UdonSharpBehaviour
     [SerializeField]
     private GameObject managers;
 
-    /// <summary>定数一覧。</summary>
-    private Constants constants;
-
     /// <summary>エントリー機能ロジック。</summary>
     private EntryManager entryManager;
 
@@ -182,17 +179,13 @@ public class SyncManager : UdonSharpBehaviour
     {
         if (managers != null)
         {
-            constants = managers.GetComponentInChildren<Constants>();
             entryManager = managers.GetComponentInChildren<EntryManager>();
         }
-        if (constants != null)
-        {
-            keys = new sbyte[constants.NUM_KEYS];
-            locked = new short[constants.NUM_ROOMS];
-            mines = new sbyte[constants.NUM_MINES];
-            playersId = new short[constants.NUM_PLAYERS];
-            rooms = new byte[constants.NUM_ROOMS];
-        }
+        keys = new sbyte[Constants.NUM_KEYS];
+        locked = new short[Constants.NUM_ROOMS];
+        mines = new sbyte[Constants.NUM_MINES];
+        playersId = new short[Constants.NUM_PLAYERS];
+        rooms = new byte[Constants.NUM_ROOMS];
         storeValues();
     }
 

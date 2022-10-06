@@ -11,8 +11,6 @@ public class RoomsCalculator : UdonSharpBehaviour
     /// <summary>管理ロジックの親となるオブジェクト。</summary>
     [SerializeField]
     private GameObject managers;
-    /// <summary>定数一覧。</summary>
-    private Constants constants;
     /// <summary>方角周りの計算ロジック。</summary>
     private DirectionCalculator directionCalculator;
     /// <summary>探索済みの部屋インデックス一覧。</summary>
@@ -21,13 +19,7 @@ public class RoomsCalculator : UdonSharpBehaviour
     /// <summary>初期状態の部屋情報一覧を取得します。</summary>
     public byte[] CreateIdentityRooms()
     {
-        if (constants == null)
-        {
-            Debug.LogError(
-                "constants が null のため、部屋を算出できません。: RoomsCalculator.CreateIdentityRooms");
-            return null;
-        }
-        var NUM_ROOMS = constants.NUM_ROOMS;
+        var NUM_ROOMS = Constants.NUM_ROOMS;
         var rooms = new byte[NUM_ROOMS];
         for (var i = NUM_ROOMS; --i >= 0;)
         {
@@ -43,12 +35,6 @@ public class RoomsCalculator : UdonSharpBehaviour
     /// <returns>探索可能な部屋数。</returns>
     public int GetReachableRoomsLength(byte[] rooms)
     {
-        if (constants == null)
-        {
-            Debug.LogError(
-                "constants が null のため、部屋を算出できません。: RoomsCalculator.GetReachableRoomsLength");
-            return 0;
-        }
         for (var i = rooms.Length; --i >= 0;)
         {
             visited[i] = -1;
@@ -63,12 +49,6 @@ public class RoomsCalculator : UdonSharpBehaviour
     /// <returns>任意のアイテムフラグを持っている場合、<c>true</c></returns>
     public bool HasAnyItems(byte room)
     {
-        if (constants == null)
-        {
-            Debug.LogError(
-                "constants が null のため、部屋を算出できません。: RoomsCalculator.HasAnyItems");
-            return false;
-        }
         return (room & (byte)ROOM_FLG.HAS_ALL) != 0;
     }
 
@@ -79,12 +59,6 @@ public class RoomsCalculator : UdonSharpBehaviour
     /// <returns>探索不能な地雷が存在する場合、<c>true</c>。</returns>
     public bool HasUnReachableMine(byte[] rooms)
     {
-        if (constants == null)
-        {
-            Debug.LogError(
-                "constants が null のため、部屋を算出できません。: RoomsCalculator.HasUnReachableMine");
-            return false;
-        }
         for (var i = rooms.Length; --i >= 0;)
         {
             var room = rooms[i];
@@ -188,7 +162,7 @@ public class RoomsCalculator : UdonSharpBehaviour
     /// <returns>上位 4bit にX座標、下位 4bit にY座標。</returns>
     private byte getXYFromIndex(int index)
     {
-        var width = constants.ROOMS_WIDTH;
+        var width = Constants.ROOMS_WIDTH;
         var x = (index % width) & 0xF;
         var y = (index / width) & 0xF;
         return (byte)((x << 4) + y);
@@ -200,7 +174,7 @@ public class RoomsCalculator : UdonSharpBehaviour
     /// <returns>インデックス。はみ出た場合、255。</returns>
     private byte getIndexFromXY(int x, int y)
     {
-        var width = constants.ROOMS_WIDTH;
+        var width = Constants.ROOMS_WIDTH;
         return x < 0 || x >= width || y < 0 || y >= width
             ? (byte)0xFF
             : (byte)((y * width) + x);
@@ -216,11 +190,6 @@ public class RoomsCalculator : UdonSharpBehaviour
     private uint getNeighborIndexes(byte room, int index)
     {
         var INV = INVALID_NEIGHBOR_INDEX;
-        var constants = this.constants;
-        if (constants == null)
-        {
-            return packNeighborIndexes(INV, INV, INV, INV);
-        }
         var xy = getXYFromIndex(index);
         var x = xy & 0xF;
         var y = (xy >> 4) & 0xF;
@@ -262,11 +231,9 @@ public class RoomsCalculator : UdonSharpBehaviour
     {
         if (managers)
         {
-            constants =
-                managers.GetComponentInChildren<Constants>();
             directionCalculator =
                 managers.GetComponentInChildren<DirectionCalculator>();
-            visited = new int[constants.NUM_ROOMS];
+            visited = new int[Constants.NUM_ROOMS];
         }
     }
 }
