@@ -50,9 +50,6 @@ public class InstantiateManager : UdonSharpBehaviour
     /// </summary>
     private ClonesManager clonesManager;
 
-    /// <summary>定数一覧。</summary>
-    private Constants constants;
-
     /// <summary>初期化マネージャー コンポーネント。</summary>
     private InitializeManager initializeManager;
 
@@ -116,26 +113,19 @@ public class InstantiateManager : UdonSharpBehaviour
         UdonSharpBehaviour callObjectOnComplete,
         string callMethodOnComplete)
     {
-        if (this.constants == null)
-        {
-            Debug.LogError(
-                "constants が null のため、Instantiate できません。: InstantiateManager.StartBatchInstantiate");
-            return;
-        }
         if (this.initializeManager == null)
         {
             Debug.LogError(
                 "initializeManager が null のため、Instantiate できません。: InstantiateManager.StartBatchInstantiate");
             return;
         }
-        var constants = this.constants;
-        var LOAD_INTERVAL = constants.LOAD_INTERVAL;
-        var NUM_INSTANTIATES = constants.NUM_INSTANTIATES;
-        var NUM_KEYS = constants.NUM_KEYS;
-        var NUM_MINES = constants.NUM_MINES;
-        var NUM_ROOMS = constants.NUM_ROOMS;
-        var ROOM_SIZE = constants.ROOM_SIZE;
-        var ROOMS_WIDTH = constants.ROOMS_WIDTH;
+        var LOAD_INTERVAL = Constants.LOAD_INTERVAL;
+        var NUM_INSTANTIATES = Constants.NUM_INSTANTIATES;
+        var NUM_KEYS = Constants.NUM_KEYS;
+        var NUM_MINES = Constants.NUM_MINES;
+        var NUM_ROOMS = Constants.NUM_ROOMS;
+        var ROOM_SIZE = Constants.ROOM_SIZE;
+        var ROOMS_WIDTH = Constants.ROOMS_WIDTH;
         this.callMethodOnComplete = callMethodOnComplete;
         this.callObjectOnComplete = callObjectOnComplete;
         this.indexes = new int[NUM_INSTANTIATES];
@@ -181,7 +171,7 @@ public class InstantiateManager : UdonSharpBehaviour
     /// <summary>1 イテレーションごとの初期化をします。</summary>
     public void RunInstantiateIteration()
     {
-        var LOAD_INTERVAL = this.constants.LOAD_INTERVAL;
+        var LOAD_INTERVAL = Constants.LOAD_INTERVAL;
         if (this.iterator < this.sources.Length)
         {
             var i = this.iterator++;
@@ -270,7 +260,7 @@ public class InstantiateManager : UdonSharpBehaviour
         {
             this.SendCustomEventDelayedSeconds(
                 nameof(FinishInstantiate),
-                this.constants.LOAD_INTERVAL);
+                Constants.LOAD_INTERVAL);
         }
     }
 
@@ -309,8 +299,6 @@ public class InstantiateManager : UdonSharpBehaviour
         {
             this.clonesManager =
                 this.managers.GetComponentInChildren<ClonesManager>();
-            this.constants =
-                this.managers.GetComponentInChildren<Constants>();
             this.initializeManager =
                 this.managers.GetComponentInChildren<InitializeManager>();
         }

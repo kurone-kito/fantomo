@@ -68,9 +68,9 @@ public class Door : UdonSharpBehaviour
         {
             stateViewController.StopProgress();
         }
-        setInteractive(false);
-        updateInteraction();
-        playAnimationToOpen();
+        SetInteractive(false);
+        UpdateInteraction();
+        PlayAnimationToOpen();
         SendCustomEventDelayedSeconds(nameof(CloseDoor), 1.5f);
     }
 
@@ -79,7 +79,7 @@ public class Door : UdonSharpBehaviour
     /// </summary>
     public void CloseDoor()
     {
-        playAnimationToClose();
+        PlayAnimationToClose();
         SendCustomEventDelayedSeconds(
             nameof(EnableInteractive), 0.5f);
     }
@@ -87,8 +87,8 @@ public class Door : UdonSharpBehaviour
     /// <summary>施錠・解錠の予約をします。</summary>
     public void ReserveToggleLock()
     {
-        setLockSwitchEnabled(false);
-        var wait = isLocked() && !isMyLock() ? 5f : 1.5f;
+        SetLockSwitchEnabled(false);
+        var wait = IsLocked() && !IsMyLock() ? 5f : 1.5f;
         if (stateViewController != null)
         {
             stateViewController.StartProgress(wait);
@@ -109,7 +109,7 @@ public class Door : UdonSharpBehaviour
     /// </summary>
     public void ToggleLockWhenNotCanceled()
     {
-        setLockSwitchEnabled(true);
+        SetLockSwitchEnabled(true);
         if (!isLockCanceled)
         {
             ToggleLock();
@@ -119,20 +119,20 @@ public class Door : UdonSharpBehaviour
     /// <summary>ドアの施錠状態を切り替えます。</summary>
     public void ToggleLock()
     {
-        setLock(!isLocked());
-        updateInteraction();
-        if (!isLocked())
+        SetLock(!IsLocked());
+        UpdateInteraction();
+        if (!IsLocked())
         {
             OpenDoor();
         }
-        updateLockSwitchText();
-        updateView();
+        UpdateLockSwitchText();
+        UpdateView();
     }
 
     /// <summary>スイッチ類を有効化します。</summary>
     public void EnableInteractive()
     {
-        setInteractive(true);
+        SetInteractive(true);
     }
 
     /// <summary>
@@ -140,14 +140,14 @@ public class Door : UdonSharpBehaviour
     /// </summary>
     public override void OnDeserialization()
     {
-        updateInteraction();
-        updateLockSwitchText();
-        updateView();
+        UpdateInteraction();
+        UpdateLockSwitchText();
+        UpdateView();
     }
 
     /// <summary>ドアが施錠しているかどうかを取得します。</summary>
     /// <returns>ドアが施錠している場合、<c>true</c>。</returns>
-    private bool isLocked()
+    private bool IsLocked()
     {
         var player = VRCPlayerApi.GetPlayerById(lockedUser);
         return player != null && player.IsValid();
@@ -159,7 +159,7 @@ public class Door : UdonSharpBehaviour
     /// <returns>
     /// 施錠者がローカルプレイヤー、つまり自分自身である場合、<c>true</c>。
     /// </returns>
-    private bool isMyLock()
+    private bool IsMyLock()
     {
         var player = VRCPlayerApi.GetPlayerById(lockedUser);
         return player != null && player.isLocal;
@@ -167,15 +167,15 @@ public class Door : UdonSharpBehaviour
 
     /// <summary>施錠の有無を設定します。</summary>
     /// <param name="isLock">施錠するかどうか。</param>
-    private void setLock(bool isLock)
+    private void SetLock(bool isLock)
     {
-        changeOwner();
+        ChangeOwner();
         lockedUser = isLock ? Networking.LocalPlayer.playerId : 0;
         RequestSerialization();
     }
 
     /// <summary>ドア閉鎖のアニメーションを再生します。</summary>
-    private void playAnimationToClose()
+    private void PlayAnimationToClose()
     {
         var animator = GetComponent<Animator>();
         if (animator != null)
@@ -185,7 +185,7 @@ public class Door : UdonSharpBehaviour
     }
 
     /// <summary>ドア開放のアニメーションを再生します。</summary>
-    private void playAnimationToOpen()
+    private void PlayAnimationToOpen()
     {
         var animator = GetComponent<Animator>();
         if (animator != null)
@@ -196,7 +196,7 @@ public class Door : UdonSharpBehaviour
 
     /// <summary>操作の有効・無効を設定します。</summary>
     /// <param name="isInteractive">操作が有効であるかどうか。</param>
-    private void setInteractive(bool isInteractive)
+    private void SetInteractive(bool isInteractive)
     {
         if (lockSwitch != null)
         {
@@ -210,7 +210,7 @@ public class Door : UdonSharpBehaviour
 
     /// <summary>施錠操作が可能であるかどうかを設定します。</summary>
     /// <param name="enabled">操作が有効であるかどうか。</param>
-    private void setLockSwitchEnabled(bool enabled)
+    private void SetLockSwitchEnabled(bool enabled)
     {
         if (lockSwitch != null)
         {
@@ -224,7 +224,7 @@ public class Door : UdonSharpBehaviour
 
     /// <summary>開放操作が可能であるかどうかを設定します。</summary>
     /// <param name="enabled">操作が有効であるかどうか。</param>
-    private void setOpenSwitchEnabled(bool enabled)
+    private void SetOpenSwitchEnabled(bool enabled)
     {
         if (openSwitch != null)
         {
@@ -237,13 +237,13 @@ public class Door : UdonSharpBehaviour
     }
 
     /// <summary>各種スイッチの有効・無効状態を更新します。</summary>
-    private void updateInteraction()
+    private void UpdateInteraction()
     {
-        setOpenSwitchEnabled(!isLocked());
+        SetOpenSwitchEnabled(!IsLocked());
     }
 
     /// <summary>施錠スイッチのラベルを更新します。</summary>
-    private void updateLockSwitchText()
+    private void UpdateLockSwitchText()
     {
         if (lockSwitch != null)
         {
@@ -251,25 +251,25 @@ public class Door : UdonSharpBehaviour
             if (lockSwitch != null)
             {
                 lockSwitch.InteractionText =
-                    isLocked() ? "解錠して開く" : "施錠";
+                    IsLocked() ? "解錠して開く" : "施錠";
             }
         }
     }
 
     /// <summary>表示状態を更新します。</summary>
-    private void updateView()
+    private void UpdateView()
     {
         if (stateViewController != null)
         {
             stateViewController.UpdateLockState(
-                isMyLock() ? stateViewController.LOCKED_BY_ME :
-                isLocked() ? stateViewController.LOCKED_BY_ENEMY :
+                IsMyLock() ? stateViewController.LOCKED_BY_ME :
+                IsLocked() ? stateViewController.LOCKED_BY_ENEMY :
                 stateViewController.UNLOCKED);
         }
     }
 
     /// <summary>オブジェクトオーナーを奪取・変更します。</summary>
-    private void changeOwner()
+    private void ChangeOwner()
     {
         var player = Networking.LocalPlayer;
         if (!Networking.IsOwner(player, gameObject))

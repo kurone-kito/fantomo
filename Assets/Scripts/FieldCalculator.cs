@@ -26,9 +26,6 @@ public class FieldCalculator : UdonSharpBehaviour
     [SerializeField]
     private GameObject managers;
 
-    /// <summary>定数一覧。</summary>
-    private Constants constants;
-
     /// <summary>方角周りの計算ロジック。</summary>
     private DirectionCalculator directionCalculator;
 
@@ -106,19 +103,13 @@ public class FieldCalculator : UdonSharpBehaviour
         UdonSharpBehaviour callObjectOnComplete,
         string callMethodOnComplete)
     {
-        if (constants == null)
-        {
-            Debug.LogError(
-                "constants が null のため、フィールドを算出できません。: FieldCalculator.Calculate");
-            return;
-        }
         if (roomsCalculator == null)
         {
             Debug.LogError(
                 "roomsCalculator が null のため、フィールドを算出できません。: FieldCalculator.Calculate");
             return;
         }
-        var LOAD_INTERVAL = constants.LOAD_INTERVAL;
+        var LOAD_INTERVAL = Constants.LOAD_INTERVAL;
         this.callMethodOnComplete = callMethodOnComplete;
         this.callObjectOnComplete = callObjectOnComplete;
         rooms = roomsCalculator.CreateIdentityRooms();
@@ -133,24 +124,24 @@ public class FieldCalculator : UdonSharpBehaviour
     /// </summary>
     public void RunIteration()
     {
-        var LOAD_INTERVAL = constants.LOAD_INTERVAL;
+        var LOAD_INTERVAL = Constants.LOAD_INTERVAL;
         var toBeContinue = true;
         switch (Phase)
         {
             case CALC_PHASE_CUT_ROUTES:
-                cutRoute();
+                CutRoute();
                 break;
             case CALC_PHASE_PUT_MINES:
-                putMines();
+                PutMines();
                 break;
             case CALC_PHASE_PUT_KEYS:
-                putItems(
-                    constants.NUM_KEYS,
+                PutItems(
+                    Constants.NUM_KEYS,
                     (byte)ROOM_FLG.HAS_KEY);
                 break;
             case CALC_PHASE_PUT_SPAWNERS:
-                putItems(
-                    constants.NUM_PLAYERS,
+                PutItems(
+                    Constants.NUM_PLAYERS,
                     (byte)ROOM_FLG.HAS_SPAWN);
                 break;
             case CALC_PHASE_DONE:
@@ -183,7 +174,7 @@ public class FieldCalculator : UdonSharpBehaviour
     }
 
     /// <summary>扉を指定の確率で削除します。</summary>
-    private void cutRoute()
+    private void CutRoute()
     {
         var rooms = this.rooms;
         var dirs = directionCalculator.Direction;
@@ -201,7 +192,7 @@ public class FieldCalculator : UdonSharpBehaviour
                 (int)(
                     this.rooms.Length *
                     (int)DIR.MAX *
-                    constants.ROOM_REMOVE_DOOR_RATE);
+                    Constants.ROOM_REMOVE_DOOR_RATE);
             Progress = (float)(++phaseCount) / max;
             if (phaseCount >= max)
             {
@@ -215,9 +206,9 @@ public class FieldCalculator : UdonSharpBehaviour
     }
 
     /// <summary>地雷を設置します。</summary>
-    private void putMines()
+    private void PutMines()
     {
-        var NUM_MINES = constants.NUM_MINES;
+        var NUM_MINES = Constants.NUM_MINES;
         var rooms = this.rooms;
         var roomsCalculator = this.roomsCalculator;
         var targetIndex = Random.Range(0, rooms.Length);
@@ -249,7 +240,7 @@ public class FieldCalculator : UdonSharpBehaviour
     /// <summary>アイテムを設置します。</summary>
     /// <param name="items">設置個数。</param>
     /// <param name="flag">アイテムを示すフラグ。</param>
-    private void putItems(int items, int flag)
+    private void PutItems(int items, int flag)
     {
         var rooms = this.rooms;
         var roomsCalculator = this.roomsCalculator;
@@ -277,8 +268,6 @@ public class FieldCalculator : UdonSharpBehaviour
     {
         if (managers)
         {
-            constants =
-                managers.GetComponentInChildren<Constants>();
             directionCalculator =
                 managers.GetComponentInChildren<DirectionCalculator>();
             initializeManager =

@@ -63,7 +63,7 @@ public class EntrySystem : UdonSharpBehaviour
             var bar = progressBar;
             bar.gameObject.SetActive(value < 1f);
             bar.Progress = value;
-            updateStartButtonView();
+            UpdateStartButtonView();
         }
     }
 
@@ -108,13 +108,13 @@ public class EntrySystem : UdonSharpBehaviour
         entryManager.Decide();
         UpdateView();
         SendCustomNetworkEvent(
-            NetworkEventTarget.All, nameof(teleportToGameField));
+            NetworkEventTarget.All, nameof(TeleportToGameField));
     }
 
     /// <summary>
     /// 自分自身がエントリーしている場合、フィールドへ転送します。
     /// </summary>
-    public void teleportToGameField()
+    public void TeleportToGameField()
     {
         var manager = entryManager;
         var gameField = this.gameField;
@@ -131,7 +131,7 @@ public class EntrySystem : UdonSharpBehaviour
             return;
         }
         gameField.Initialize();
-        gameField.teleportToGameField();
+        gameField.TeleportToGameField();
     }
 
     /// <summary>ビューを最新の状態に更新します。</summary>
@@ -147,15 +147,15 @@ public class EntrySystem : UdonSharpBehaviour
             full ? "満員です" :
             "参加する";
         entryButton.interactable = !full && valid && !manager.Decided;
-        updateStartButtonView();
+        UpdateStartButtonView();
         for (var i = playerNamesLabel.Length; --i >= 0;)
         {
-            playerNamesLabel[i].text = getDisplayName(manager.Ids[i]);
+            playerNamesLabel[i].text = GetDisplayName(manager.Ids[i]);
         }
     }
 
     /// <summary>ゲーム開始ボタンを最新の状態に更新します。</summary>
-    private void updateStartButtonView()
+    private void UpdateStartButtonView()
     {
         var manager = entryManager;
         startButton.SetActive(
@@ -172,7 +172,7 @@ public class EntrySystem : UdonSharpBehaviour
     /// </summary>
     /// <param name="id">このワールドにおける、プレイヤー ID。</param>
     /// <returns>プレイヤーの表示名。無効である場合、空文字。</returns>
-    private string getDisplayName(int id)
+    private string GetDisplayName(int id)
     {
         var manager = entryManager;
         if (manager == null || manager.InvalidLocalPlayer)

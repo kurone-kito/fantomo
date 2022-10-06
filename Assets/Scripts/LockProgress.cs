@@ -24,14 +24,14 @@ public class LockProgress : UdonSharpBehaviour
     private float endTime = float.MinValue;
 
     /// <summary><seealso cref="Image"/>コンポーネントを取得します。</summary>
-    private Image lockImage => gameObject.GetComponent<Image>();
+    private Image LockImage => gameObject.GetComponent<Image>();
 
     /// <summary>プログレス バーを無効状態にします。</summary>
     public void IgnoreProgress()
     {
-        if (lockImage != null)
+        if (LockImage != null)
         {
-            lockImage.color = ignoredColor;
+            LockImage.color = ignoredColor;
         }
     }
 
@@ -44,9 +44,9 @@ public class LockProgress : UdonSharpBehaviour
         // 100ms 見かけ上の待機時間を減らすことにより、
         // 完了の一瞬のみ無効表示になる現象を回避している。
         endTime = Time.realtimeSinceStartup + time - 0.1f;
-        if (lockImage != null)
+        if (LockImage != null)
         {
-            lockImage.color = defaultColor;
+            LockImage.color = defaultColor;
         }
     }
 
@@ -61,7 +61,7 @@ public class LockProgress : UdonSharpBehaviour
 
     /// <summary>進捗中かどうかを取得します。</summary>
     /// <returns>進捗中である場合、<c>true</c>。</returns>
-    private bool isProgress()
+    private bool IsProgress()
     {
         return !float.IsNaN(startTime);
     }
@@ -81,9 +81,9 @@ public class LockProgress : UdonSharpBehaviour
             ? 0f
             : Mathf.InverseLerp(
                 startTime, endTime, Time.realtimeSinceStartup);
-        if (lockImage != null)
+        if (LockImage != null)
         {
-            lockImage.fillAmount = amount;
+            LockImage.fillAmount = amount;
         }
         if (amount >= 1f)
         {

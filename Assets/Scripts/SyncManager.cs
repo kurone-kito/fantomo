@@ -13,9 +13,6 @@ public class SyncManager : UdonSharpBehaviour
     [SerializeField]
     private GameObject managers;
 
-    /// <summary>定数一覧。</summary>
-    private Constants constants;
-
     /// <summary>エントリー機能ロジック。</summary>
     private EntryManager entryManager;
 
@@ -67,7 +64,7 @@ public class SyncManager : UdonSharpBehaviour
     /// <summary>
     /// 前回同期時の<seealso cref="SyncManager.decided"/>の値。
     /// </summary>
-    public bool prevDecided
+    public bool PrevDecided
     {
         get;
         private set;
@@ -76,7 +73,7 @@ public class SyncManager : UdonSharpBehaviour
     /// <summary>
     /// 前回同期時の<seealso cref="SyncManager.fieldCalculateProgress"/>の値。
     /// </summary>
-    public float prevFieldCalculateProgress
+    public float PrevFieldCalculateProgress
     {
         get;
         private set;
@@ -85,7 +82,7 @@ public class SyncManager : UdonSharpBehaviour
     /// <summary>
     /// 前回同期時の<seealso cref="SyncManager.keys"/>の値。
     /// </summary>
-    public sbyte[] prevKeys
+    public sbyte[] PrevKeys
     {
         get;
         private set;
@@ -94,7 +91,7 @@ public class SyncManager : UdonSharpBehaviour
     /// <summary>
     /// 前回同期時の<seealso cref="SyncManager.locked"/>の値。
     /// </summary>
-    public short[] prevLocked
+    public short[] PrevLocked
     {
         get;
         private set;
@@ -103,7 +100,7 @@ public class SyncManager : UdonSharpBehaviour
     /// <summary>
     /// 前回同期時の<seealso cref="SyncManager.mines"/>の値。
     /// </summary>
-    public sbyte[] prevMines
+    public sbyte[] PrevMines
     {
         get;
         private set;
@@ -112,7 +109,7 @@ public class SyncManager : UdonSharpBehaviour
     /// <summary>
     /// 前回同期時の<seealso cref="SyncManager.openedX"/>の値。
     /// </summary>
-    public ulong prevOpenedX
+    public ulong PrevOpenedX
     {
         get;
         private set;
@@ -121,7 +118,7 @@ public class SyncManager : UdonSharpBehaviour
     /// <summary>
     /// 前回同期時の<seealso cref="SyncManager.openedY"/>の値。
     /// </summary>
-    public ulong prevOpenedY
+    public ulong PrevOpenedY
     {
         get;
         private set;
@@ -130,7 +127,7 @@ public class SyncManager : UdonSharpBehaviour
     /// <summary>
     /// 前回同期時の<seealso cref="SyncManager.playersId"/>の値。
     /// </summary>
-    public short[] prevPlayersId
+    public short[] PrevPlayersId
     {
         get;
         private set;
@@ -139,7 +136,7 @@ public class SyncManager : UdonSharpBehaviour
     /// <summary>
     /// 前回同期時の<seealso cref="SyncManager.rooms"/>の値。
     /// </summary>
-    public byte[] prevRooms
+    public byte[] PrevRooms
     {
         get;
         private set;
@@ -172,7 +169,7 @@ public class SyncManager : UdonSharpBehaviour
         {
             entryManager.OnDeserialization();
         }
-        storeValues();
+        StoreValues();
     }
 
     /// <summary>
@@ -182,33 +179,29 @@ public class SyncManager : UdonSharpBehaviour
     {
         if (managers != null)
         {
-            constants = managers.GetComponentInChildren<Constants>();
             entryManager = managers.GetComponentInChildren<EntryManager>();
         }
-        if (constants != null)
-        {
-            keys = new sbyte[constants.NUM_KEYS];
-            locked = new short[constants.NUM_ROOMS];
-            mines = new sbyte[constants.NUM_MINES];
-            playersId = new short[constants.NUM_PLAYERS];
-            rooms = new byte[constants.NUM_ROOMS];
-        }
-        storeValues();
+        keys = new sbyte[Constants.NUM_KEYS];
+        locked = new short[Constants.NUM_ROOMS];
+        mines = new sbyte[Constants.NUM_MINES];
+        playersId = new short[Constants.NUM_PLAYERS];
+        rooms = new byte[Constants.NUM_ROOMS];
+        StoreValues();
     }
 
     /// <summary>
     /// 現在の値を、以前の値として保持します。
     /// </summary>
-    private void storeValues()
+    private void StoreValues()
     {
-        prevDecided = decided;
-        prevFieldCalculateProgress = fieldCalculateProgress;
-        prevKeys = keys;
-        prevLocked = locked;
-        prevMines = mines;
-        prevOpenedX = openedX;
-        prevOpenedY = openedY;
-        prevPlayersId = playersId;
-        prevRooms = rooms;
+        PrevDecided = decided;
+        PrevFieldCalculateProgress = fieldCalculateProgress;
+        PrevKeys = keys;
+        PrevLocked = locked;
+        PrevMines = mines;
+        PrevOpenedX = openedX;
+        PrevOpenedY = openedY;
+        PrevPlayersId = playersId;
+        PrevRooms = rooms;
     }
 }

@@ -52,10 +52,9 @@ public class ClonesManager : UdonSharpBehaviour
                 "managers が null のため、初期化を行えません。: ClonesManager.Start");
             return;
         }
-        var constants = managers.GetComponentInChildren<Constants>();
-        Keys = new GameObject[constants.NUM_KEYS];
-        Mines = new GameObject[constants.NUM_MINES];
-        Rooms = new GameObject[constants.NUM_ROOMS];
-        Spawns = new GameObject[constants.NUM_PLAYERS];
+        Keys = new GameObject[Constants.NUM_KEYS];
+        Mines = new GameObject[Constants.NUM_MINES];
+        Rooms = new GameObject[Constants.NUM_ROOMS];
+        Spawns = new GameObject[Constants.NUM_PLAYERS];
     }
 }

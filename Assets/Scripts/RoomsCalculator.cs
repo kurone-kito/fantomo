@@ -11,8 +11,6 @@ public class RoomsCalculator : UdonSharpBehaviour
     /// <summary>管理ロジックの親となるオブジェクト。</summary>
     [SerializeField]
     private GameObject managers;
-    /// <summary>定数一覧。</summary>
-    private Constants constants;
     /// <summary>方角周りの計算ロジック。</summary>
     private DirectionCalculator directionCalculator;
     /// <summary>探索済みの部屋インデックス一覧。</summary>
@@ -21,13 +19,7 @@ public class RoomsCalculator : UdonSharpBehaviour
     /// <summary>初期状態の部屋情報一覧を取得します。</summary>
     public byte[] CreateIdentityRooms()
     {
-        if (constants == null)
-        {
-            Debug.LogError(
-                "constants が null のため、部屋を算出できません。: RoomsCalculator.CreateIdentityRooms");
-            return null;
-        }
-        var NUM_ROOMS = constants.NUM_ROOMS;
+        var NUM_ROOMS = Constants.NUM_ROOMS;
         var rooms = new byte[NUM_ROOMS];
         for (var i = NUM_ROOMS; --i >= 0;)
         {
@@ -43,17 +35,11 @@ public class RoomsCalculator : UdonSharpBehaviour
     /// <returns>探索可能な部屋数。</returns>
     public int GetReachableRoomsLength(byte[] rooms)
     {
-        if (constants == null)
-        {
-            Debug.LogError(
-                "constants が null のため、部屋を算出できません。: RoomsCalculator.GetReachableRoomsLength");
-            return 0;
-        }
         for (var i = rooms.Length; --i >= 0;)
         {
             visited[i] = -1;
         }
-        return getReachableRoomsLengthRecursive(rooms, 0) + 1;
+        return GetReachableRoomsLengthRecursive(rooms, 0) + 1;
     }
 
     /// <summary>
@@ -63,12 +49,6 @@ public class RoomsCalculator : UdonSharpBehaviour
     /// <returns>任意のアイテムフラグを持っている場合、<c>true</c></returns>
     public bool HasAnyItems(byte room)
     {
-        if (constants == null)
-        {
-            Debug.LogError(
-                "constants が null のため、部屋を算出できません。: RoomsCalculator.HasAnyItems");
-            return false;
-        }
         return (room & (byte)ROOM_FLG.HAS_ALL) != 0;
     }
 
@@ -79,12 +59,6 @@ public class RoomsCalculator : UdonSharpBehaviour
     /// <returns>探索不能な地雷が存在する場合、<c>true</c>。</returns>
     public bool HasUnReachableMine(byte[] rooms)
     {
-        if (constants == null)
-        {
-            Debug.LogError(
-                "constants が null のため、部屋を算出できません。: RoomsCalculator.HasUnReachableMine");
-            return false;
-        }
         for (var i = rooms.Length; --i >= 0;)
         {
             var room = rooms[i];
@@ -92,7 +66,7 @@ public class RoomsCalculator : UdonSharpBehaviour
             {
                 continue;
             }
-            var neighbors = getNeighborIndexes(room, i);
+            var neighbors = GetNeighborIndexes(room, i);
             var founds = 0;
             for (int j = (int)DIR.MAX; --j >= 0;)
             {
@@ -114,7 +88,7 @@ public class RoomsCalculator : UdonSharpBehaviour
     /// <summary>通じていないルートの削除をします。</summary>
     /// <param name="rooms">現在の部屋状況一覧。</param>
     /// <returns>新しい部屋状況一覧。。</returns>
-    private byte[] closeInvalidDirections(byte[] rooms)
+    private byte[] CloseInvalidDirections(byte[] rooms)
     {
         var directions = directionCalculator.Direction;
         var invertDirections = directionCalculator.InvertDirection;
@@ -122,7 +96,7 @@ public class RoomsCalculator : UdonSharpBehaviour
         for (int i = rooms.Length; --i >= 0;)
         {
             var room = rooms[i];
-            var neighbors = getNeighborIndexes(room, i);
+            var neighbors = GetNeighborIndexes(room, i);
             for (int j = (int)DIR.MAX; --j >= 0;)
             {
                 var ni = (neighbors >> (j * 8)) & 0xFF;
@@ -142,10 +116,10 @@ public class RoomsCalculator : UdonSharpBehaviour
     /// <param name="index">現在探索中の部屋インデックス。</param>
     /// <returns>探索可能な部屋数。</returns>
     [RecursiveMethod]
-    private int getReachableRoomsLengthRecursive(byte[] rooms, int index)
+    private int GetReachableRoomsLengthRecursive(byte[] rooms, int index)
     {
         var visited = this.visited;
-        var neighbors = getNeighborIndexes(rooms[index], index);
+        var neighbors = GetNeighborIndexes(rooms[index], index);
         for (var i = visited.Length; --i >= 0;)
         {
             if (visited[i] < 0)
@@ -178,7 +152,7 @@ public class RoomsCalculator : UdonSharpBehaviour
                 continue;
             }
             result +=
-                1 + getReachableRoomsLengthRecursive(rooms, (int)ni);
+                1 + GetReachableRoomsLengthRecursive(rooms, (int)ni);
         }
         return result;
     }
@@ -186,9 +160,9 @@ public class RoomsCalculator : UdonSharpBehaviour
     /// <summary>インデックスから座標を取得します。</summary>
     /// <param name="index">インデックス。</param>
     /// <returns>上位 4bit にX座標、下位 4bit にY座標。</returns>
-    private byte getXYFromIndex(int index)
+    private byte GetXYFromIndex(int index)
     {
-        var width = constants.ROOMS_WIDTH;
+        var width = Constants.ROOMS_WIDTH;
         var x = (index % width) & 0xF;
         var y = (index / width) & 0xF;
         return (byte)((x << 4) + y);
@@ -198,9 +172,9 @@ public class RoomsCalculator : UdonSharpBehaviour
     /// <param name="x">X 座標。</param>
     /// <param name="y">Y 座標。</param>
     /// <returns>インデックス。はみ出た場合、255。</returns>
-    private byte getIndexFromXY(int x, int y)
+    private byte GetIndexFromXY(int x, int y)
     {
-        var width = constants.ROOMS_WIDTH;
+        var width = Constants.ROOMS_WIDTH;
         return x < 0 || x >= width || y < 0 || y >= width
             ? (byte)0xFF
             : (byte)((y * width) + x);
@@ -213,30 +187,25 @@ public class RoomsCalculator : UdonSharpBehaviour
     /// 隣接する部屋のインデックス一覧を、上位から 8bit ごとに
     /// +X、-X、+Y、-Y の順で返します。通路がふさがっている場合は、255。
     /// </returns>
-    private uint getNeighborIndexes(byte room, int index)
+    private uint GetNeighborIndexes(byte room, int index)
     {
         var INV = INVALID_NEIGHBOR_INDEX;
-        var constants = this.constants;
-        if (constants == null)
-        {
-            return packNeighborIndexes(INV, INV, INV, INV);
-        }
-        var xy = getXYFromIndex(index);
+        var xy = GetXYFromIndex(index);
         var x = xy & 0xF;
         var y = (xy >> 4) & 0xF;
-        return packNeighborIndexes(
+        return PackNeighborIndexes(
             (room & (1 << (byte)ROOM_FLG.DIR_N)) == 0
                 ? INV
-                : getIndexFromXY(x - 1, y),
+                : GetIndexFromXY(x - 1, y),
             (room & (1 << (byte)ROOM_FLG.DIR_S)) == 0
                 ? INV
-                : getIndexFromXY(x + 1, y),
+                : GetIndexFromXY(x + 1, y),
             (room & (1 << (byte)ROOM_FLG.DIR_W)) == 0
                 ? INV
-                : getIndexFromXY(x, y - 1),
+                : GetIndexFromXY(x, y - 1),
             (room & (1 << (byte)ROOM_FLG.DIR_E)) == 0
                 ? INV
-                : getIndexFromXY(x, y + 1)
+                : GetIndexFromXY(x, y + 1)
         );
     }
 
@@ -249,7 +218,7 @@ public class RoomsCalculator : UdonSharpBehaviour
     /// 隣接する部屋のインデックス一覧を、上位から 8bit ごとに
     /// +X、-X、+Y、-Y の順で返します。
     /// </returns>
-    private uint packNeighborIndexes(byte n, byte s, byte w, byte e)
+    private uint PackNeighborIndexes(byte n, byte s, byte w, byte e)
     {
         return ((uint)e << 24) | ((uint)w << 16) | ((uint)s << 8) | n;
     }
@@ -262,11 +231,9 @@ public class RoomsCalculator : UdonSharpBehaviour
     {
         if (managers)
         {
-            constants =
-                managers.GetComponentInChildren<Constants>();
             directionCalculator =
                 managers.GetComponentInChildren<DirectionCalculator>();
-            visited = new int[constants.NUM_ROOMS];
+            visited = new int[Constants.NUM_ROOMS];
         }
     }
 }

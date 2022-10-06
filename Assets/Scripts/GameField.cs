@@ -24,12 +24,12 @@ public class GameField : UdonSharpBehaviour
     /// <summary>ゲーム フィールドを初期化します。</summary>
     public void Initialize()
     {
-        initializeRooms();
-        // this.placeMines();
+        // InitializeRooms();
+        // PlaceMines();
     }
 
     /// <summary>プレイヤーをフィールドへ転送します。</summary>
-    public void teleportToGameField()
+    public void TeleportToGameField()
     {
         var player = Networking.LocalPlayer;
         if (player == null)
@@ -41,7 +41,7 @@ public class GameField : UdonSharpBehaviour
     }
 
     /// <summary>地雷の配置候補先を決定します。</summary>
-    private void placeMines()
+    private void PlaceMines()
     {
         var candidate = (int)(UnityEngine.Random.value * rooms.Length);
         var roomScript = rooms[candidate].GetComponent<Room>();
@@ -53,21 +53,21 @@ public class GameField : UdonSharpBehaviour
     }
 
     /// <summary>各部屋を初期化します。</summary>
-    private void initializeRooms()
+    private void InitializeRooms()
     {
         for (var i = rooms.Length; --i >= 0;)
         {
-            placeWall(i);
-            setNeighbors(i);
+            PlaceWall(i);
+            SetNeighbors(i);
         }
     }
 
     /// <summary>壁を配置します。</summary>
     /// <param name="index">部屋のインデックス。</param>
-    private void placeWall(int index)
+    private void PlaceWall(int index)
     {
         var room = rooms[index];
-        var xy = getXYFromIndex(index);
+        var xy = GetXYFromIndex(index);
         var roomScript = room.GetComponent<Room>();
         roomScript.existsDoorNX = xy[0] > 0;
         roomScript.existsDoorPX = xy[0] < WIDTH - 1;
@@ -78,10 +78,10 @@ public class GameField : UdonSharpBehaviour
 
     /// <summary>隣室を設定します。</summary>
     /// <param name="index">部屋のインデックス。</param>
-    private void setNeighbors(int index)
+    private void SetNeighbors(int index)
     {
         var room = rooms[index];
-        var neighborsIndex = getNeighborIndexes(index);
+        var neighborsIndex = GetNeighborIndexes(index);
         var neighbors = new Room[neighborsIndex.Length];
         for (var j = neighborsIndex.Length; --j >= 0;)
         {
@@ -95,7 +95,7 @@ public class GameField : UdonSharpBehaviour
 
     /// <summary>探索フラグを初期化します。</summary>
     /// <returns>探索を開始する際の起点となる、インデックス。</returns>
-    private int clearExploringFlag()
+    private int ClearExploringFlag()
     {
         var result = -1;
         for (var i = rooms.Length; --i >= 0;)
@@ -116,21 +116,21 @@ public class GameField : UdonSharpBehaviour
     /// <returns>
     /// 隣接する部屋のインデックス一覧。存在しない場合、負数。
     /// </returns>
-    private int[] getNeighborIndexes(int index)
+    private int[] GetNeighborIndexes(int index)
     {
-        var xy = getXYFromIndex(index);
+        var xy = GetXYFromIndex(index);
         return new int[] {
-            getIndexFromXY(xy[0] - 1, xy[1]),
-            getIndexFromXY(xy[0] + 1, xy[1]),
-            getIndexFromXY(xy[0], xy[1] - 1),
-            getIndexFromXY(xy[0], xy[1] + 1),
+            GetIndexFromXY(xy[0] - 1, xy[1]),
+            GetIndexFromXY(xy[0] + 1, xy[1]),
+            GetIndexFromXY(xy[0], xy[1] - 1),
+            GetIndexFromXY(xy[0], xy[1] + 1),
         };
     }
 
     /// <summary>インデックスから座標を取得します。</summary>
     /// <param name="index">インデックス。</param>
     /// <returns>X、Y座標を示す、配列。</returns>
-    private int[] getXYFromIndex(int index)
+    private int[] GetXYFromIndex(int index)
     {
         return new int[] { index % WIDTH, index / WIDTH };
     }
@@ -139,7 +139,7 @@ public class GameField : UdonSharpBehaviour
     /// <param name="x">X 座標。</param>
     /// <param name="y">Y 座標。</param>
     /// <returns>インデックス。はみ出た場合、負数。</returns>
-    private int getIndexFromXY(int x, int y)
+    private int GetIndexFromXY(int x, int y)
     {
         return x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT
             ? -1
