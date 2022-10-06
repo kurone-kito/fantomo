@@ -746,13 +746,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: <prevDecided>k__BackingField
+      Data: <PrevDecided>k__BackingField
     - Name: $v
       Entry: 7
       Data: 52|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: <prevDecided>k__BackingField
+      Data: <PrevDecided>k__BackingField
     - Name: <UserType>k__BackingField
       Entry: 9
       Data: 11
@@ -794,13 +794,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: <prevFieldCalculateProgress>k__BackingField
+      Data: <PrevFieldCalculateProgress>k__BackingField
     - Name: $v
       Entry: 7
       Data: 54|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: <prevFieldCalculateProgress>k__BackingField
+      Data: <PrevFieldCalculateProgress>k__BackingField
     - Name: <UserType>k__BackingField
       Entry: 9
       Data: 16
@@ -842,13 +842,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: <prevKeys>k__BackingField
+      Data: <PrevKeys>k__BackingField
     - Name: $v
       Entry: 7
       Data: 56|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: <prevKeys>k__BackingField
+      Data: <PrevKeys>k__BackingField
     - Name: <UserType>k__BackingField
       Entry: 9
       Data: 21
@@ -890,13 +890,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: <prevLocked>k__BackingField
+      Data: <PrevLocked>k__BackingField
     - Name: $v
       Entry: 7
       Data: 58|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: <prevLocked>k__BackingField
+      Data: <PrevLocked>k__BackingField
     - Name: <UserType>k__BackingField
       Entry: 9
       Data: 26
@@ -938,13 +938,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: <prevMines>k__BackingField
+      Data: <PrevMines>k__BackingField
     - Name: $v
       Entry: 7
       Data: 60|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: <prevMines>k__BackingField
+      Data: <PrevMines>k__BackingField
     - Name: <UserType>k__BackingField
       Entry: 9
       Data: 21
@@ -986,13 +986,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: <prevOpenedX>k__BackingField
+      Data: <PrevOpenedX>k__BackingField
     - Name: $v
       Entry: 7
       Data: 62|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: <prevOpenedX>k__BackingField
+      Data: <PrevOpenedX>k__BackingField
     - Name: <UserType>k__BackingField
       Entry: 9
       Data: 35
@@ -1034,13 +1034,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: <prevOpenedY>k__BackingField
+      Data: <PrevOpenedY>k__BackingField
     - Name: $v
       Entry: 7
       Data: 64|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: <prevOpenedY>k__BackingField
+      Data: <PrevOpenedY>k__BackingField
     - Name: <UserType>k__BackingField
       Entry: 9
       Data: 35
@@ -1082,13 +1082,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: <prevPlayersId>k__BackingField
+      Data: <PrevPlayersId>k__BackingField
     - Name: $v
       Entry: 7
       Data: 66|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: <prevPlayersId>k__BackingField
+      Data: <PrevPlayersId>k__BackingField
     - Name: <UserType>k__BackingField
       Entry: 9
       Data: 26
@@ -1130,13 +1130,13 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: <prevRooms>k__BackingField
+      Data: <PrevRooms>k__BackingField
     - Name: $v
       Entry: 7
       Data: 68|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: <prevRooms>k__BackingField
+      Data: <PrevRooms>k__BackingField
     - Name: <UserType>k__BackingField
       Entry: 9
       Data: 48

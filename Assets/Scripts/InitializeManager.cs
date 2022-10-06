@@ -46,7 +46,7 @@ public class InitializeManager : UdonSharpBehaviour
         var syncedFieldProgress = syncManager == null
             ? 0f
             : syncManager.fieldCalculateProgress;
-        var fieldProgress = shouldFieldCalculate()
+        var fieldProgress = ShouldFieldCalculate()
             ? rawFieldProgress
             : syncedFieldProgress;
         var instantiateProgress = instantiateManager == null
@@ -59,7 +59,7 @@ public class InitializeManager : UdonSharpBehaviour
     /// <summary>非同期的なバッチ初期化を開始します。</summary>
     public void StartInitializing()
     {
-        if (fieldCalculator != null && shouldFieldCalculate())
+        if (fieldCalculator != null && ShouldFieldCalculate())
         {
             fieldCalculator.StartCalculate(this, "Dummy");
         }
@@ -78,7 +78,7 @@ public class InitializeManager : UdonSharpBehaviour
     /// ローカルプレイヤーがフィールド計算の責務を持っているかどうかを判定します。
     /// </summary>
     /// <returns>フィールド計算の責務を持っている場合、<c>true</c>。</returns>
-    private bool shouldFieldCalculate()
+    private bool ShouldFieldCalculate()
     {
         var local = Networking.LocalPlayer;
         return local == null || Networking.IsOwner(local, gameObject);

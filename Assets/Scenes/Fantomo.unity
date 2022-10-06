@@ -82310,7 +82310,6 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2059776424}
-  constants: {fileID: 0}
 --- !u!1 &2065174035
 GameObject:
   m_ObjectHideFlags: 0

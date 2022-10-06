@@ -129,18 +129,18 @@ public class FieldCalculator : UdonSharpBehaviour
         switch (Phase)
         {
             case CALC_PHASE_CUT_ROUTES:
-                cutRoute();
+                CutRoute();
                 break;
             case CALC_PHASE_PUT_MINES:
-                putMines();
+                PutMines();
                 break;
             case CALC_PHASE_PUT_KEYS:
-                putItems(
+                PutItems(
                     Constants.NUM_KEYS,
                     (byte)ROOM_FLG.HAS_KEY);
                 break;
             case CALC_PHASE_PUT_SPAWNERS:
-                putItems(
+                PutItems(
                     Constants.NUM_PLAYERS,
                     (byte)ROOM_FLG.HAS_SPAWN);
                 break;
@@ -174,7 +174,7 @@ public class FieldCalculator : UdonSharpBehaviour
     }
 
     /// <summary>扉を指定の確率で削除します。</summary>
-    private void cutRoute()
+    private void CutRoute()
     {
         var rooms = this.rooms;
         var dirs = directionCalculator.Direction;
@@ -206,7 +206,7 @@ public class FieldCalculator : UdonSharpBehaviour
     }
 
     /// <summary>地雷を設置します。</summary>
-    private void putMines()
+    private void PutMines()
     {
         var NUM_MINES = Constants.NUM_MINES;
         var rooms = this.rooms;
@@ -240,7 +240,7 @@ public class FieldCalculator : UdonSharpBehaviour
     /// <summary>アイテムを設置します。</summary>
     /// <param name="items">設置個数。</param>
     /// <param name="flag">アイテムを示すフラグ。</param>
-    private void putItems(int items, int flag)
+    private void PutItems(int items, int flag)
     {
         var rooms = this.rooms;
         var roomsCalculator = this.roomsCalculator;
