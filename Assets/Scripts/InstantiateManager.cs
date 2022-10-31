@@ -279,7 +279,7 @@ public class InstantiateManager : UdonSharpBehaviour
         var entrySystem = this.lobbyRoom.GetComponentInChildren<EntrySystem>();
         if (entrySystem)
         {
-            entrySystem.entryManager =
+            entrySystem.EntryManagerInstance =
                 this.managers.GetComponentInChildren<EntryManager>();
             entrySystem.UpdateView();
             this.initializeManager.EntrySystem = entrySystem;

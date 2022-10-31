@@ -40,7 +40,7 @@ public class EntrySystem : UdonSharpBehaviour
     private EntryManager _entryManager;
 
     /// <summary>エントリー管理オブジェクト。</summary>
-    public EntryManager entryManager
+    public EntryManager EntryManagerInstance
     {
         get => _entryManager;
         set
@@ -86,26 +86,26 @@ public class EntrySystem : UdonSharpBehaviour
     /// <summary>エントリーします。</summary>
     public void Entry()
     {
-        if (entryManager == null)
+        if (EntryManagerInstance == null)
         {
             Debug.LogError(
                 "entryManager が null のため、エントリーを行えません。: EntrySystem.Entry");
             return;
         }
-        entryManager.ToggleEntry();
+        EntryManagerInstance.ToggleEntry();
         UpdateView();
     }
 
     /// <summary>ゲーム開始ボタンを押下した際に呼び出します。</summary>
     public void GameStart()
     {
-        if (entryManager == null)
+        if (EntryManagerInstance == null)
         {
             Debug.LogError(
                 "entryManager が null のため、ゲーム開始できません。: EntrySystem.GameStart");
             return;
         }
-        entryManager.Decide();
+        EntryManagerInstance.Decide();
         UpdateView();
         SendCustomNetworkEvent(
             NetworkEventTarget.All, nameof(TeleportToGameField));
@@ -116,7 +116,7 @@ public class EntrySystem : UdonSharpBehaviour
     /// </summary>
     public void TeleportToGameField()
     {
-        var manager = entryManager;
+        var manager = EntryManagerInstance;
         var gameField = this.gameField;
         if (manager == null || gameField == null)
         {
@@ -137,7 +137,7 @@ public class EntrySystem : UdonSharpBehaviour
     /// <summary>ビューを最新の状態に更新します。</summary>
     public void UpdateView()
     {
-        var manager = entryManager;
+        var manager = EntryManagerInstance;
         var valid = manager != null;
         var isEntry = valid && manager.IsEntry();
         var full = !isEntry && manager.GetEmpty() < 0;
@@ -157,7 +157,7 @@ public class EntrySystem : UdonSharpBehaviour
     /// <summary>ゲーム開始ボタンを最新の状態に更新します。</summary>
     private void UpdateStartButtonView()
     {
-        var manager = entryManager;
+        var manager = EntryManagerInstance;
         startButton.SetActive(
             !progressBar.gameObject.activeSelf &&
             manager != null &&
@@ -174,7 +174,7 @@ public class EntrySystem : UdonSharpBehaviour
     /// <returns>プレイヤーの表示名。無効である場合、空文字。</returns>
     private string GetDisplayName(int id)
     {
-        var manager = entryManager;
+        var manager = EntryManagerInstance;
         if (manager == null || manager.InvalidLocalPlayer)
         {
             return id > 0 ? "Anonymous" : string.Empty;
