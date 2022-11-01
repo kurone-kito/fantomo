@@ -1,4 +1,5 @@
 ﻿
+using System;
 using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
@@ -20,8 +21,8 @@ public class EntryManager : UdonSharpBehaviour
 
     /// <summary>エントリーしている、プレイヤーの一覧。。</summary>
     public short[] Ids => syncManager == null
-                ? new short[0]
-                : syncManager.playersId;
+        ? new short[0]
+        : syncManager.playersId;
 
     /// <summary>参加メンバーが確定したかどうかを取得します。</summary>
     public bool Decided => syncManager != null && syncManager.decided;
@@ -33,15 +34,8 @@ public class EntryManager : UdonSharpBehaviour
         set;
     }
 
-    /// <summary>
-    /// 現在プレイしているプレイヤーが無効であるかどうかを取得します。
-    /// </summary>
-    public bool InvalidLocalPlayer => Networking.LocalPlayer == null;
-
     /// <summary>現在プレイしているプレイヤーの ID を取得します。</summary>
-    public short LocalPlayerId => InvalidLocalPlayer
-                ? short.MaxValue
-                : (short)Networking.LocalPlayer.playerId;
+    public short LocalPlayerId => (short)Networking.LocalPlayer.playerId;
 
     /// <summary>現在のメンバーでゲームを開始します。</summary>
     public void Decide()
@@ -69,10 +63,6 @@ public class EntryManager : UdonSharpBehaviour
     /// </returns>
     public int GetEmpty()
     {
-        if (InvalidLocalPlayer)
-        {
-            return 0;
-        }
         var ids = Ids;
         for (var i = ids.Length; --i >= 0;)
         {
@@ -89,18 +79,7 @@ public class EntryManager : UdonSharpBehaviour
     /// <returns>エントリーしている場合、<c>true</c>。</returns>
     public bool IsEntry()
     {
-        if (syncManager != null)
-        {
-            var localId = LocalPlayerId;
-            foreach (var id in Ids)
-            {
-                if (id == localId)
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return syncManager != null && Array.IndexOf(Ids, LocalPlayerId) >= 0;
     }
 
     /// <summary>
@@ -220,8 +199,7 @@ public class EntryManager : UdonSharpBehaviour
     /// </summary>
     private void SYNC__addId()
     {
-        Ids[GetEmpty()] =
-            LocalPlayerId;
+        Ids[GetEmpty()] = LocalPlayerId;
     }
 
     /// <summary>
@@ -235,13 +213,10 @@ public class EntryManager : UdonSharpBehaviour
     /// <param name="id">プレイヤー ID。</param>
     private void SYNC__removeId(short id)
     {
-        var ids = Ids;
-        for (var i = ids.Length; --i >= 0;)
+        var index = Array.IndexOf(Ids, id);
+        if (index >= 0)
         {
-            if (ids[i] == id)
-            {
-                ids[i] = 0;
-            }
+            Ids[index] = 0;
         }
     }
 }

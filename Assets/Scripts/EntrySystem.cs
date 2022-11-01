@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UdonSharp;
 using UnityEngine;
 using UnityEngine.UI;
@@ -174,11 +174,6 @@ public class EntrySystem : UdonSharpBehaviour
     /// <returns>プレイヤーの表示名。無効である場合、空文字。</returns>
     private string GetDisplayName(int id)
     {
-        var manager = EntryManagerInstance;
-        if (manager == null || manager.InvalidLocalPlayer)
-        {
-            return id > 0 ? "Anonymous" : string.Empty;
-        }
         var player = VRCPlayerApi.GetPlayerById(id);
         return player != null && player.IsValid()
             ? player.displayName
