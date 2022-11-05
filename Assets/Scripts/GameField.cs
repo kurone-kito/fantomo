@@ -37,7 +37,7 @@ public class GameField : UdonSharpBehaviour
             Debug.LogError("UnityEditor ではここから先には進めません。");
             return;
         }
-        player.TeleportTo(new Vector3(20, 1, 0), player.GetRotation());
+        player.TeleportTo(new Vector3(19, 1, 5), player.GetRotation());
     }
 
     /// <summary>地雷の配置候補先を決定します。</summary>

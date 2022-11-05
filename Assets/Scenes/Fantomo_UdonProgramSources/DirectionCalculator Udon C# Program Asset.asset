@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: DirectionCalculator Udon C# Program Asset
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: 464fdea18e654ba48a61630fbf12af21,
+  serializedUdonProgramAsset: {fileID: 11400000, guid: d0f490c071737c74baa739af2ded1099,
     type: 2}
   udonAssembly: 
   assemblyError: 
