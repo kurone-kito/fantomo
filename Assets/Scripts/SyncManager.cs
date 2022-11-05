@@ -4,6 +4,7 @@ using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon.Common;
+using VRC.Udon.Common.Interfaces;
 
 /// <summary>同期機能のロジック。</summary>
 [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
@@ -150,6 +151,24 @@ public class SyncManager : UdonSharpBehaviour
         {
             Networking.SetOwner(player, gameObject);
         }
+    }
+
+    /// <summary>ゲーム開始を全プレイヤーに伝達します。</summary>
+    public void GameStart()
+    {
+        ChangeOwner();
+        decided = true;
+        RequestSerialization();
+        SendCustomNetworkEvent(
+            NetworkEventTarget.All, nameof(OnDecidedGameStart));
+    }
+
+    /// <summary>
+    /// ゲーム開始を各プレイヤーが認知した時のコールバック。
+    /// </summary>
+    public void OnDecidedGameStart()
+    {
+        entryManager.EntrySystem.TeleportToGameField();
     }
 
     /// <summary>

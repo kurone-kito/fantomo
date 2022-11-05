@@ -13,9 +13,6 @@ public class EntryManager : UdonSharpBehaviour
     [SerializeField]
     private GameObject managers;
 
-    /// <summary>フィールド算出のロジック。</summary>
-    private FieldCalculator fieldCalculator;
-
     /// <summary>同期管理オブジェクト。</summary>
     private SyncManager syncManager;
 
@@ -46,15 +43,7 @@ public class EntryManager : UdonSharpBehaviour
                 "syncManager が null のため、エントリーを行えません。: EntryManager.Decide");
             return;
         }
-        if (fieldCalculator == null)
-        {
-            Debug.LogError(
-                "fieldCalculator が null のため、エントリーを行えません。: EntryManager.Decide");
-            return;
-        }
-        syncManager.ChangeOwner();
-        syncManager.decided = true;
-        syncManager.RequestSerialization();
+        syncManager.GameStart();
     }
 
     /// <summary>空きスロットのインデックスを取得します。</summary>
@@ -184,8 +173,6 @@ public class EntryManager : UdonSharpBehaviour
         {
             syncManager =
                 managers.GetComponentInChildren<SyncManager>();
-            fieldCalculator =
-                managers.GetComponentInChildren<FieldCalculator>();
         }
     }
 

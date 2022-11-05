@@ -1,9 +1,8 @@
-using System;
+﻿using System;
 using UdonSharp;
 using UnityEngine;
 using UnityEngine.UI;
 using VRC.SDKBase;
-using VRC.Udon.Common.Interfaces;
 
 /// <summary>エントリー フォーム表示制御のロジック。</summary>
 [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
@@ -107,8 +106,6 @@ public class EntrySystem : UdonSharpBehaviour
         }
         EntryManagerInstance.Decide();
         UpdateView();
-        SendCustomNetworkEvent(
-            NetworkEventTarget.All, nameof(TeleportToGameField));
     }
 
     /// <summary>
