@@ -250,3 +250,9 @@ $RECYCLE.BIN/
 ### Unity ###
 [Aa]ssets/SerializedUdonPrograms/*
 [Aa]ssets/UdonSharp/PrefabBuild*
+
+### VRChat ###
+/Packages/*/
+/Packages/!com.vrchat.core.*/
+/Packages/com.vrchat.*/
+/Packages/.gitignore
